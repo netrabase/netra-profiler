@@ -103,7 +103,7 @@ netra profile path/to/your/dataset.csv
 #### Advanced Execution Options
 You can combine flags to handle massive or messy datasets with ease:
 
-- `--low-memory`: Triggers the bounded-memory execution path (approximate counting and map-reduce sampling) to profile out-of-core datasets without crashing your RAM.
+- `--low-memory`: Triggers the low-memory execution path (approximate counting and sampled correlations).
 - `-i, --ignore <column>`: Skip profiling for a specific column (perfect for highly cardinal IDs, hashes, or PII).
 - `--full-inference`: Forces full-file schema inference. Crucial for messy CSVs where data types might silently change deep in the file.
 - `--json`: Disables the visual CLI output and generates the raw profile payload as a JSON string. Ideal for piping to `jq` or redirecting to a file: `> profile.json`.
