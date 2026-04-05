@@ -1,0 +1,58 @@
+name: CI
+
+# 1. Triggers
+# Run this pipeline on every push to main and every Pull Request.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# 2. Concurrency
+# If code is pushed twice quickly, cancel the first run to save resources.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gate:
+    name: Code Quality & Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # A. Get the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # B. Install uv (The Magic Step)
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      # C. Set up Python
+      - name: Set up Python 3.10
+        run: uv python install 3.10
+
+      # D. Install Dependencies
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      # E. The Checks
+
+      # 1. Formatting Check
+      - name: Check Formatting
+        run: uv run ruff format --check .
+
+      # 2. Linting
+      - name: Lint Code
+        run: uv run ruff check .
+
+      # 3. Type Checking
+      - name: Static Type Check
+        run: uv run mypy .
+
+      # 4. Unit Tests
+      - name: Run Tests
+        run: uv run pytest -v

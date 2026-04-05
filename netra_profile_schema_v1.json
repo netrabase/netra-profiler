@@ -1,0 +1,203 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/netrabase/netra-profiler/main/netra_profile_schema_v1.json",
+  "title": "Netra Profiler Output Schema",
+  "description": "The standardized JSON output for Netra Profiler (v1).",
+  "type": "object",
+  "required": ["dataset", "columns", "correlations", "alerts", "_meta"],
+  "properties": {
+    "dataset": {
+      "type": "object",
+      "required": ["name", "format", "row_count"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "row_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "columns": {
+      "type": "object",
+      "description": "Keys are column names, values are column metrics.",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "data_type",
+          "null_count",
+          "n_unique",
+          "histogram",
+          "top_k"
+        ],
+        "properties": {
+          "data_type": {
+            "type": "string"
+          },
+          "null_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "zero_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "n_unique": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "histogram": {
+            "type": "array"
+          },
+          "top_k": {
+            "type": "array"
+          },
+          "min": {
+            "type": ["number", "null"]
+          },
+          "max": {
+            "type": ["number", "null"]
+          },
+          "mean": {
+            "type": ["number", "null"]
+          },
+          "std": {
+            "type": ["number", "null"]
+          },
+          "skew": {
+            "type": ["number", "null"]
+          },
+          "kurtosis": {
+            "type": ["number", "null"]
+          },
+          "p25": {
+            "type": ["number", "null"]
+          },
+          "p50": {
+            "type": ["number", "null"]
+          },
+          "p75": {
+            "type": ["number", "null"]
+          },
+          "min_length": {
+            "type": ["integer", "null"]
+          },
+          "max_length": {
+            "type": ["integer", "null"]
+          },
+          "mean_length": {
+            "type": ["number", "null"]
+          }
+        }
+      }
+    },
+    "correlations": {
+      "type": "object",
+      "required": ["pearson", "spearman"],
+      "properties": {
+        "pearson": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/correlation_pair"
+          }
+        },
+        "spearman": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/correlation_pair"
+          }
+        },
+        "sampling_method": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "alerts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["column_name", "type", "level", "message", "value"],
+        "properties": {
+          "column_name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string",
+            "enum": ["CRITICAL", "WARNING", "INFO"]
+          },
+          "message": {
+            "type": "string"
+          },
+          "value": {
+            "type": ["number", "null"]
+          }
+        }
+      }
+    },
+    "_meta": {
+      "type": "object",
+      "required": [
+        "created_at",
+        "execution_start_epoch",
+        "execution_end_epoch",
+        "engine_time_seconds",
+        "profiler_version",
+        "is_low_memory_run",
+        "warnings"
+      ],
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "execution_start_epoch": {
+          "type": "number"
+        },
+        "execution_end_epoch": {
+          "type": "number"
+        },
+        "engine_time_seconds": {
+          "type": "number"
+        },
+        "profiler_version": {
+          "type": "string"
+        },
+        "is_low_memory_run": {
+          "type": "boolean"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "correlation_pair": {
+      "type": "object",
+      "required": ["column_a", "column_b", "score"],
+      "properties": {
+        "column_a": {
+          "type": "string"
+        },
+        "column_b": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number",
+          "minimum": -1.0,
+          "maximum": 1.0
+        }
+      }
+    }
+  }
+}

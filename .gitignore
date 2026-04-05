@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+.env
+
+# Distribution
+dist/
+build/
+*.egg-info/
+
+# Tools & Caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+.coverage
+htmlcov/
+
+# Generated data
+benchmarks/data/*
+tests/data/*
+
+# Editors & IDEs
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# User specific source setups
+# You can put anything here that needs to be done to prepare your env.
+.user_env.*
