@@ -19,7 +19,7 @@ Tested locally on a consumer laptop machine with the following specifications:
 * **OS:** Ubuntu 24.04.4 LTS
 * **Storage:** 512GB NVMe SSD
 
-Dataset Schema: **11 Columns** (3 Int, 4 String, 2 Float, 1 Bool, 1 Date), **12 Million Rows**. Details can be found in the generation script [here](https://github.com/nitinpaul/netra-profiler/benchmarks/forge_dataset.py).
+Dataset Schema: **11 Columns** (3 Int, 4 String, 2 Float, 1 Bool, 1 Date), **12 Million Rows**. Details can be found in the generation script [here](benchmarks/forge_dataset.py).
 
 File Size: 1.04 GB (CSV) / 225 MB (Parquet)
 
@@ -150,4 +150,4 @@ if critical_issues:
 
 ## License
 
-This software is licensed under the [MIT License](https://github.com/nitinpaul/netra-profiler/blob/main/LICENSE).
+This software is licensed under the [MIT License](LICENSE).
