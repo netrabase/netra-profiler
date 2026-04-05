@@ -53,7 +53,7 @@ To determine the actual extent of the Data Envelope for the test hardware, we ra
 
 `netra-profiler` engine scales linearly and predictably thanks to the streaming-first architecture and the sampling strategy for calculating correlations, which keeps the memory footprint strictly proportional to the dataset size. This predictable scaling eliminates sudden Out-Of-Memory (OOM) crashes and allows you to accurately forecast your hardware limits. 
 
-![Netra Profiler Linear Scaling: 12M to 950M Rows](docs/assets/linear_scaling.png)
+![Netra Profiler Linear Scaling: 12M to 950M Rows](https://raw.githubusercontent.com/netrabase/netra-profiler/refs/heads/main/docs/assets/linear_scaling.png)
 
 ### B. Cloud Scale-Up (Vertical Scaling)
 
@@ -98,7 +98,7 @@ The fastest way to profile your data is right from the command line. `netra-prof
 netra profile path/to/your/dataset.csv
 ```
 
-![Netra Profiler CLI](docs/assets/cli_showcase.png)
+![Netra Profiler CLI](https://raw.githubusercontent.com/netrabase/netra-profiler/refs/heads/main/docs/assets/cli_showcase.png)
 
 #### Advanced Execution Options
 You can combine flags to handle massive or messy datasets with ease:
@@ -147,7 +147,3 @@ if critical_issues:
         print(f" - [{issue['column_name']}] {issue['type']}: {issue['message']}")
     raise ValueError("Data quality checks failed. Upstream data contract violated.")
 ```
-
-## License
-
-This software is licensed under the [MIT License](LICENSE).

@@ -1,6 +1,6 @@
 [project]
 name = "netra-profiler"
-version = "0.1.0"
+version = "0.1.1"
 description = "High-performance profiling and data quality tool built with Polars. "
 readme = "README.md"
 requires-python = ">=3.10"
