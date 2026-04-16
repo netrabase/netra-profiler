@@ -21,7 +21,7 @@ import typer
 
 from netra_profiler import Profiler, __version__
 from netra_profiler.cli.console import NetraCLIRenderer, console
-from netra_profiler.types import NetraProfile
+from netra_profiler.types import NetraProfile, PipelineContext
 
 
 def _get_peak_ram_usage_in_mb() -> float:
@@ -145,6 +145,55 @@ def _scan_file(path: Path, full_inference: bool = False) -> tuple[pl.LazyFrame, 
         raise ValueError(f"Unsupported extension: {extension}")
 
 
+def _evaluate_pipeline_context(
+    profile: NetraProfile, fail_on_critical: bool, fail_on_warnings: bool
+) -> PipelineContext:
+    """Generates the Quality Gate execution metadata."""
+
+    quality_gate_active = fail_on_critical or fail_on_warnings
+    alerts = profile.get("alerts", [])
+
+    critical_alerts_count = sum(1 for alert in alerts if alert.get("level") == "CRITICAL")
+    warning_alerts_count = sum(1 for alert in alerts if alert.get("level") == "WARNING")
+
+    if not quality_gate_active:
+        return {
+            "quality_gate_active": False,
+            "fail_on_critical": False,
+            "fail_on_warnings": False,
+            "status": "PASSIVE",
+            "exit_code": 0,
+            "reason": "No strict halting conditions were configured.",
+        }
+
+    should_fail = (
+        fail_on_warnings and (warning_alerts_count > 0 or critical_alerts_count > 0)
+    ) or (fail_on_critical and critical_alerts_count > 0)
+
+    # Generate Unified Reason String
+    if should_fail:
+        parts = []
+        if warning_alerts_count > 0:
+            s = "S" if warning_alerts_count > 1 else ""
+            parts.append(f"{warning_alerts_count} WARNING{s}")
+        if critical_alerts_count > 0:
+            parts.append(f"{critical_alerts_count} CRITICAL")
+
+        anomaly_str = " and ".join(parts)
+        reason = f"Halted due to {anomaly_str} quality issues."
+    else:
+        reason = "No data quality issues found."
+
+    return {
+        "quality_gate_active": True,
+        "fail_on_critical": fail_on_critical,
+        "fail_on_warnings": fail_on_warnings,
+        "status": "FAILED" if should_fail else "PASSED",
+        "exit_code": 1 if should_fail else 0,
+        "reason": reason,
+    }
+
+
 app = typer.Typer(
     name="netra",
     help="Netra Profiler: High-performance profiling and data quality tool built with Polars.",
@@ -152,8 +201,14 @@ app = typer.Typer(
 )
 
 
-def _run_json_mode(
-    path: Path, bins: int, top_k: int, full_inference: bool, ignore_columns: list[str]
+def _run_json_mode(  # noqa: PLR0913
+    path: Path,
+    bins: int,
+    top_k: int,
+    full_inference: bool,
+    ignore_columns: list[str],
+    fail_on_critical: bool,
+    fail_on_warnings: bool,
 ) -> None:
     """
     HEADLESS MODE: Raw JSON output execution.
@@ -165,9 +220,19 @@ def _run_json_mode(
         df, _ = _scan_file(path, full_inference=full_inference)
         profiler = Profiler(df, ignore_columns=ignore_columns)
         profile = profiler.run(bins=bins, top_k=top_k)
+
+        # 1. Generate & Inject Pipeline Context
+        pipeline_context = _evaluate_pipeline_context(profile, fail_on_critical, fail_on_warnings)
+        profile["_meta"]["pipeline_context"] = pipeline_context
+
+        # 2. Output the JSON Payload
         print(json.dumps(profile, default=str))
+
+        # 3. Exit
+        if pipeline_context["exit_code"] == 1:
+            raise typer.Exit(code=1)
+
     except Exception as e:
-        # Output error as JSON for machine parsing
         print(json.dumps({"error": str(e)}))
         raise typer.Exit(code=1) from None
 
@@ -318,6 +383,16 @@ def profile(  # noqa: PLR0913
             " quantiles to prevent OOM on massive datasets."
         ),
     ),
+    fail_on_critical: bool = typer.Option(
+        False,
+        "--fail-on-critical",
+        help="Halt the pipeline (exit 1) if CRITICAL data quality alerts are found.",
+    ),
+    fail_on_warnings: bool = typer.Option(
+        False,
+        "--fail-on-warnings",
+        help="Halt the pipeline (exit 1) if Warnings or Critical data quality alerts are found.",
+    ),
 ) -> None:
     """
     Profile the connected data source and generate the CLI report.
@@ -325,11 +400,16 @@ def profile(  # noqa: PLR0913
     path = Path(file_path)
 
     # --- MODE 1: JSON OUTPUT ---
+
     if json_output:
-        _run_json_mode(path, bins, top_k, full_inference, ignore_columns)
+        _run_json_mode(
+            path, bins, top_k, full_inference, ignore_columns, fail_on_critical, fail_on_warnings
+        )
         return
 
     # --- MODE 2: CLI OUTPUT ---
+
+    exit_code = 0  # Default to success
 
     with NetraCLIRenderer() as ui:
         if not path.exists():
@@ -354,8 +434,18 @@ def profile(  # noqa: PLR0913
         )
         profile = _execute_profiling(ui, profiler, file_size, bins, top_k)
 
-        # Phase 3: Results Dashboard
+        # Phase 3: Evaluate Pipeline Gatekeeper and Inject JSON Meta
+        pipeline_context = _evaluate_pipeline_context(profile, fail_on_critical, fail_on_warnings)
+        profile["_meta"]["pipeline_context"] = pipeline_context
+        exit_code = pipeline_context["exit_code"]
+
+        # Phase 4: Render Dashboards
         ui.render_profiling_results(profile)
+        ui.render_pipeline_info(pipeline_context)
+
+    # Clean Exit: Executed only after the 'with ui:' context safely closes the Rich terminal state
+    if exit_code != 0:
+        raise typer.Exit(code=exit_code)
 
 
 @app.command()

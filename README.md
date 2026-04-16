@@ -74,6 +74,7 @@ Netra Profiler’s core engine is built purely on the Polars Lazy API, which mea
 - **Comprehensive Profiling:** Automatically extracts scalar statistics (min, max, mean, skew, kurtosis), streaming distributions (histograms), Top-K frequent values, and Pearson/Spearman correlation matrices.
 - **Complex Type Support:** Automatically flattens nested Structs and computes length statistics for Lists and Arrays, allowing you to profile complex JSON or Parquet files with zero configuration.
 - **Built-in Quality Alerts:** Stop bad data before it enters your pipeline. Netra's diagnostics engine automatically flags critical issues like zero-inflation, corrupted primary keys, extreme skewness, and high null percentages.
+- **CI/CD Pipeline Gatekeeper:** Use strict exit codes (`--fail-on-critical` or `--fail-on-warnings`) to automatically act as a Data Firewall, breaking your CI/CD builds (GitHub Actions, Airflow, GitLab CI) if corrupted data enters the pipeline.
 - **Beautiful Terminal UI:** Includes an information-dense, highly readable CLI dashboard to profile and check your data health directly in the terminal.
 - **JSON Data Contracts:** Export the full diagnostic profile to a strictly typed JSON artifact (`netra profile data.parquet --json`) for CI/CD data quality gates, a metadata feed for data catalogs, or context for LLM-based data agents.
 - **Python API:** Integrate seamlessly into your data engineering pipelines (Airflow DAGs, Marimo/Jupyter Notebooks, CI/CD) with a clean, expressive programmatic interface.
@@ -103,6 +104,8 @@ netra profile path/to/your/dataset.csv
 #### Advanced Execution Options
 You can combine flags to handle massive or messy datasets with ease:
 
+- `--fail-on-critical`: Enables the Active Quality Gate. Breaks the pipeline (exits with code 1) if any CRITICAL anomalies are found.
+- `--fail-on-warnings`: Stricter Quality Gate. Breaks the pipeline if ANY anomalies (Warning or Critical) are found.
 - `--low-memory`: Triggers the low-memory execution path (approximate counting and sampled correlations).
 - `-i, --ignore <column>`: Skip profiling for a specific column (perfect for highly cardinal IDs, hashes, or PII).
 - `--full-inference`: Forces full-file schema inference. Crucial for messy CSVs where data types might silently change deep in the file.

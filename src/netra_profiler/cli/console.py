@@ -19,7 +19,13 @@ from rich.text import Text
 
 from netra_profiler import __version__
 from netra_profiler.cli.theme import NETRA_CLI_THEME
-from netra_profiler.types import ColumnMetrics, DiagnosticAlert, NetraProfile, is_numeric_type
+from netra_profiler.types import (
+    ColumnMetrics,
+    DiagnosticAlert,
+    NetraProfile,
+    PipelineContext,
+    is_numeric_type,
+)
 
 LATENCY_THRESHOLD = 0.01
 EXECUTION_TIME_THRESHOLD = 0.01
@@ -31,7 +37,7 @@ console = Console(theme=NETRA_CLI_THEME)
 
 class NetraCLIRenderer:
     """
-    The UI Engine for Netra Profiler CLI.
+    The UI Class for Netra Profiler CLI.
 
     Operates on a 'Stacked Card' layout philosophy within a live terminal display.
     The lifecycle moves through three distinct phases:
@@ -55,6 +61,9 @@ class NetraCLIRenderer:
 
         # Phase 3: The Profiling Results Panels (Health + Variables)
         self._profiling_results: RenderableType | None = None
+
+        # Phase 4: Pipeline Execution Context
+        self._pipeline_info_panel: RenderableType | None = None
 
         # The Live Context
         self.live = Live(
@@ -82,6 +91,9 @@ class NetraCLIRenderer:
 
         if self._profiling_results:
             active_cards.append(self._profiling_results)
+
+        if self._pipeline_info_panel:
+            active_cards.append(self._pipeline_info_panel)
 
         # Main Outer Wrapper Title: Show filename if available, else show init state
         panel_title = (
@@ -636,4 +648,65 @@ class NetraCLIRenderer:
             renderables.append(variable_explorer_card)
 
         self._profiling_results = Group(*renderables)
+        self._refresh()
+
+    def render_pipeline_info(self, pipeline_context: PipelineContext) -> None:
+        """
+        Renders the Pipeline Info card indicating the CI/CD Quality Gate status.
+        Dynamically shifts its border color based on the pass/fail state.
+        """
+        quality_gate_active = pipeline_context.get("quality_gate_active", False)
+        status = pipeline_context.get("status", "PASSIVE")
+        exit_code = pipeline_context.get("exit_code", 0)
+        reason = pipeline_context.get("reason", "")
+
+        fail_on_critical = pipeline_context.get("fail_on_critical", False)
+        fail_on_warnings = pipeline_context.get("fail_on_warnings", False)
+
+        active_flags = []
+        if fail_on_critical:
+            active_flags.append("--fail-on-critical")
+        if fail_on_warnings:
+            active_flags.append("--fail-on-warnings")
+        flags_string = ", ".join(active_flags) if active_flags else "None"
+
+        grid = Table.grid(expand=True)
+        grid.add_column(style="muted")
+
+        if not quality_gate_active:
+            border_style = "border.section"
+            title = "[not dim][muted]⎆[/] [value]Pipeline Info[/value][/]"
+            quality_gate_mode = "Passive"
+        elif status == "PASSED":
+            border_style = "success"
+            title = "[not dim][success]⎆[/] [value]Pipeline Info[/value][/]"
+            quality_gate_mode = "Active"
+        else:
+            border_style = "#FF004D"  # Bold Red
+            title = "[not dim][#FF004D]⎆[/] [value]Pipeline Info[/value][/]"
+            quality_gate_mode = "Active"
+
+        # Build the Card Content
+        grid.add_row(f" Quality Gate:  [value]{quality_gate_mode}[/value]")
+
+        if quality_gate_active:
+            grid.add_row(f" Flags:         [value]{flags_string}[/value]")
+
+        exit_color = "success" if exit_code == 0 else "#FF004D"
+        status_word = "Success" if exit_code == 0 else "Halted"
+        grid.add_row(
+            f" Exit Status:   [{exit_color}][bold]{exit_code} ({status_word})[/bold][/{exit_color}]"
+        )
+
+        if reason:
+            grid.add_row(f" Reason:        [value]{reason}[/value]")
+
+        self._pipeline_info_panel = Panel(
+            grid,
+            title=title,
+            title_align="left",
+            border_style=border_style,
+            box=box.ROUNDED,
+            padding=(1, 1),
+        )
         self._refresh()

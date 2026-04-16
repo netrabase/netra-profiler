@@ -16,6 +16,20 @@ class DatasetMeta(TypedDict):
     row_count: int
 
 
+class PipelineContext(TypedDict):
+    """
+    Context injected by the CLI orchestrator (`main.py`) when running from the command line.
+    This does not exist in the Python API context.
+    """
+
+    quality_gate_active: bool
+    fail_on_critical: bool
+    fail_on_warnings: bool
+    status: str  # "PASSED", "FAILED", or "PASSIVE"
+    exit_code: int
+    reason: str | None
+
+
 class ExecutionMeta(TypedDict):
     """Telemetry and metadata regarding the profiler's execution environment and performance."""
 
@@ -26,6 +40,7 @@ class ExecutionMeta(TypedDict):
     profiler_version: str
     is_low_memory_run: bool
     warnings: list[str]
+    pipeline_context: PipelineContext | None
 
 
 class ColumnMetrics(TypedDict, total=False):

@@ -474,6 +474,7 @@ class Profiler:
                 "profiler_version": __version__,
                 "is_low_memory_run": self.low_memory,
                 "warnings": profiler_warnings,
+                "pipeline_context": None,
             },
         }
 
