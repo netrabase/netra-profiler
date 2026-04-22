@@ -13,6 +13,7 @@ from rich.progress import (
     SpinnerColumn,
     TextColumn,
 )
+from rich.rule import Rule
 from rich.spinner import Spinner
 from rich.table import Table
 from rich.text import Text
@@ -324,8 +325,16 @@ class NetraCLIRenderer:
             return f"[bold #997602]\\[{alert_type}][/]"
         return f"[bold #8C8C8C]\\[{alert_type}][/]"
 
-    def _render_data_health_panel(self, alerts: list[DiagnosticAlert], row_count: int) -> Panel:
+    def _render_data_health_panel(
+        self,
+        alerts: list[DiagnosticAlert],
+        row_count: int,
+        config_source: str,
+        config_warnings: list[str],
+    ) -> Panel:
         """Renders the prioritized list of dataset anomalies, anchored by the row count."""
+
+        config_text = f"[muted] Active Config:[/muted] [cyan]{config_source}[/cyan]"
         health_summary_text = self._build_health_summary_text(alerts, row_count)
 
         grid = Table.grid(padding=(0, 0))
@@ -383,7 +392,16 @@ class NetraCLIRenderer:
                         prefix = "• " if len(messages) > 1 else ""
                         grid.add_row(f"      [muted]{prefix}{msg}[/muted]")
 
-        panel_content = Group(health_summary_text, Padding(grid, (1, 0, 0, 0)))
+        if config_warnings:
+            grid.add_row("")
+            grid.add_row(Rule(style="muted"))
+            grid.add_row("")
+            grid.add_row(" [#FFFF00]Configuration Warnings[/]")
+            grid.add_row("")
+            for warning in config_warnings:
+                grid.add_row(f"   [muted][#FFFF00]•[/] {warning}[/muted]")
+
+        panel_content = Group(config_text, health_summary_text, Padding(grid, (1, 0, 0, 0)))
 
         return Panel(
             panel_content,
@@ -632,12 +650,17 @@ class NetraCLIRenderer:
     def render_profiling_results(self, profile: NetraProfile) -> None:
         """Assembles the final profiling results from the profile payload."""
 
+        config_source = profile.get("_meta", {}).get("config_source", "Default")
+        config_warnings = profile.get("_meta", {}).get("config_warnings", [])
+
         row_count = profile["dataset"]["row_count"]
         alerts = profile["alerts"]
 
         numerics, categoricals = self._group_column_metrics(profile)
 
-        health_card = self._render_data_health_panel(alerts, row_count)
+        health_card = self._render_data_health_panel(
+            alerts, row_count, config_source, config_warnings
+        )
         variable_explorer_card = self._build_variable_explorer_panel(
             numerics, categoricals, row_count
         )
@@ -650,7 +673,9 @@ class NetraCLIRenderer:
         self._profiling_results = Group(*renderables)
         self._refresh()
 
-    def render_pipeline_info(self, pipeline_context: PipelineContext) -> None:
+    def render_pipeline_info(
+        self, pipeline_context: PipelineContext, profiler_warnings: list[str]
+    ) -> None:
         """
         Renders the Pipeline Info card indicating the CI/CD Quality Gate status.
         Dynamically shifts its border color based on the pass/fail state.
@@ -700,6 +725,15 @@ class NetraCLIRenderer:
 
         if reason:
             grid.add_row(f" Reason:        [value]{reason}[/value]")
+
+        if profiler_warnings:
+            grid.add_row("")
+            grid.add_row(Rule(style="muted"))
+            grid.add_row("")
+            grid.add_row(" [#FFFF00]System & Engine Warnings[/]")
+            grid.add_row("")
+            for warning in profiler_warnings:
+                grid.add_row(f"   [muted][#FFFF00]•[/] {warning}[/muted]")
 
         self._pipeline_info_panel = Panel(
             grid,

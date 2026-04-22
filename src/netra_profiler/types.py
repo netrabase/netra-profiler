@@ -39,7 +39,9 @@ class ExecutionMeta(TypedDict):
     engine_time_seconds: float
     profiler_version: str
     is_low_memory_run: bool
-    warnings: list[str]
+    config_source: str
+    profiler_warnings: list[str]
+    config_warnings: list[str]
     pipeline_context: PipelineContext | None
 
 

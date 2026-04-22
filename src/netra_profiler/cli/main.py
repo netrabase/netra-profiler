@@ -15,9 +15,11 @@ import sys
 import time
 from collections import Counter
 from pathlib import Path
+from typing import Any
 
 import polars as pl
 import typer
+import yaml
 
 from netra_profiler import Profiler, __version__
 from netra_profiler.cli.console import NetraCLIRenderer, console
@@ -82,8 +84,6 @@ def _format_bytes(size: int) -> str:
 
 def _detect_csv_separator(path: Path) -> str:
     """
-    PRE-FLIGHT: CSV Dialect Sniffing.
-
     Peeks at the first 5 lines of a CSV file to automatically detect the delimiter.
     This prevents Polars from panicking or misparsing datasets that use semicolons or tabs.
 
@@ -209,6 +209,8 @@ def _run_json_mode(  # noqa: PLR0913
     ignore_columns: list[str],
     fail_on_critical: bool,
     fail_on_warnings: bool,
+    config: dict[str, Any] | None,
+    config_source: str,
 ) -> None:
     """
     HEADLESS MODE: Raw JSON output execution.
@@ -218,7 +220,9 @@ def _run_json_mode(  # noqa: PLR0913
     """
     try:
         df, _ = _scan_file(path, full_inference=full_inference)
-        profiler = Profiler(df, ignore_columns=ignore_columns)
+        profiler = Profiler(
+            df, ignore_columns=ignore_columns, config=config, config_source=config_source
+        )
         profile = profiler.run(bins=bins, top_k=top_k)
 
         # 1. Generate & Inject Pipeline Context
@@ -393,17 +397,56 @@ def profile(  # noqa: PLR0913
         "--fail-on-warnings",
         help="Halt the pipeline (exit 1) if Warnings or Critical data quality alerts are found.",
     ),
+    config_file_path: str | None = typer.Option(
+        None, "--config", "-c", help="Path to netra_config.yaml. Overrides NETRA_CONFIG env var."
+    ),
 ) -> None:
     """
     Profile the connected data source and generate the CLI report.
     """
     path = Path(file_path)
 
+    # --- CONFIGURATION RESOLUTION ---
+    config = None
+    config_source = "Default"
+    resolved_config_path = config_file_path or os.environ.get("NETRA_CONFIG") or "netra_config.yaml"
+    config_path_object = Path(resolved_config_path)
+
+    if config_path_object.exists():
+        try:
+            with open(config_path_object, encoding="utf-8") as f:
+                config = yaml.safe_load(f)
+                config_source = str(config_path_object)
+        except Exception as e:
+            error_message = f"Failed to parse YAML config file: {e}"
+            if json_output:
+                print(json.dumps({"error": error_message}))
+            else:
+                console.print(f"[bold red]Configuration Error:[/] {error_message}")
+            raise typer.Exit(code=1) from None
+
+    elif config_file_path or os.environ.get("NETRA_CONFIG"):
+        # Fail hard ONLY if an explicit path was provided and not found
+        error_message = f"Config file not found at '{resolved_config_path}'"
+        if json_output:
+            print(json.dumps({"error": error_message}))
+        else:
+            console.print(f"[bold red]Configuration Error:[/] {error_message}")
+        raise typer.Exit(code=1)
+
     # --- MODE 1: JSON OUTPUT ---
 
     if json_output:
         _run_json_mode(
-            path, bins, top_k, full_inference, ignore_columns, fail_on_critical, fail_on_warnings
+            path,
+            bins,
+            top_k,
+            full_inference,
+            ignore_columns,
+            fail_on_critical,
+            fail_on_warnings,
+            config,
+            config_source,
         )
         return
 
@@ -431,6 +474,8 @@ def profile(  # noqa: PLR0913
             dataset_format=file_type,
             ignore_columns=ignore_columns,
             low_memory=low_memory,
+            config=config,
+            config_source=config_source,
         )
         profile = _execute_profiling(ui, profiler, file_size, bins, top_k)
 
@@ -441,7 +486,9 @@ def profile(  # noqa: PLR0913
 
         # Phase 4: Render Dashboards
         ui.render_profiling_results(profile)
-        ui.render_pipeline_info(pipeline_context)
+
+        profiler_warnings = profile.get("_meta", {}).get("profiler_warnings", [])
+        ui.render_pipeline_info(pipeline_context, profiler_warnings)
 
     # Clean Exit: Executed only after the 'with ui:' context safely closes the Rich terminal state
     if exit_code != 0:

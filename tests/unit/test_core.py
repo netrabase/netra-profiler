@@ -30,9 +30,9 @@ def profile(sample_df: pl.DataFrame) -> NetraProfile:
     profile = profiler.run()
 
     # DEBUG: Print warnings if they exist
-    if profile["_meta"]["warnings"]:
+    if profile["_meta"]["profiler_warnings"]:
         print("\n!!! WARNINGS FOUND !!!")
-        for warning in profile["_meta"]["warnings"]:
+        for warning in profile["_meta"]["profiler_warnings"]:
             print(f"- {warning}")
 
     return profile
@@ -158,8 +158,8 @@ def test_metadata(profile: NetraProfile) -> None:
 
     assert "engine_time_seconds" in meta
     assert meta["engine_time_seconds"] > 0
-    assert isinstance(meta["warnings"], list)
-    assert len(meta["warnings"]) == 0
+    assert isinstance(meta["profiler_warnings"], list)
+    assert len(meta["profiler_warnings"]) == 0
 
 
 def test_alerts(profile: NetraProfile) -> None:

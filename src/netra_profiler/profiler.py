@@ -6,7 +6,7 @@ from typing import Any, cast
 import polars as pl
 
 from netra_profiler import __version__, engine
-from netra_profiler.diagnostics import DiagnosticEngine
+from netra_profiler.diagnostics import DiagnosticConfig, DiagnosticEngine
 from netra_profiler.types import NetraProfile, is_numeric_type, is_string_type
 
 CORRELATION_SAMPLE_SIZE = 100_000
@@ -31,13 +31,15 @@ class Profiler:
        to rely on the outputs of upstream computations (e.g., global Min/Max).
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         df: pl.DataFrame | pl.LazyFrame,
         dataset_name: str = "Unknown",
         dataset_format: str = "Unknown",
         ignore_columns: list[str] | None = None,
         low_memory: bool = False,
+        config: dict[str, Any] | None = None,
+        config_source: str = "Default",
     ):
         """
         Initializes the profiling session.
@@ -61,6 +63,8 @@ class Profiler:
             memory_safe: If True, invokes bounded-memory execution. Replaces exact unique
                 counts with HyperLogLog approximations and strips global sorts (quantiles)
                 from the execution graph to prevent OOM panics on massive datasets.
+            diagnostic_config: A dictionary containing YAML-parsed threshold overrides for
+                the Data Quality checks (e.g., altering null threshold from 0.95 to 0.50).
         """
 
         # If a DataFrame is passed, it is converted to LazyFrame to
@@ -78,6 +82,9 @@ class Profiler:
         self.dataset_name = dataset_name
         self.dataset_format = dataset_format
         self.low_memory = low_memory
+        self.config_source = config_source
+
+        self.diagnostic_config = DiagnosticConfig(config)
 
         # Preprocess Complex Types (Structs/Lists)
         # This "flattens" the data view for the engine, enabling
@@ -473,7 +480,8 @@ class Profiler:
                 "engine_time_seconds": round(profiling_end_time - profiling_start_time, 4),
                 "profiler_version": __version__,
                 "is_low_memory_run": self.low_memory,
-                "warnings": profiler_warnings,
+                "config_source": self.config_source,
+                "profiler_warnings": profiler_warnings,
                 "pipeline_context": None,
             },
         }
@@ -533,7 +541,7 @@ class Profiler:
             profile: The finalized `NetraProfile` contract. Mutated in-place.
         """
 
-        diagnostic_engine = DiagnosticEngine(profile)
+        diagnostic_engine = DiagnosticEngine(profile, config=self.diagnostic_config)
         alerts = diagnostic_engine.run()
 
         # Serialize alerts to dicts for JSON output
@@ -547,3 +555,9 @@ class Profiler:
             }
             for alert in alerts
         ]
+
+        # Validate config typos and inject warnings into the _meta block
+        dataset_columns = list(profile.get("columns", {}).keys())
+        config_warnings = self.diagnostic_config.get_unused_override_warnings(dataset_columns)
+        if config_warnings:
+            profile["_meta"]["config_warnings"] = config_warnings

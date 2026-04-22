@@ -1,6 +1,6 @@
 [project]
 name = "netra-profiler"
-version = "0.2.0"
+version = "0.3.0"
 description = "High-performance profiling and data quality tool built with Polars. "
 readme = "README.md"
 requires-python = ">=3.10"
@@ -22,9 +22,10 @@ dependencies = [
     "polars>=1.0.0",
     "pyarrow>=14.0.0",
     "numpy>=2.2.6",
-    "typer>=0.24.0",   # CLI Framework
-    "rich>=14.3.1",    # CLI UI
+    "typer>=0.24.0", # CLI Framework
+    "rich>=14.3.1", # CLI UI
     "psutil>=7.2.2",
+    "pyyaml>=6.0.3",
 ]
 
 [project.urls]
@@ -41,6 +42,7 @@ dev = [
     "pytest>=8.0.0", # Testing framework
     "ruff>=0.3.0", # Linter/Formatter (Rust-based)
     "mypy>=1.8.0",
+    "types-pyyaml>=6.0.12.20260408",
 ]
 
 [project.scripts]
