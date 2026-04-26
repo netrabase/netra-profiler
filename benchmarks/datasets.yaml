@@ -1,0 +1,33 @@
+# benchmarks/datasets.yaml
+
+nyc_taxi:
+  name: "NYC TLC Yellow Taxi Trip Record Data"
+  description: "High volume, high cardinality time-series dataset."
+  # The official AWS CloudFront mirror for TLC data
+  base_url: "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{year}-{month:02d}.parquet"
+  years: [2024, 2023, 2022, 2021, 2020, 2019, 2018]
+  scales:
+    small: 1 # 1 month (~40-150 MB) - Quick testing
+    medium: 24 # 2 years (~1-3 GB) - Local test
+    massive: 0 # 0 means 'All' available in the years list
+
+# Placeholders for the rest of the Triad (We will fill URLs later if needed)
+fannie_mae:
+  name: "Fannie Mae Loan Performance (Short & Wide)"
+  description: "High column count, moderate volume."
+  base_url: ""
+  years: []
+  scales:
+    small: 1
+    medium: 4
+    massive: 0
+
+github_events:
+  name: "GHArchive Events (Nested JSON)"
+  description: "Deeply nested structs and variable-length arrays."
+  base_url: ""
+  years: []
+  scales:
+    small: 1
+    medium: 10
+    massive: 0
