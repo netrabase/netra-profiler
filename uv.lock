@@ -1030,7 +1030,7 @@ wheels = [
 
 [[package]]
 name = "netra-profiler"
-version = "0.3.0"
+version = "0.3.1"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },
@@ -1054,6 +1054,7 @@ dev = [
     { name = "mypy" },
     { name = "pytest" },
     { name = "ruff" },
+    { name = "types-aiofiles" },
     { name = "types-pyyaml" },
 ]
 
@@ -1080,6 +1081,7 @@ dev = [
     { name = "mypy", specifier = ">=1.8.0" },
     { name = "pytest", specifier = ">=8.0.0" },
     { name = "ruff", specifier = ">=0.3.0" },
+    { name = "types-aiofiles", specifier = ">=25.1.0.20260409" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20260408" },
 ]
 
@@ -2306,6 +2308,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5a/b6/3e681d3b6bb22647509bdbfdd18055d5adc0dce5c5585359fa46ff805fdc/typer-0.24.0.tar.gz", hash = "sha256:f9373dc4eff901350694f519f783c29b6d7a110fc0dcc11b1d7e353b85ca6504", size = 118380, upload-time = "2026-02-16T22:08:48.496Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/85/d0/4da85c2a45054bb661993c93524138ace4956cb075a7ae0c9d1deadc331b/typer-0.24.0-py3-none-any.whl", hash = "sha256:5fc435a9c8356f6160ed6e85a6301fdd6e3d8b2851da502050d1f92c5e9eddc8", size = 56441, upload-time = "2026-02-16T22:08:47.535Z" },
+]
+
+[[package]]
+name = "types-aiofiles"
+version = "25.1.0.20260409"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6c/66/9e62a2692792bc96c0f423f478149f4a7b84720704c546c8960b0a047c89/types_aiofiles-25.1.0.20260409.tar.gz", hash = "sha256:49e67d72bdcf9fe406f5815758a78dc34a1249bb5aa2adba78a80aec0a775435", size = 14812, upload-time = "2026-04-09T04:22:35.308Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/27/d0/28236f869ba4dfb223ecdbc267eb2bdb634b81a561dd992230a4f9ec48fa/types_aiofiles-25.1.0.20260409-py3-none-any.whl", hash = "sha256:923fedb532c772cc0f62e0ce4282725afa82ca5b41cabd9857f06b55e5eee8de", size = 14372, upload-time = "2026-04-09T04:22:34.328Z" },
 ]
 
 [[package]]

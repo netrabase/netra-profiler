@@ -23,7 +23,7 @@ def _get_peak_ram_usage_in_mb() -> float:
             return rusage.ru_maxrss / 1024
 
 
-def main():
+def main() -> None:
     if len(sys.argv) != WORKER_ARGUMENTS:
         print("ERROR: Invalid arguments. Usage: worker.py <tool> <data_dir> <mode>")
         sys.exit(1)

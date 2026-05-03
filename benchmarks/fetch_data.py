@@ -1,7 +1,7 @@
 import argparse
 import asyncio
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import aiofiles
 import httpx
@@ -14,7 +14,7 @@ MAX_CONCURRENT_DOWNLOADS = 10
 def load_config(config_path: Path) -> dict[str, Any]:
     """Loads the benchmark dataset definitions."""
     with open(config_path, encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        return cast(dict[str, Any], yaml.safe_load(f))
 
 
 def generate_dataset_urls(dataset_config: dict[str, Any], scale: str) -> list[str]:

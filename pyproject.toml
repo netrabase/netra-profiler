@@ -43,6 +43,7 @@ dev = [
     "ruff>=0.3.0", # Linter/Formatter (Rust-based)
     "mypy>=1.8.0",
     "types-pyyaml>=6.0.12.20260408",
+    "types-aiofiles>=25.1.0.20260409",
 ]
 benchmark = [
     "ydata-profiling>=4.18.0",

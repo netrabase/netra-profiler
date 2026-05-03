@@ -41,7 +41,7 @@ def run_worker(tool: str, data_dir: str, mode: str) -> bool:
         return False
 
 
-def find_envelope(tool: str, mode: str, source_files: list[Path], temp_dir: Path):
+def find_envelope(tool: str, mode: str, source_files: list[Path], temp_dir: Path) -> None:
     print(f"\nFinding Data Envelope for {tool.upper()} ({mode})")
     print("-" * 50)
 
@@ -90,7 +90,7 @@ def find_envelope(tool: str, mode: str, source_files: list[Path], temp_dir: Path
     print(f"SURVIVED ENTIRE DATASET: {last_success_mb:.1f} MB ({last_success_rows:,} rows)")
 
 
-def main():
+def main() -> None:
     source_dir = Path("./benchmarks/data/nyc_taxi/massive")
     temp_dir = Path("./benchmarks/data/temp_envelope")
 

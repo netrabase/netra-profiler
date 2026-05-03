@@ -83,7 +83,7 @@ def execute_matrix(tool: str, data_dir: str, mode: str, runs: int) -> str:
     return f"**{avg_time:.2f}s** ({avg_ram_gb:.1f} GB RAM)"
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Netra Benchmark Execution Orchestrator")
     parser.add_argument("--dataset", type=str, default="nyc_taxi")
     parser.add_argument(
