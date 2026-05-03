@@ -87,7 +87,10 @@ def main():
     parser = argparse.ArgumentParser(description="Netra Benchmark Execution Orchestrator")
     parser.add_argument("--dataset", type=str, default="nyc_taxi")
     parser.add_argument(
-        "--scale", type=str, choices=["small", "medium", "massive"], default="small"
+        "--scale",
+        type=str,
+        choices=["small", "medium", "massive", "h2h_4m", "max_52m"],
+        default="small",
     )
     parser.add_argument("--runs", type=int, default=3, help="Number of benchmark runs to average")
     parser.add_argument("--data-root", type=str, default="./benchmarks/data")

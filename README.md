@@ -6,78 +6,143 @@ Netra Profiler is a next-generation data profiling tool and diagnostic engine bu
 
 The profiler ships with a comprehensive diagnostic engine to detect column-wise data quality issues early in your analysis or modeling workflows, such as high zeros/null count, high cardinality, data skew and more. The tool includes a detailed, zero-configuration CLI for quickly profiling your CSV, JSON, Arrow/IPC or Parquet files.
 
-## Performance & The Data Envelope
+## Performance Benchmarks
 
-Data Envelope is the maximum size and complexity of data your organization can process within your hardware limitations or cloud cost limits. Netra Profiler is designed to be a **value multiplier** for your existing hardware by expanding your data envelope to include larger data workloads, and optimize your current workflow with faster, more efficient processing, which means less time and costs spent running profiling tasks. 
+> *Note: All the scripts used to fetch the dataset, run the benchmarks and generate the results can be found in the ['benchmarks/'](https://github.com/netrabase/netra-profiler/tree/main/benchmarks) directory.*
+
+### Dataset
+
+To ensure the benchmarks reflect the real-world friction of a typical data workload, we use the [New York City TLC Yellow Taxi Trip Records](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) dataset. It contains high-cardinality columns, high-nulls or missing data, and shifting schemas.
+
+When reviewing the metrics below, please keep the following nuances in mind regarding the data:
+
+* Data Organization: The TLC publishes the data as individual `.parquet` files for every month of the year. To test raw I/O and schema harmonization, we process these files *as is*, without combining files or pre-processing the data. 
+* The Timeline: We restricted the benchmarks to the years 2018-2024, as the schema remains relatively stable in this interval, and provides sufficient volume for the local benchmarks.
+* The COVID-19 Data Cliff: Pre-pandemic files (2018–2019) are significantly larger, containing 8 to 10 million trips per month compared to the 2 to 3 million trips in post-2020 files. For our local tests, we are predominantly using the older files.
+* Parquet Compression: All disk sizes referenced in these benchmarks represent the heavily compressed Snappy Parquet files. The actual uncompressed data expanding in-memory is roughly **6x to 10x larger** than the on-disk size.
+
+### The Data Envelope
+
+Data Envelope is the maximum size and complexity of data your data pipeline can process within your hardware limitations or cloud budget ceiling. Netra Profiler is designed to be a **value multiplier** for your existing hardware. This allows you to:
+
+* **Stay Local Longer:**  Process larger workloads directly on your laptop or workstation without needing to migrate to an HPC or cloud platform.
+* **Scale Vertically:** Fully saturate a single heavy compute node (like an AWS EC2 instance) to bypass the overhead of complex, multi-node distributed frameworks like Apache Spark.
+* **Preserve Productivity:** Near-interactive profiling at Polars speed leaves no time to get up and grab a coffee while your profiler is spinning up!
 
 ### A. Single-Node Workstation
 
-Tested locally on a consumer laptop machine with the following specifications:
+All local benchmarks were executed on a consumer laptop machine with the following specifications:
 
 * **CPU:** Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz (12 Cores)
 * **RAM:** 32 GB
 * **OS:** Ubuntu 24.04.4 LTS
 * **Storage:** 512GB NVMe SSD
 
-Dataset Schema: **11 Columns** (3 Int, 4 String, 2 Float, 1 Bool, 1 Date), **12 Million Rows**. Details can be found in the generation script [here](benchmarks/forge_dataset.py).
+We begin the benchmarks by determining the **Data Envelope** for this machine. To find the exact hardware redline, we tested both tools by incrementally feeding them months/files of data until an Out-Of-Memory (OOM) crash happened.
 
-File Size: 1.04 GB (CSV) / 225 MB (Parquet)
+#### 1. The Local Envelope
 
-| Execution Mode | netra-profiler (Parquet) | ydata-profiling (Parquet) | netra-profiler (CSV) | ydata-profiling (CSV) |
-| :--- | :--- | :--- | :--- | :--- |
-| All stats, All columns | **3.20s**<br>(3.9 GB RAM) | 181.26s<br>(13.7 GB RAM) | **6.23s**<br>(7.1 GB RAM) | 222.05s<br>(11.5 GB RAM) |
-| Ignore Primary Key | **2.78s**<br>(2.1 GB RAM) | 134.97s<br>(10.4 GB RAM) | **5.60s**<br>(6.4 GB RAM) | 161.74s<br>(8.6 GB RAM) |
-| `low-memory`<sup>†</sup> / `minimal`<sup>‡</sup> | **1.41s**<br>(1.9 GB RAM) | 24.54s<br>(5.0 GB RAM) | **3.92s**<br>(5.4 GB RAM) | 33.25s<br>(3.9 GB RAM) |
-
-<sup>†</sup> `low-memory` (netra-profiler): Replaces exact unique counts with an approximate method (HyperLogLog) and skips global sorts (skew, kurtosis and quantiles). Crucially, it **retains** the Pearson/Spearman correlation matrices by using a 100,000-row systematic sample.
-
-<sup>‡</sup> `minimal` (ydata-profiling): Turns off the most expensive computations, and entirely **disables** the correlation matrices.
-
-#### Performance Takeaways
-
-* Netra Profiler is **35x to 56x faster** than traditional Pandas-based profiling out-of-the-box, and uses **up to 71% less memory**. Standard workloads that take minutes now finish in seconds.
-* When dropping highly cardinal primary keys, the engine maintains a ~48x speed advantage while operating on just 2.1 GB of RAM (an 80% reduction vs Pandas).
-* The `low-memory` mode maximizes your hardware's Data Envelope, allowing consumer hardware to handle large data workloads that otherwise require a scaled-up cloud node or distributed compute.
-
-To determine the actual extent of the Data Envelope for the test hardware, we ran the profiler on an increasing row size of the benchmark dataset, in Parquet format:
-
-| Rows | Engine Time | Peak RAM Usage |
+| Profiler | Execution Mode | Maximum Safe Envelope |
 | :--- | :--- | :--- |
-| 12M | 1.41s | 1.9 GB |
-| 100M | 11.08s | 5.5 GB |
-| 300M | 33.76s | 13.2 GB |
-| 500M | 57.38s | 20.9 GB |
-| 700M | 83.16s | 25.2 GB | 
-| 900M | 104.00s | 29.7 GB | 
-| **950M** | **114.35s** | **30.3 GB** |
+| **ydata-profiling** | Standard | 359.2 MB (~26.7 Million rows / 3 Months) |
+| **ydata-profiling** | `minimal`<sup>‡</sup> | 728.0 MB (~54 Million rows / 6 Months) |
+| **netra-profiler** | Standard | **3.58 GB** (~255.6 Million rows / 52 Months) |
+| **netra-profiler** | `low-memory`<sup>†</sup> | **3.58 GB** (~255.6 Million rows / 52 Months) |
 
-`netra-profiler` engine scales linearly and predictably thanks to the streaming-first architecture and the sampling strategy for calculating correlations, which keeps the memory footprint strictly proportional to the dataset size. This predictable scaling eliminates sudden Out-Of-Memory (OOM) crashes and allows you to accurately forecast your hardware limits. 
+<sup>‡</sup> `minimal` (ydata-profiling): Turns off the most expensive computations, including the correlations.
 
-![Netra Profiler Linear Scaling: 12M to 950M Rows](https://raw.githubusercontent.com/netrabase/netra-profiler/refs/heads/main/docs/assets/linear_scaling.png)
+<sup>†</sup> `low-memory` (netra-profiler): Replaces exact unique counts with an approximate method (HyperLogLog) and skips global sorts (skew, kurtosis and quantiles). Computes the Pearson/Spearman correlation matrices by using a 100,000-row systematic sample.
+
+*Netra expands the local data envelope by nearly 5x, allowing developers to profile roughly 4.5 years of continuous NYC Taxi data directly on their laptop without migrating to the cloud.*
+
+#### 2. Head-to-Head Performance
+Having established the ~359.2 MB (3 Months) ceiling where both modes of `ydata-profiling` can successfully execute, we conduct a head-to-head performance comparison of the tools across the standard and efficiency modes. 
+
+Results below are averaged over 5 consecutive runs + 1 warmup run.
+
+| Execution Mode | netra-profiler | ydata-profiling |
+| :--- | :--- | :--- |
+| Standard (Full Stats) | **12.48s (6.1 GB RAM)** | 572.39s (28.7 GB RAM) |
+| `low-memory` / `minimal` | **5.14s (4.7 GB RAM)** | 75.77s (15.3 GB RAM) |
+
+The standard run of `ydata-profiling` takes more than 9 minutes because Pandas loads all 26.7 million rows of the dataset into memory at once, exhausting the available physical memory and forcing the operating system to use the swap space on the hard drive to keep the process alive. Polars' lazy execution model and streaming data ingestion allow `netra-profiler` to profile the same data 45x faster (14x faster for the efficiency mode, with correlations) while using a fraction of the RAM.
 
 ### B. Cloud Scale-Up (Vertical Scaling)
 
-For multi-billion row datasets, deploying the profiler on a single heavy cloud instance bypasses the network-shuffle and orchestration bottlenecks of distributed systems, offering extreme performance without the cluster management overhead.
+When scaling up to Cloud or HPC infrastructure to handle larger datasets, `netra-profiler` enables you to maximize the capacity of a single compute node by minimizing processing time and memory overhead. An expanded single-node data envelope allows your team to avoid complex distributed setups like Apache Spark for routine data profiling.
 
-*(Benchmarks are in development)*
+To demonstrate this, we benchmarked the engine on a standard Enterprise HPC node:
+
+* **Machine:** AWS EC2 r6id.8xlarge (Memory Optimized)
+* **CPU:** 32 vCPUs
+* **RAM:** 256 GB
+* **OS:** Ubuntu 24.04.4 LTS
+* **Storage:** Attached NVMe SSD
+
+#### 1. The Baseline Run (Full Dataset)
+
+We first process the complete 84-month (7 years) dataset to establish the baseline memory requirement to handle the true cardinality of the data. The total file size on disk is **5.13 GB (362.2 Million Rows)**.
+
+| Execution Mode | Execution Time | Peak RAM |
+| :--- | :--- | :--- |
+| Standard | 216.75s | 80.4 GB |
+| `low-memory` | **50.75s** | **55.7 GB**
+
+#### 2. The Throughput Stress Test
+
+To push the hardware to its limits, we created larger datasets with bounded cardinality by using the Polars' Lazy API to replicate the available data. This simulates contexts like IoT telemetry or server logs, where the volume of data is effectively infinite, but the number of unique identifiers (sensors, IP addresses) is fixed. This benchmark effectively tests the maximum I/O throughput.
+
+| Scale | Compressed Size | Execution Mode | Execution Time | Peak RAM |
+| :--- | :--- | :--- | :--- | :--- | 
+| 4x | 20.51 GB<br>(1.45 Billion Rows) | Standard | 829.68s (~14m) | 158.6 GB |
+| | | `low-memory` | **164.39s (~2.7m)** | **105.1 GB** |
+| 10x | 51.28 GB<br>(3.62 Billion Rows) | Standard | 2029.46s (~34m) | 241.5 GB |
+| | | `low-memory` | **417.27s (~7m)** | **171.2 GB** |
+
+The 10x Standard run saturated ~94% (241.5 GB) of the instance's 256 GB physical memory to profile 51.28 GB of compressed data without triggering an OOM crash. This establishes the data envelope for this specific node size and dataset. Because compressed Parquet typically expands 5-10x in size in-memory, processing a 51 GB workload normally exceeds the physical limits of a 256 GB machine. By expanding the envelope of a vertically scaled single-node to safely process this volume in 33 minutes (or 7 minutes in `low-memory` mode), `netra-profiler` avoids the forced transition to costlier, higher-tier instances or the complexity of a distributed cluster.
 
 ### C. Distributed Multi-Node (Horizontal Scaling)
 
-Netra Profiler’s core engine is built purely on the Polars Lazy API, which means it is natively compatible with the Polars Distributed Layer out-of-the-box. Moving from a local 1-Billion row workload to a multi-node 100-Billion row cloud workload requires zero code rewrites.
+Because the core engine of `netra-profiler` is built entirely on the Polars Lazy API, it is natively compatible with the Polars Distributed Layer out-of-the-box. Moving from a vertically scaled single-node workload to a horizontally scaled multi-node cluster will essentially be a low-friction configuration option.
 
-*(Benchmarks are in development)*
+*Note: Native support for Polars Cloud & Distributed, and multi-node benchmarks are currently on the roadmap.*
 
 ## Features
 
-- **Multi-Core Streaming Engine:** Built on Polars to completely bypass the Python GIL and utilize 100% of your CPU cores. By leveraging zero-copy Apache Arrow memory, Netra streams data directly from disk, eliminating the massive intermediate RAM spikes associated with traditional Pandas-based data processing.
-- **Low-Memory Mode:** Process large datasets without crashing your machine. By passing the `--low-memory` flag, Netra intelligently switches to approximate counting and sampling techniques to keep RAM usage low.
-- **Comprehensive Profiling:** Automatically extracts scalar statistics (min, max, mean, skew, kurtosis), streaming distributions (histograms), Top-K frequent values, and Pearson/Spearman correlation matrices.
-- **Complex Type Support:** Automatically flattens nested Structs and computes length statistics for Lists and Arrays, allowing you to profile complex JSON or Parquet files with zero configuration.
-- **Built-in Quality Alerts:** Stop bad data before it enters your pipeline. Netra's diagnostics engine automatically flags critical issues like zero-inflation, corrupted primary keys, extreme skewness, and high null percentages.
+- **Multi-Core Streaming Engine:** Built on Polars, the profiling engine completely bypasses the Python GIL and utilizes 100% of your CPU cores for maximum performance. Unlike legacy tools that must load the entire dataset into memory for profiling, Netra processes data in streaming batches.
+- **Low-Memory Mode:** Process larger datasets safely. By passing the `--low-memory` flag, the profiler switches to approximate counting and sampling techniques to keep RAM usage low.
+- **Comprehensive Profiling:** Automatically extracts scalar statistics, distributions, and correlation matrices based on column data types. (See the Metrics Table below).
+- **Complex Type Support:** Automatically flattens nested JSON/Parquet Structs and computes length statistics for Lists and Arrays. Zero configuration required.
+- **Built-in Configurable Quality Rules:** Stop bad data before it enters your pipeline. Netra's diagnostic engine automatically flags anomalies like zero-inflation, corrupted primary keys, and extreme skewness. All detection thresholds can be customized globally or on a per-column basis via YAML (See Data Quality Rules below).
 - **CI/CD Pipeline Gatekeeper:** Use strict exit codes (`--fail-on-critical` or `--fail-on-warnings`) to automatically act as a Data Firewall, breaking your CI/CD builds (GitHub Actions, Airflow, GitLab CI) if corrupted data enters the pipeline.
-- **Beautiful Terminal UI:** Includes an information-dense, highly readable CLI dashboard to profile and check your data health directly in the terminal.
-- **JSON Data Contracts:** Export the full diagnostic profile to a strictly typed JSON artifact (`netra profile data.parquet --json`) for CI/CD data quality gates, a metadata feed for data catalogs, or context for LLM-based data agents.
-- **Python API:** Integrate seamlessly into your data engineering pipelines (Airflow DAGs, Marimo/Jupyter Notebooks, CI/CD) with a clean, expressive programmatic interface.
+- **Terminal UI:** Includes an information-dense, highly readable CLI dashboard to profile and check your data health directly in the terminal.
+- **Strictly Typed Profile Output:** Access the complete mathematical state of your data via a strictly typed JSON export (`--json`) or native Python dictionary. Because the output schema is immutable, you can safely program against it to power custom CI/CD quality gates, feed metadata catalogs, or provide context to LLM data agents.
+- **Python API:** Integrate seamlessly into Airflow, Dagster, Marimo/Jupyter Notebooks, and custom pipelines with a clean, expressive programmatic interface.
+
+### Supported Metrics & Roadmap
+
+| Metric Category | Feature | Target Data Types | Status |
+| :--- | :--- | :--- | :--- |
+| **Universal** | Null Count | All Types | ✅ Active |
+| | Exact Cardinality (`n_unique`) | All Types | ✅ Active |
+| | Approximate Cardinality (HyperLogLog) | All Types (`--low-memory`) | ✅ Active |
+| **Numeric** | Min, Max, Mean | Integers, Floats | ✅ Active |
+| | Standard Deviation | Integers, Floats | ✅ Active |
+| | Skewness & Kurtosis | Integers, Floats | ✅ Active |
+| | Exact Quantiles (p25, p50, p75) | Integers, Floats | ✅ Active |
+| | Zero Count Detection | Integers, Floats | ✅ Active |
+| | Streaming Histograms | Integers, Floats | ✅ Active |
+| **Categorical / Text** | Min / Max (Lexicographical) | Strings, Categoricals, Enums | ✅ Active |
+| | String Lengths (Min, Max, Mean) | Strings, Categoricals, Enums | ✅ Active |
+| | Top-K Frequent Values | Strings, Categoricals, Enums | ✅ Active |
+| | Regex / Pattern Matching | Strings | 🚧 Planned |
+| **Temporal** | Min, Max, Span | Datetime, Date | 🚧 Planned |
+| | Distribution by Time/Day | Datetime, Date | 🚧 Planned |
+| **Multivariate** | Pearson Correlation Matrix | Integers, Floats | ✅ Active |
+| | Spearman Rank Correlation | Integers, Floats | ✅ Active |
+| | Cramer's V (Categorical) | Strings, Categoricals | 🚧 Planned |
+| **Complex Types** | Automatic Struct Flattening | Structs | ✅ Active |
+| | Array / List Length Distributions | Lists, Arrays | ✅ Active |
 
 ## Installation
 
@@ -91,7 +156,7 @@ uv pip install netra-profiler
 
 ## Quickstart
 
-### 1. The CLI
+### 1. Command Line
 
 The fastest way to profile your data is right from the command line. `netra-profiler` natively supports .csv, .parquet, .json, and .arrow files.
 
@@ -111,7 +176,7 @@ You can combine flags to handle massive or messy datasets with ease:
 - `--full-inference`: Forces full-file schema inference. Crucial for messy CSVs where data types might silently change deep in the file.
 - `--json`: Disables the visual CLI output and generates the raw profile payload as a JSON string. Ideal for piping to `jq` or redirecting to a file: `> profile.json`.
 
-### 2. The Python API
+### 2. Python API
 
 Netra Profiler exposes a fully typed Python API that accepts Polars DataFrames natively. The output is a rigidly typed Data Contract, making it perfect for programmatic quality gates.
 
@@ -149,4 +214,93 @@ if critical_issues:
     for issue in critical_issues:
         print(f" - [{issue['column_name']}] {issue['type']}: {issue['message']}")
     raise ValueError("Data quality checks failed. Upstream data contract violated.")
+```
+
+### 3. Data Quality Rules
+
+The rules for each column are resolved using a cascading method, where global rules are overridden by column-specific rules. If a check is too noisy for your dataset or analysis, you can explicitly disable it by setting its threshold to `false` or `null`.
+
+To configure the data quality engine, use a `netra_config.yaml` file:
+```yaml
+diagnostics:
+  # ---------------------------------------------------------
+  # GLOBAL THRESHOLDS: Apply to all columns by default
+  # ---------------------------------------------------------
+  global_thresholds:
+    # Null & Missing Data
+    null_critical_threshold: 0.95           # Alert CRITICAL if > 95% null (Empty Column)
+    null_warning_threshold: 0.50            # Alert WARNING if > 50% null (High Nulls)
+    
+    # Variance & Entropy
+    constant_check_enabled: true            # Alert CRITICAL if column has only 1 unique value
+    zero_inflated_threshold: 0.10           # Alert WARNING if > 10% of numeric values are zero
+    
+    # Statistical Distribution
+    skew_threshold: 2.0                     # Alert WARNING if absolute skewness exceeds 2.0
+    outlier_iqr_multiplier: 3.0             # Alert WARNING for extreme outliers (Tukey IQR method)
+    
+    # Strings & Categoricals
+    high_cardinality_threshold: 10000       # Alert WARNING if unique strings > 10,000
+    string_length_anomaly_multiplier: 50.0  # Alert WARNING if max/min string length deviates from mean
+    
+    # Identifiers & Primary Keys
+    id_uniqueness_threshold: 0.99           # Alert INFO if > 99% unique (Likely Primary Key)
+    min_rows_for_pk_check: 100              # Skip ID checks for tables smaller than 100 rows
+    
+    # Schema & Correlation
+    possible_numeric_sample_size: 5         # Top-K sample size to detect Strings acting as Numbers
+    high_correlation_threshold: 0.95        # Alert WARNING if two numeric columns are > 95% correlated
+
+  # ---------------------------------------------------------
+  # COLUMN OVERRIDES: Surgical exceptions to global rules
+  # ---------------------------------------------------------
+  column_overrides:
+    # Example: 'middle_name' is expected to be mostly empty
+    middle_name:
+      null_critical_threshold: false        # Disable critical null check completely
+      null_warning_threshold: 0.99          # Only warn if it's 99% empty
+      
+    # Example: 'is_active' is a heavily imbalanced boolean flag
+    is_active:
+      constant_check_enabled: false         # Prevent alerts if all users happen to be active
+      zero_inflated_threshold: false        # Prevent alerts if most values are 0 (False)
+      
+    # Example: 'customer_hash' is naturally highly cardinal
+    customer_hash:
+      high_cardinality_threshold: false     # Disable cardinality warning for this specific ID
+```
+#### Integration
+
+Netra will automatically look for netra_config.yaml in your current working directory. You can also explicitly pass it to the engine in three ways:
+
+```bash
+netra profile dataset.parquet --config path/to/custom_config.yaml
+```
+
+##### Via Environment Variable (Ideal for Docker/CI/CD):
+
+```bash
+export NETRA_CONFIG="/etc/netra/production_rules.yaml"
+netra profile dataset.parquet
+```
+
+##### Via Python API:
+
+```python
+import yaml
+from netra_profiler import Profiler
+
+# Option A: Load from a YAML file
+with open("rules.yaml", "r") as f:
+    config = yaml.safe_load(f)
+
+# Option B: Pass a dictionary directly
+config = {
+    "diagnostics": {
+        "global_thresholds": {"null_critical_threshold": 0.80},
+        "column_overrides": {"status": {"constant_check_enabled": False}}
+    }
+}
+
+profiler = Profiler(df, config=config)
 ```

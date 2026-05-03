@@ -103,7 +103,9 @@ async def fetch_dataset(dataset_name: str, scale: str, output_dir: Path) -> None
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Netra Benchmark Data Fetcher")
-    parser.add_argument("--dataset", type=str, default="taxi", help="Dataset name in yaml")
+    parser.add_argument(
+        "--dataset", type=str, default="nyc_taxi", help="Dataset name in the yaml config file"
+    )
     parser.add_argument(
         "--scale", type=str, choices=["small", "medium", "massive"], default="small"
     )
