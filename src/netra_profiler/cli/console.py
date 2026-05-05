@@ -215,10 +215,10 @@ class NetraCLIRenderer:
             f"[value]{file_path}[/value]"
         )
         grid.add_row(success_msg)
-        grid.add_row(f" └─ Latency: [not dim][brand]{latency_string}[/brand][/]")
-        grid.add_row(f" └─ Format:  {file_type}")
-        grid.add_row(f" └─ Size:    {file_size}")
-        grid.add_row(f" └─ Schema:  {columns} Columns ({schema_info})")
+        grid.add_row(f" └─ Latency:  [not dim][brand]{latency_string}[/brand][/]")
+        grid.add_row(f" └─ Format:   {file_type}")
+        grid.add_row(f" └─ Size:     {file_size}")
+        grid.add_row(f" └─ Schema:   {columns} Columns ({schema_info})")
 
         self._data_source_panel = Panel(
             grid,
@@ -267,10 +267,10 @@ class NetraCLIRenderer:
             "< 0.01s" if engine_time < EXECUTION_TIME_THRESHOLD else f"{engine_time:.2f}s"
         )
 
-        grid.add_row(f" Engine Time:  [not dim][brand]{engine_time_string}[/brand][/]")
-        grid.add_row(f" Data Throughput: [not dim][brand]{throughput_gb_s:.2f} GB/s[/brand][/]")
+        grid.add_row(f" Engine Time:      [not dim][brand]{engine_time_string}[/brand][/]")
+        grid.add_row(f" Data Throughput:  [not dim][brand]{throughput_gb_s:.2f} GB/s[/brand][/]")
         grid.add_row(
-            f" Peak RAM Usage:  [not dim][brand]{peak_ram_usage:.1f} MB[/brand][/] "
+            f" Peak RAM Usage:   [not dim][brand]{peak_ram_usage:.1f} MB[/brand][/] "
             "[muted](Includes Arrow allocation & compute buffers)[/muted]"
         )
 
@@ -306,10 +306,10 @@ class NetraCLIRenderer:
 
         issues_count_parts = []
         if critical_alerts_count > 0:
-            issues_count_parts.append(f"[bold #8F0000]{critical_alerts_count} CRITICAL[/]")
+            issues_count_parts.append(f"[bold #CF0000]{critical_alerts_count} CRITICAL[/]")
         if warning_alerts_count > 0:
             s = "S" if warning_alerts_count > 1 else ""
-            issues_count_parts.append(f"[bold #997602]{warning_alerts_count} WARNING{s}[/]")
+            issues_count_parts.append(f"[bold #B58C00]{warning_alerts_count} WARNING{s}[/]")
 
         joined_issues_count = "[muted],[/muted] ".join(issues_count_parts)
         issues_count_string = (
@@ -320,10 +320,42 @@ class NetraCLIRenderer:
     def _get_alert_badge(self, alert_level: str, alert_type: str) -> str:
         """Returns the color-coded alert badge based on alert severity."""
         if alert_level == "CRITICAL":
-            return f"[bold #8F0000]\\[{alert_type}][/]"
+            return f"[bold #CF0000]\\[{alert_type}][/]"  # #8F0000
         elif alert_level == "WARNING":
-            return f"[bold #997602]\\[{alert_type}][/]"
+            return f"[bold #B58C00]\\[{alert_type}][/]"  # #997602
         return f"[bold #8C8C8C]\\[{alert_type}][/]"
+
+    def _format_alert_messages(
+        self, alert_type: str, alert_objects: list[DiagnosticAlert]
+    ) -> list[str]:
+        """
+        Formats alert messages, merging specific types like HIGH_CORRELATION
+        into a single, clean UI string to prevent terminal clutter.
+        """
+        if alert_type != "HIGH_CORRELATION":
+            return [a["message"] for a in alert_objects]
+
+        pearson_value = None
+        spearman_value = None
+
+        for alert_object in alert_objects:
+            alert_message = alert_object.get("message", "").lower()
+            if "pearson" in alert_message:
+                pearson_value = alert_object.get("value")
+            elif "spearman" in alert_message:
+                spearman_value = alert_object.get("value")
+
+        correlation_values_text = []
+        if pearson_value is not None:
+            correlation_values_text.append(f"Pearson ({pearson_value:.4f})")
+        if spearman_value is not None:
+            correlation_values_text.append(f"Spearman ({spearman_value:.4f})")
+
+        if correlation_values_text:
+            return [f"Columns are highly correlated via {' & '.join(correlation_values_text)}."]
+
+        # Fallback if parsing fails
+        return [a["message"] for a in alert_objects]
 
     def _render_data_health_panel(
         self,
@@ -378,19 +410,18 @@ class NetraCLIRenderer:
                         continue
                     seen_types.add(alert_type)
 
-                    # Gather all messages for this specific alert type
-                    messages = [
-                        alert["message"] for alert in column_alerts if alert["type"] == alert_type
-                    ]
+                    # Gather all alert objects for this specific alert type
+                    alert_objects = [a for a in column_alerts if a["type"] == alert_type]
 
+                    messages = self._format_alert_messages(alert_type, alert_objects)
                     badge = self._get_alert_badge(alert["level"], alert_type_for_display)
 
                     grid.add_row(f" [muted]└─[/muted] {badge}")
 
-                    for msg in messages:
+                    for message in messages:
                         # We use bullet points if there are multiple alerts to create a clean list
                         prefix = "• " if len(messages) > 1 else ""
-                        grid.add_row(f"      [muted]{prefix}{msg}[/muted]")
+                        grid.add_row(f"      [muted]{prefix}{message}[/muted]")
 
         if config_warnings:
             grid.add_row("")

@@ -177,10 +177,13 @@ def _evaluate_pipeline_context(
             s = "S" if warning_alerts_count > 1 else ""
             parts.append(f"{warning_alerts_count} WARNING{s}")
         if critical_alerts_count > 0:
-            parts.append(f"{critical_alerts_count} CRITICAL")
+            s = "s" if critical_alerts_count > 1 else ""
+            parts.append(f"{critical_alerts_count} CRITICAL quality issue{s}.")
 
         anomaly_str = " and ".join(parts)
-        reason = f"Halted due to {anomaly_str} quality issues."
+        reason = f"Halted due to {anomaly_str}"
+    elif fail_on_critical and critical_alerts_count == 0:
+        reason = "No CRITICAL data quality issues found."
     else:
         reason = "No data quality issues found."
 

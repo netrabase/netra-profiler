@@ -1,10 +1,18 @@
 # Netra Profiler
 
+[![PyPI version](https://img.shields.io/pypi/v/netra-profiler.svg?color=blue)](https://pypi.org/project/netra-profiler/)
+[![Downloads](https://static.pepy.tech/badge/netra-profiler)](https://pepy.tech/project/netra-profiler)
+[![Python Versions](https://img.shields.io/pypi/pyversions/netra-profiler.svg)](https://pypi.org/project/netra-profiler/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Polars](https://img.shields.io/badge/Powered%20by-Polars-cd792c.svg)](https://github.com/pola-rs/polars)
+[![CI/CD](https://github.com/netrabase/netra-profiler/actions/workflows/ci.yaml/badge.svg)](https://github.com/netrabase/netra-profiler/actions)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
+
 ### High-performance profiling and data quality tool built with Polars
 
-Netra Profiler is a next-generation data profiling tool and diagnostic engine built on top of [Polars](https://github.com/pola-rs/polars). Designed to operate at the speed of your disk I/O, it leverages Polars' Rust-based query optimizer and zero-copy Apache Arrow memory model to maximize the profiling capabilities of your local hardware. Netra processes massive datasets with predictable, linear RAM usage, eliminating the sudden memory spikes and crashes associated with traditional Python tools.
+Netra Profiler is a high-performance data profiling tool and diagnostic engine built on top of [Polars](https://github.com/pola-rs/polars). It maximizes single-node hardware utilization by leveraging Polars' Rust-based query optimizer and columnar Apache Arrow memory model.
 
-The profiler ships with a comprehensive diagnostic engine to detect column-wise data quality issues early in your analysis or modeling workflows, such as high zeros/null count, high cardinality, data skew and more. The tool includes a detailed, zero-configuration CLI for quickly profiling your CSV, JSON, Arrow/IPC or Parquet files.
+The profiler ships with a configurable diagnostic engine to detect data quality issues in your EDA or ELT workflows. It automatically flags anomalies like extreme zero-inflation, high cardinality, severe data skew, and corrupted primary keys. Netra includes an information-dense, zero-configuration CLI designed to instantly profile your CSV, JSON, IPC/Arrow, and Parquet files directly from the terminal.
 
 ## Performance Benchmarks
 
@@ -135,12 +143,12 @@ Because the core engine of `netra-profiler` is built entirely on the Polars Lazy
 | **Categorical / Text** | Min / Max (Lexicographical) | Strings, Categoricals, Enums | ✅ Active |
 | | String Lengths (Min, Max, Mean) | Strings, Categoricals, Enums | ✅ Active |
 | | Top-K Frequent Values | Strings, Categoricals, Enums | ✅ Active |
-| | Regex / Pattern Matching | Strings | 🚧 Planned |
-| **Temporal** | Min, Max, Span | Datetime, Date | 🚧 Planned |
-| | Distribution by Time/Day | Datetime, Date | 🚧 Planned |
+| | Regex / Pattern Matching | Strings | 🔮 Future |
+| **Temporal** | Min, Max, Span | Datetime, Date | 🔮 Future |
+| | Distribution by Time/Day | Datetime, Date | 🔮 Future |
 | **Multivariate** | Pearson Correlation Matrix | Integers, Floats | ✅ Active |
 | | Spearman Rank Correlation | Integers, Floats | ✅ Active |
-| | Cramer's V (Categorical) | Strings, Categoricals | 🚧 Planned |
+| | Cramer's V (Categorical) | Strings, Categoricals | 🔮 Future |
 | **Complex Types** | Automatic Struct Flattening | Structs | ✅ Active |
 | | Array / List Length Distributions | Lists, Arrays | ✅ Active |
 
@@ -218,7 +226,7 @@ if critical_issues:
 
 ### 3. Data Quality Rules
 
-The rules for each column are resolved using a cascading method, where global rules are overridden by column-specific rules. If a check is too noisy for your dataset or analysis, you can explicitly disable it by setting its threshold to `false` or `null`.
+The rules for each column are resolved using a cascading method, where global rules are overridden by column-specific rules. If a check is too noisy for your dataset or analysis, you can explicitly disable it by setting its threshold to `false`.
 
 To configure the data quality engine, use a `netra_config.yaml` file:
 ```yaml
