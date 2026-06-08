@@ -514,7 +514,7 @@ def profile(  # noqa: PLR0913
 
 
 @app.command()
-def diff(  # noqa: PLR0913
+def diff(  # noqa: PLR0913, PLR0915
     reference_path: str = typer.Argument(..., help="Path to the baseline NetraProfile JSON."),
     target_path: str = typer.Argument(
         ..., help="Path to the target NetraProfile JSON to evaluate."
