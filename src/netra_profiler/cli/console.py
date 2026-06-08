@@ -23,6 +23,7 @@ from netra_profiler.cli.theme import NETRA_CLI_THEME
 from netra_profiler.types import (
     ColumnMetrics,
     DiagnosticAlert,
+    DiffReport,
     NetraProfile,
     PipelineContext,
     is_numeric_type,
@@ -774,4 +775,89 @@ class NetraCLIRenderer:
             box=box.ROUNDED,
             padding=(1, 1),
         )
+        self._refresh()
+
+    def _render_diff_info_panel(self, report: DiffReport, config_source: str) -> Panel:
+        """Renders the prioritized list of schema and data drift anomalies."""
+
+        alerts = report.get("alerts", [])
+
+        if not alerts:
+            summary_text = "[muted] Status:[/muted] [bold green]IDENTICAL / NO DRIFT[/]"
+        else:
+            criticals = sum(1 for alert in alerts if alert["level"] == "CRITICAL")
+            warnings = sum(1 for alert in alerts if alert["level"] == "WARNING")
+            parts = []
+            if criticals > 0:
+                parts.append(f"[bold #CF0000]{criticals} CRITICAL[/]")
+            if warnings > 0:
+                parts.append(f"[bold #B58C00]{warnings} WARNING[/]")
+            summary_text = f"[muted] Drift Detected: \\[[/muted]{', '.join(parts)}[muted]][/muted]"
+
+        config_text = f"[muted] Active Config:[/muted] [cyan]{config_source}[/cyan]"
+
+        grid = Table.grid(padding=(0, 0))
+        grid.add_column(justify="left")
+
+        if not alerts:
+            grid.add_row(
+                "[bold green] [MATCH][/]"
+                "[value] The target profile complies with the reference.[/value]",
+            )
+        else:
+            # Group by Column
+            alerts_by_column: dict[str, list[Any]] = defaultdict(list)
+            for alert in alerts:
+                alerts_by_column[alert["column_name"]].append(alert)
+
+            # Ensure "TABLE" (Global shifts) appears at the top
+            sorted_columns = sorted(alerts_by_column.keys())
+            if "TABLE" in sorted_columns:
+                sorted_columns.remove("TABLE")
+                sorted_columns.insert(0, "TABLE")
+
+            alert_level_ranks = {"CRITICAL": 0, "WARNING": 1, "INFO": 2}
+
+            for i, column in enumerate(sorted_columns):
+                if i > 0:
+                    grid.add_row("")
+
+                # Format Header
+                column_header = "DATASET" if column == "TABLE" else column
+                grid.add_row(f" [not dim][brand]{column_header}[/brand][/]")
+
+                column_alerts = alerts_by_column[column]
+                column_alerts.sort(key=lambda x: alert_level_ranks.get(x["level"], 3))
+
+                for alert in column_alerts:
+                    alert_type = alert["diff_type"].replace("_", " ")
+                    badge = self._get_alert_badge(alert["level"], alert_type)
+                    message = alert["message"]
+
+                    grid.add_row(f" [muted]└─[/muted] {badge}")
+                    grid.add_row(f"      [muted]{message}[/muted]")
+
+        panel_content = Group(config_text, summary_text, Padding(grid, (1, 0, 0, 0)))
+
+        return Panel(
+            panel_content,
+            title="[not dim][#FF004D]𝝙[/] [value]Profile Diff[/value][/]",
+            title_align="left",
+            border_style="border.section",
+            box=box.ROUNDED,
+            padding=(1, 1),
+        )
+
+    def render_diff_results(self, report: DiffReport) -> None:
+        """Assembles the final Diff results dashboard."""
+        config_source = report.get("_meta", {}).get("config_source", "Default")
+
+        # Set the title for the main panel
+        reference_name = report.get("reference_dataset", {}).get("name", "Reference")
+        target_name = report.get("target_dataset", {}).get("name", "Target")
+        self._data_source_name = f"{reference_name} <> {target_name}"
+
+        health_card = self._render_diff_info_panel(report, config_source)
+
+        self._profiling_results = health_card
         self._refresh()

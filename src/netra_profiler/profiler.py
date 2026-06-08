@@ -6,7 +6,8 @@ from typing import Any, cast
 import polars as pl
 
 from netra_profiler import __version__, engine
-from netra_profiler.diagnostics import DiagnosticConfig, DiagnosticEngine
+from netra_profiler.config import DiagnosticConfig
+from netra_profiler.diagnostics import DiagnosticEngine
 from netra_profiler.types import NetraProfile, is_numeric_type, is_string_type
 
 CORRELATION_SAMPLE_SIZE = 100_000

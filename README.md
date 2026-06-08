@@ -123,6 +123,8 @@ Because the core engine of `netra-profiler` is built entirely on the Polars Lazy
 - **Complex Type Support:** Automatically flattens nested JSON/Parquet Structs and computes length statistics for Lists and Arrays. Zero configuration required.
 - **Built-in Configurable Quality Rules:** Stop bad data before it enters your pipeline. Netra's diagnostic engine automatically flags anomalies like zero-inflation, corrupted primary keys, and extreme skewness. All detection thresholds can be customized globally or on a per-column basis via YAML (See Data Quality Rules below).
 - **CI/CD Pipeline Gatekeeper:** Use strict exit codes (`--fail-on-critical` or `--fail-on-warnings`) to automatically act as a Data Firewall, breaking your CI/CD builds (GitHub Actions, Airflow, GitLab CI) if corrupted data enters the pipeline.
+- **Data Drift and Schema Diffing:** Compare two profiles (e.g., yesterday's data vs. today's data) to automatically detect dropped columns, mutated data types, volume shifts, and statistical data drift in `O(1)` time without rescanning the raw data.
+- **Universal Configuration:** A single netra_config.yaml file manages your pipeline execution state, diagnostic quality rules, and data drift thresholds.
 - **Terminal UI:** Includes an information-dense, highly readable CLI dashboard to profile and check your data health directly in the terminal.
 - **Strictly Typed Profile Output:** Access the complete mathematical state of your data via a strictly typed JSON export (`--json`) or native Python dictionary. Because the output schema is immutable, you can safely program against it to power custom CI/CD quality gates, feed metadata catalogs, or provide context to LLM data agents.
 - **Python API:** Integrate seamlessly into Airflow, Dagster, Marimo/Jupyter Notebooks, and custom pipelines with a clean, expressive programmatic interface.
@@ -224,16 +226,65 @@ if critical_issues:
     raise ValueError("Data quality checks failed. Upstream data contract violated.")
 ```
 
-### 3. Data Quality Rules
+### 3. Data Drift & Schema Diffing
 
-The rules for each column are resolved using a cascading method, where global rules are overridden by column-specific rules. If a check is too noisy for your dataset or analysis, you can explicitly disable it by setting its threshold to `false`.
+Netra Profiler allows you to compare two generated profiles to detect schema changes, volume shifts, and statistical data drift. Because this operation compares the JSON profile rather than the raw data, it executes in `O(1)` time (milliseconds) regardless of dataset size.
 
-To configure the data quality engine, use a `netra_config.yaml` file:
+**1. Generate the baseline and target profiles:**
+
+```bash
+netra profile yesterday.parquet --json > baseline.json
+netra profile today.parquet --json > target.json
+```
+
+**2. Run the Diff Operation:**
+
+```bash
+netra diff baseline.json target.json
+```
+
+*(You can also pass `--fail-on-critical` or `--fail-on-warnings` to halt your CI/CD pipeline if breaking schema changes are detected).*
+
+You can also seamlessly integrate the Diff Engine directly into your Python workflows:
+
+```python
+import json
+from netra_profiler.diff import DiffEngine
+
+# 1. Load the generated profiles
+with open("baseline.json", "r") as f:
+    reference_profile = json.load(f)
+with open("target.json", "r") as f:
+    target_profile = json.load(f)
+
+# 2. Run the diff operation (Config can optionally be passed here)
+engine = DiffEngine(reference_profile, target_profile)
+report = engine.run()
+
+# 3. Handle Drift Alerts
+drift_alerts = report.get("alerts", [])
+for alert in drift_alerts:
+    print(f"[{alert['level']}] {alert['column_name']} ({alert['diff_type']}): {alert['message']}")
+```
+
+### 4. Universal Configuration (`netra_config.yaml`)
+
+Netra uses a centralized YAML configuration file to manage your pipeline execution state, data quality diagnostics, and drift detection thresholds. The rules are resolved using a cascading method, where global rules can be overridden by column-specific rules. If a check is too noisy for your dataset or analysis, you can explicitly disable it by setting its threshold to `false`.
+
+To configure the profiler, use a `netra_config.yaml` file:
 ```yaml
+# ---------------------------------------------------------
+# PIPELINE: CI/CD Execution State
+# ---------------------------------------------------------
+pipeline:
+  fail_on_critical: true         # Halt the process (exit 1) if CRITICAL alerts are found
+  fail_on_warnings: false        # Halt the process if WARNING alerts are found
+
+# ---------------------------------------------------------
+# DIAGNOSTICS: Dataset Quality Rules
+# ---------------------------------------------------------
 diagnostics:
-  # ---------------------------------------------------------
   # GLOBAL THRESHOLDS: Apply to all columns by default
-  # ---------------------------------------------------------
   global_thresholds:
     # Null & Missing Data
     null_critical_threshold: 0.95           # Alert CRITICAL if > 95% null (Empty Column)
@@ -259,9 +310,7 @@ diagnostics:
     possible_numeric_sample_size: 5         # Top-K sample size to detect Strings acting as Numbers
     high_correlation_threshold: 0.95        # Alert WARNING if two numeric columns are > 95% correlated
 
-  # ---------------------------------------------------------
   # COLUMN OVERRIDES: Surgical exceptions to global rules
-  # ---------------------------------------------------------
   column_overrides:
     # Example: 'middle_name' is expected to be mostly empty
     middle_name:
@@ -276,23 +325,41 @@ diagnostics:
     # Example: 'customer_hash' is naturally highly cardinal
     customer_hash:
       high_cardinality_threshold: false     # Disable cardinality warning for this specific ID
-```
-#### Integration
 
-Netra will automatically look for netra_config.yaml in your current working directory. You can also explicitly pass it to the engine in three ways:
+# ---------------------------------------------------------
+# DIFF: Data Drift & Schema Comparison Rules
+# ---------------------------------------------------------
+diff:
+  global_thresholds:
+    schema_change_level: "CRITICAL"         # Alert CRITICAL if columns are added/dropped
+    type_change_level: "CRITICAL"           # Alert CRITICAL if data types mutate
+    row_count_shift_pct: 0.20               # Alert WARNING if total rows change by > 20%
+    mean_shift_pct: 0.10                    # Alert WARNING if the mean shifts by > 10%
+    null_count_shift_pct: 0.10              # Alert WARNING if missingness shifts by > 10%
+
+  column_overrides:
+    daily_revenue:
+      mean_shift_pct: 0.50                  # Revenue fluctuates; relax the shift threshold
+    user_id:
+      n_unique_shift_pct: false             # Disable cardinality shift alerts for IDs
+```
+
+Netra will automatically look for netra_config.yaml in your current working directory. You can also explicitly pass it to the engine in the following ways:
+
+##### Using Command Line Flag
 
 ```bash
 netra profile dataset.parquet --config path/to/custom_config.yaml
 ```
 
-##### Via Environment Variable (Ideal for Docker/CI/CD):
+##### Environment Variable:
 
 ```bash
 export NETRA_CONFIG="/etc/netra/production_rules.yaml"
 netra profile dataset.parquet
 ```
 
-##### Via Python API:
+##### Python API:
 
 ```python
 import yaml

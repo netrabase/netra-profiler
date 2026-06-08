@@ -23,7 +23,9 @@ import yaml
 
 from netra_profiler import Profiler, __version__
 from netra_profiler.cli.console import NetraCLIRenderer, console
-from netra_profiler.types import NetraProfile, PipelineContext
+from netra_profiler.config import DiffConfig, PipelineConfig
+from netra_profiler.diff import DiffEngine
+from netra_profiler.types import DiagnosticAlert, DiffAlert, NetraProfile, PipelineContext
 
 
 def _get_peak_ram_usage_in_mb() -> float:
@@ -146,12 +148,11 @@ def _scan_file(path: Path, full_inference: bool = False) -> tuple[pl.LazyFrame, 
 
 
 def _evaluate_pipeline_context(
-    profile: NetraProfile, fail_on_critical: bool, fail_on_warnings: bool
+    alerts: list[DiagnosticAlert] | list[DiffAlert], fail_on_critical: bool, fail_on_warnings: bool
 ) -> PipelineContext:
     """Generates the Quality Gate execution metadata."""
 
     quality_gate_active = fail_on_critical or fail_on_warnings
-    alerts = profile.get("alerts", [])
 
     critical_alerts_count = sum(1 for alert in alerts if alert.get("level") == "CRITICAL")
     warning_alerts_count = sum(1 for alert in alerts if alert.get("level") == "WARNING")
@@ -228,8 +229,15 @@ def _run_json_mode(  # noqa: PLR0913
         )
         profile = profiler.run(bins=bins, top_k=top_k)
 
+        # Apply Global Pipeline Config Override
+        pipeline_config = PipelineConfig(config)
+        fail_on_critical = fail_on_critical or pipeline_config.fail_on_critical
+        fail_on_warnings = fail_on_warnings or pipeline_config.fail_on_warnings
+
         # 1. Generate & Inject Pipeline Context
-        pipeline_context = _evaluate_pipeline_context(profile, fail_on_critical, fail_on_warnings)
+        pipeline_context = _evaluate_pipeline_context(
+            profile.get("alerts", []), fail_on_critical, fail_on_warnings
+        )
         profile["_meta"]["pipeline_context"] = pipeline_context
 
         # 2. Output the JSON Payload
@@ -439,6 +447,11 @@ def profile(  # noqa: PLR0913
 
     # --- MODE 1: JSON OUTPUT ---
 
+    # Apply Global Pipeline Config Override
+    pipeline_config = PipelineConfig(config)
+    fail_on_critical = fail_on_critical or pipeline_config.fail_on_critical
+    fail_on_warnings = fail_on_warnings or pipeline_config.fail_on_warnings
+
     if json_output:
         _run_json_mode(
             path,
@@ -483,7 +496,9 @@ def profile(  # noqa: PLR0913
         profile = _execute_profiling(ui, profiler, file_size, bins, top_k)
 
         # Phase 3: Evaluate Pipeline Gatekeeper and Inject JSON Meta
-        pipeline_context = _evaluate_pipeline_context(profile, fail_on_critical, fail_on_warnings)
+        pipeline_context = _evaluate_pipeline_context(
+            profile.get("alerts", []), fail_on_critical, fail_on_warnings
+        )
         profile["_meta"]["pipeline_context"] = pipeline_context
         exit_code = pipeline_context["exit_code"]
 
@@ -499,8 +514,104 @@ def profile(  # noqa: PLR0913
 
 
 @app.command()
+def diff(  # noqa: PLR0913
+    reference_path: str = typer.Argument(..., help="Path to the baseline NetraProfile JSON."),
+    target_path: str = typer.Argument(
+        ..., help="Path to the target NetraProfile JSON to evaluate."
+    ),
+    json_output: bool = typer.Option(
+        False, "--json", help="Output raw JSON to stdout (silences UI)."
+    ),
+    fail_on_critical: bool = typer.Option(
+        False, "--fail-on-critical", help="Halt the pipeline (exit 1) if CRITICAL drifts are found."
+    ),
+    fail_on_warnings: bool = typer.Option(
+        False,
+        "--fail-on-warnings",
+        help="Halt the pipeline (exit 1) if Warning or Critical drifts are found.",
+    ),
+    config_file_path: str | None = typer.Option(
+        None, "--config", "-c", help="Path to netra_config.yaml."
+    ),
+) -> None:
+    """
+    Compare two Netra Profiles to detect Schema Changes and Data Drift.
+    """
+
+    # 1. Load Profiles
+    try:
+        with open(reference_path, encoding="utf-8") as f:
+            reference_profile = json.load(f)
+        with open(target_path, encoding="utf-8") as f:
+            target_profile = json.load(f)
+    except Exception as e:
+        error_msg = f"Failed to load JSON profiles: {e}"
+        if json_output:
+            print(json.dumps({"error": error_msg}))
+        else:
+            console.print(f"[bold red]File Error:[/] {error_msg}")
+        raise typer.Exit(code=1) from None
+
+    # 2. Configuration Resolution
+    config_dict = None
+    config_source = "Default"
+    resolved_config_path = config_file_path or os.environ.get("NETRA_CONFIG") or "netra_config.yaml"
+    config_path_object = Path(resolved_config_path)
+
+    if config_path_object.exists():
+        try:
+            with open(config_path_object, encoding="utf-8") as f:
+                config_dict = yaml.safe_load(f)
+                config_source = str(config_path_object)
+        except Exception as e:
+            console.print(f"[bold red]Configuration Error:[/] {e}")
+            raise typer.Exit(code=1) from None
+
+    # Instantiate the specific config managers
+    diff_config = DiffConfig(config_dict)
+    pipeline_config = PipelineConfig(config_dict)
+
+    # CLI Override Hierarchy (CLI flags > YAML Pipeline config block)
+    fail_on_critical = fail_on_critical or pipeline_config.fail_on_critical
+    fail_on_warnings = fail_on_warnings or pipeline_config.fail_on_warnings
+
+    # 3. Execution
+    exit_code = 0
+    try:
+        engine = DiffEngine(reference_profile, target_profile, config=diff_config)
+        report = engine.run()
+        report["_meta"]["config_source"] = config_source
+
+        # Evaluate Quality Gate
+        pipeline_context = _evaluate_pipeline_context(
+            report.get("alerts", []), fail_on_critical, fail_on_warnings
+        )
+        report["_meta"]["pipeline_context"] = pipeline_context
+        exit_code = pipeline_context["exit_code"]
+
+        # 4. Output
+        if json_output:
+            print(json.dumps(report, default=str))
+        else:
+            with NetraCLIRenderer() as ui:
+                ui.render_diff_results(report)
+                ui.render_pipeline_info(pipeline_context, [])
+
+    except Exception as e:
+        if json_output:
+            print(json.dumps({"error": str(e)}))
+        else:
+            console.print(f"[bold red]Diff Engine Error:[/] {e}")
+        raise typer.Exit(code=1) from None
+
+    if exit_code != 0:
+        raise typer.Exit(code=exit_code)
+
+
+@app.command()
 def info() -> None:
     """Prints environment info for debugging."""
+
     console.print(f"Netra Version: {__version__}")
     console.print(f"Polars Version: {pl.__version__}")
     console.print(f"Python Version: {sys.version.split()[0]}")
