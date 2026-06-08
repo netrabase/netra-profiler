@@ -26,7 +26,7 @@ def baseline_profile() -> NetraProfile:
     }
 
 
-def test_diff_identical_profiles(baseline_profile):
+def test_diff_identical_profiles(baseline_profile: NetraProfile) -> None:
     """If profiles are identical, zero alerts should be generated."""
     target_profile = copy.deepcopy(baseline_profile)
 
@@ -36,7 +36,7 @@ def test_diff_identical_profiles(baseline_profile):
     assert len(report["alerts"]) == 0
 
 
-def test_schema_changes(baseline_profile):
+def test_schema_changes(baseline_profile: NetraProfile) -> None:
     """Test dropping a column, adding a column, and changing a type."""
     target_profile = copy.deepcopy(baseline_profile)
 
@@ -59,7 +59,7 @@ def test_schema_changes(baseline_profile):
     assert "TYPE_CHANGED" in diff_types
 
 
-def test_volume_shift(baseline_profile):
+def test_volume_shift(baseline_profile: NetraProfile) -> None:
     """Test that a >20% row count shift triggers an alert."""
     target_profile = copy.deepcopy(baseline_profile)
     target_profile["dataset"]["row_count"] = 1500  # 50% increase
@@ -73,7 +73,7 @@ def test_volume_shift(baseline_profile):
     assert alerts[0]["delta_percentage"] == DELTA_PERCENTAGE_THRESHOLD
 
 
-def test_scalar_shift(baseline_profile):
+def test_scalar_shift(baseline_profile: NetraProfile) -> None:
     """Test that metric shifts (mean, nulls) are calculated correctly."""
     target_profile = copy.deepcopy(baseline_profile)
 
@@ -90,7 +90,7 @@ def test_scalar_shift(baseline_profile):
     assert alerts[0]["delta_percentage"] == DELTA_PERCENTAGE_THRESHOLD
 
 
-def test_zero_to_value_infinity_shift(baseline_profile):
+def test_zero_to_value_infinity_shift(baseline_profile: NetraProfile) -> None:
     """Ensure shifting from exactly 0.0 to a value returns 'Infinity' and doesn't crash."""
     target_profile = copy.deepcopy(baseline_profile)
 

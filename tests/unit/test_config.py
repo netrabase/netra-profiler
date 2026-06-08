@@ -6,16 +6,18 @@ MEAN_SHIFT_PCT_THRESHOLD_10_PCT = 0.10
 MEAN_SHIFT_PCT_THRESHOLD_50_PCT = 0.50
 NULL_COUNT_SHIFT_PCT_THRESHOLD_10_PCT = 0.10
 NULL_COUNT_SHIFT_PCT_THRESHOLD_01_PCT = 0.01
+NULL_CRITICAL_THRESHOLD = 0.95
+SKEW_THRESHOLD = 2.0
 
 
-def test_diff_config_defaults():
+def test_diff_config_defaults() -> None:
     """Ensure the engine loads with sane defaults if no config is provided."""
     config = DiffConfig(None)
     assert config.get_rule("schema_change_level") == "CRITICAL"
     assert config.get_rule("mean_shift_pct") == MEAN_SHIFT_PCT_THRESHOLD_10_PCT
 
 
-def test_diff_config_global_overrides():
+def test_diff_config_global_overrides() -> None:
     """Ensure global rules in YAML overwrite the engine defaults."""
     yaml_dict = {
         "diff": {"global_thresholds": {"mean_shift_pct": 0.50, "schema_change_level": "WARNING"}}
@@ -25,7 +27,7 @@ def test_diff_config_global_overrides():
     assert config.get_rule("schema_change_level") == "WARNING"
 
 
-def test_diff_config_column_overrides():
+def test_diff_config_column_overrides() -> None:
     """Ensure column-specific rules override global rules."""
     yaml_dict = {
         "diff": {
@@ -55,7 +57,7 @@ def test_diff_config_column_overrides():
     )
 
 
-def test_diff_config_type_validation_error():
+def test_diff_config_type_validation_error() -> None:
     """Ensure the config parser catches invalid types and raises ValueErrors."""
     yaml_dict = {
         "diff": {
@@ -70,7 +72,7 @@ def test_diff_config_type_validation_error():
         DiffConfig(yaml_dict)
 
 
-def test_pipeline_config_parsing():
+def test_pipeline_config_parsing() -> None:
     """Ensure the Pipeline context extracts correctly from the YAML."""
     yaml_dict = {"pipeline": {"fail_on_critical": True, "fail_on_warnings": False}}
     config = PipelineConfig(yaml_dict)
@@ -79,14 +81,14 @@ def test_pipeline_config_parsing():
     assert config.quality_gate_active is True
 
 
-def test_diagnostic_config_defaults():
+def test_diagnostic_config_defaults() -> None:
     """Ensure DiagnosticConfig loads correct defaults via BaseConfig."""
     config = DiagnosticConfig(None)
-    assert config.get_rule("null_critical_threshold") == 0.95
+    assert config.get_rule("null_critical_threshold") == NULL_CRITICAL_THRESHOLD
     assert config.get_rule("constant_check_enabled") is True
 
 
-def test_config_type_validation_soft_cast():
+def test_config_type_validation_soft_cast() -> None:
     """Ensure BaseConfig safely casts compatible types (e.g., int to float)."""
     yaml_dict = {
         "diagnostics": {
@@ -98,11 +100,11 @@ def test_config_type_validation_soft_cast():
     }
     config = DiagnosticConfig(yaml_dict)
     # It should be safely cast to 2.0 (float)
-    assert config.get_rule("skew_threshold") == 2.0
+    assert config.get_rule("skew_threshold") == SKEW_THRESHOLD
     assert isinstance(config.get_rule("skew_threshold"), float)
 
 
-def test_config_type_validation_failure():
+def test_config_type_validation_failure() -> None:
     """Ensure BaseConfig raises a loud ValueError on completely invalid types."""
     yaml_dict = {
         "diagnostics": {
@@ -119,7 +121,7 @@ def test_config_type_validation_failure():
     assert "null_critical_threshold" in str(exc_info.value)
 
 
-def test_unused_override_warnings():
+def test_unused_override_warnings() -> None:
     """Ensure the config system correctly tracks which overrides were actually applied."""
     yaml_dict = {
         "diagnostics": {

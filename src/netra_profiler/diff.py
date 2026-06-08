@@ -18,6 +18,8 @@ from netra_profiler.types import (
     NetraProfile,
 )
 
+DELTA_MESSAGE_THRESHOLD = 5.0
+
 
 class DiffEngine:
     """
@@ -69,8 +71,8 @@ class DiffEngine:
 
         # Construct the final DiffReport
         report: DiffReport = {
-            "reference_dataset": self.reference.get("dataset", {}),  # type: ignore
-            "target_dataset": self.target.get("dataset", {}),  # type: ignore
+            "reference_dataset": self.reference.get("dataset", {}),
+            "target_dataset": self.target.get("dataset", {}),
             "alerts": self.alerts,
             "_meta": {
                 "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -78,9 +80,8 @@ class DiffEngine:
                 "execution_end_epoch": end_time,
                 "engine_time_seconds": round(end_time - start_time, 4),
                 "profiler_version": __version__,
-                "is_low_memory_run": False,  # Not applicable to diff engine
                 "config_source": "Loaded via CLI/API",
-                "profiler_warnings": [],
+                "diff_warnings": [],
                 "config_warnings": [],
                 "pipeline_context": None,  # Will be injected by the CLI orchestrator
             },
@@ -190,7 +191,9 @@ class DiffEngine:
         if delta is not None and delta > threshold:
             if delta == float("inf"):
                 message = f"Total row count shifted from 0 to {target_rows}."
-            elif delta >= 5.0:  # If shift is 500% or greater, switch to multiplier
+            elif (
+                delta >= DELTA_MESSAGE_THRESHOLD
+            ):  # If shift is 500% or greater, switch to multiplier
                 multiplier = target_rows / reference_rows
                 direction = "spiked" if target_rows > reference_rows else "plummeted"
                 message = (
@@ -260,7 +263,9 @@ class DiffEngine:
 
                     if delta == float("inf"):
                         message = f"{metric_name} shifted from 0 to {target_value}."
-                    elif delta >= 5.0:  # If shift is 500% or greater, switch to multiplier
+                    elif (
+                        delta >= DELTA_MESSAGE_THRESHOLD
+                    ):  # If shift is 500% or greater, switch to multiplier
                         multiplier = target_value / reference_value
                         direction = "spiked" if target_value > reference_value else "plummeted"
                         message = (
