@@ -116,6 +116,7 @@ class DiagnosticConfig(BaseConfig):
         "outlier_iqr_multiplier": 3.0,
         "string_length_anomaly_multiplier": 50.0,
         "constant_check_enabled": True,
+        "max_duplicate_percent": False,
     }
 
     def __init__(self, config_dict: dict[str, Any] | None = None):

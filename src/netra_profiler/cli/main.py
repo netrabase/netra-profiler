@@ -23,8 +23,9 @@ import yaml
 
 from netra_profiler import Profiler, __version__
 from netra_profiler.cli.console import NetraCLIRenderer, console
-from netra_profiler.config import DiffConfig, PipelineConfig
+from netra_profiler.config import DiagnosticConfig, DiffConfig, PipelineConfig
 from netra_profiler.diff import DiffEngine
+from netra_profiler.odcs import ODCSBuilder
 from netra_profiler.types import DiagnosticAlert, DiffAlert, NetraProfile, PipelineContext
 
 
@@ -531,7 +532,7 @@ def diff(  # noqa: PLR0913, PLR0915
         help="Halt the pipeline (exit 1) if Warning or Critical drifts are found.",
     ),
     config_file_path: str | None = typer.Option(
-        None, "--config", "-c", help="Path to netra_config.yaml."
+        None, "--config", "-c", help="Path to the YAML config file."
     ),
 ) -> None:
     """
@@ -606,6 +607,54 @@ def diff(  # noqa: PLR0913, PLR0915
 
     if exit_code != 0:
         raise typer.Exit(code=exit_code)
+
+
+@app.command()
+def contract(
+    profile_path: str = typer.Argument(..., help="Path to the generated NetraProfile JSON."),
+    config_file_path: str | None = typer.Option(
+        None, "--config", "-c", help="Path to the YAML config file."
+    ),
+) -> None:
+    """
+    Generate an Open Data Contract Standard (ODCS) YAML from a Netra Profile.
+    """
+
+    # 1. Load the Profile
+    try:
+        with open(profile_path, encoding="utf-8") as f:
+            profile = json.load(f)
+    except Exception as e:
+        console.print(f"[bold red]File Error:[/] Failed to load JSON profile: {e}")
+        raise typer.Exit(code=1) from None
+
+    # 2. Configuration Resolution
+    config_dict = None
+    resolved_config_path = config_file_path or os.environ.get("NETRA_CONFIG") or "netra_config.yaml"
+    config_path_object = Path(resolved_config_path)
+
+    if config_path_object.exists():
+        try:
+            with open(config_path_object, encoding="utf-8") as f:
+                config_dict = yaml.safe_load(f)
+        except Exception as e:
+            console.print(f"[bold red]Configuration Error:[/] {e}")
+            raise typer.Exit(code=1) from None
+
+    # We initialize the DiagnosticConfig so the builder can access the quality thresholds
+    diagnostic_config = DiagnosticConfig(config_dict)
+
+    # 3. Generate and Output ODCS Contract
+    try:
+        builder = ODCSBuilder(profile, diagnostic_config)
+        odcs_yaml = builder.build()
+
+        # We print directly to stdout (bypassing Rich) to ensure clean pipeline redirects
+        print(odcs_yaml, end="")
+
+    except Exception as e:
+        console.print(f"[bold red]ODCS Generation Error:[/] {e}")
+        raise typer.Exit(code=1) from None
 
 
 @app.command()

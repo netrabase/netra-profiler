@@ -118,15 +118,16 @@ Because the core engine of `netra-profiler` is built entirely on the Polars Lazy
 ## Features
 
 - **Multi-Core Streaming Engine:** Built on Polars, the profiling engine completely bypasses the Python GIL and utilizes 100% of your CPU cores for maximum performance. Unlike legacy tools that must load the entire dataset into memory for profiling, Netra processes data in streaming batches.
-- **Low-Memory Mode:** Process larger datasets safely. By passing the `--low-memory` flag, the profiler switches to approximate counting and sampling techniques to keep RAM usage low.
 - **Comprehensive Profiling:** Automatically extracts scalar statistics, distributions, and correlation matrices based on column data types. (See the Metrics Table below).
-- **Complex Type Support:** Automatically flattens nested JSON/Parquet Structs and computes length statistics for Lists and Arrays. Zero configuration required.
-- **Built-in Configurable Quality Rules:** Stop bad data before it enters your pipeline. Netra's diagnostic engine automatically flags anomalies like zero-inflation, corrupted primary keys, and extreme skewness. All detection thresholds can be customized globally or on a per-column basis via YAML (See Data Quality Rules below).
+- **Built-in Data Quality Checks:** Stop bad data before it enters your pipeline. Netra's diagnostic engine automatically flags anomalies like zero-inflation, corrupted primary keys, and extreme skewness. All detection thresholds can be customized globally or on a per-column basis via YAML (See Data Quality Rules below).
 - **CI/CD Pipeline Gatekeeper:** Use strict exit codes (`--fail-on-critical` or `--fail-on-warnings`) to automatically act as a Data Firewall, breaking your CI/CD builds (GitHub Actions, Airflow, GitLab CI) if corrupted data enters the pipeline.
 - **Data Drift and Schema Diffing:** Compare two profiles (e.g., yesterday's data vs. today's data) to automatically detect dropped columns, mutated data types, volume shifts, and statistical data drift in `O(1)` time without rescanning the raw data.
+- **Data Contract Generation (ODCS):** Automatically translate profiling results and configuration thresholds into Open Data Contract Standard (v3.1.0) compliant YAML files.
 - **Universal Configuration:** A single netra_config.yaml file manages your pipeline execution state, diagnostic quality rules, and data drift thresholds.
-- **Terminal UI:** Includes an information-dense, highly readable CLI dashboard to profile and check your data health directly in the terminal.
+- **Low-Memory Mode:** Process larger datasets safely. By passing the `--low-memory` flag, the profiler switches to approximate counting and sampling techniques to keep RAM usage low.
+- **Complex Type Support:** Automatically flattens nested JSON/Parquet Structs and computes length statistics for Lists and Arrays. Zero configuration required.
 - **Strictly Typed Profile Output:** Access the complete mathematical state of your data via a strictly typed JSON export (`--json`) or native Python dictionary. Because the output schema is immutable, you can safely program against it to power custom CI/CD quality gates, feed metadata catalogs, or provide context to LLM data agents.
+- **Terminal UI:** Includes an information-dense, highly readable CLI dashboard to profile and check your data health directly in the terminal.
 - **Python API:** Integrate seamlessly into Airflow, Dagster, Marimo/Jupyter Notebooks, and custom pipelines with a clean, expressive programmatic interface.
 
 ### Supported Metrics & Roadmap
@@ -379,3 +380,35 @@ config = {
 
 profiler = Profiler(df, config=config)
 ```
+
+### 5. Data Contract Generation (ODCS v3.1.0)
+
+Netra Profiler bridges the gap between data observability and governance by automatically generating **Open Data Contract Standard (v3.1.0)** YAML documents directly from your profiling results.
+
+Instead of writing massive YAML contracts by hand, Netra translates your empirical profile and custom `netra_config.yaml` thresholds into a ready-to-deploy Data Contract.
+
+**1. Generate the JSON Profile:**
+
+```bash
+netra profile dataset.parquet --json > profile.json
+```
+
+**2. Generate the Contract:**
+
+```bash
+netra contract profile.json --config netra_config.yaml > contract.yaml
+```
+
+**What the Generator Handles Automatically:**
+
+- **Schema Inference:** Maps Polars' native memory types (e.g., `Float64`, `Int32`) to ODCS `physicalType` and `logicalType` fields.
+
+- **Empirical Constraints:** Injects actual data boundaries (`maxLength`, `minimum`, `maximum`) directly into the `logicalTypeOptions` block.
+
+- **Completeness Locking:** Automatically tags columns with zero missing values as `required: true`.
+
+- **Primary Key Auto-Discovery:** Leaves YAML comments on highly-unique columns, suggesting them as candidate Primary Keys.
+
+- **Dynamic Quality SLAs:** Translates your configuration thresholds (`null_critical_threshold`, `max_duplicate_percent`) into nested ODCS `quality` metrics using percentage-based tolerances (`unit: percent`), ensuring your contract remains robust regardless of future data volume shifts.
+
+- **Native SQL Fallback:** Automatically generates valid ODCS `type: sql` queries (e.g., for DuckDB) to handle variance/constant checks for a column.

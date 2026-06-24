@@ -99,6 +99,8 @@ class DiagnosticEngine:
                 if is_id_candidate:
                     self._check_primary_key(column_name, n_unique)
 
+                self._check_duplicates(column_name, n_unique)
+
             # 2. Numeric Checks
             if is_numeric:
                 skew = column_profile.get("skew")
@@ -267,6 +269,35 @@ class DiagnosticEngine:
                         value=n_unique,
                     )
                 )
+
+    def _check_duplicates(self, column_name: str, n_unique: int) -> None:
+        """
+        Validates the duplication ratio against the user limit.
+
+        Alerts:
+            - EXCESSIVE_DUPLICATES (WARNING/CRITICAL): Triggers when the percentage of
+              duplicate rows crosses the allowed threshold.
+        """
+
+        max_duplicate_percent = self.config.get_rule("max_duplicate_percent", column_name)
+        if max_duplicate_percent in (False, None):
+            return
+
+        duplicate_ratio = (self.row_count - n_unique) / max(self.row_count, 1)
+
+        if duplicate_ratio > max_duplicate_percent:
+            self.alerts.append(
+                Alert(
+                    column_name=column_name,
+                    type="EXCESSIVE_DUPLICATES",
+                    level=AlertLevel.WARNING,
+                    message=(
+                        f"Column contains {duplicate_ratio:.1%} duplicate rows, "
+                        f"exceeding the configured limit of {max_duplicate_percent:.1%}."
+                    ),
+                    value=duplicate_ratio,
+                )
+            )
 
     def _check_cardinality(self, column_name: str, n_unique: int) -> None:
         """
