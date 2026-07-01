@@ -99,6 +99,17 @@ def build_scalar_plan(lf: pl.LazyFrame, low_memory: bool = False) -> pl.LazyFram
                     ]
                 )
 
+        # Temporal Stats (Date/Datetime/Time)
+        elif data_type.is_temporal():
+            expressions.extend(
+                [
+                    # We cast to String at the Polars level to guarantee native
+                    # ISO 8601 string formatting for JSON serialization.
+                    column.min().cast(pl.String).alias(f"{column_name}_min"),
+                    column.max().cast(pl.String).alias(f"{column_name}_max"),
+                ]
+            )
+
         # String/Categorical Stats
         elif data_type in (pl.String, pl.Categorical, pl.Enum):
             # We cast column to String for .str operations
@@ -113,6 +124,12 @@ def build_scalar_plan(lf: pl.LazyFrame, low_memory: bool = False) -> pl.LazyFram
                     column.str.len_chars().mean().alias(f"{column_name}_mean_length"),
                     column.str.len_chars().min().alias(f"{column_name}_min_length"),
                     column.str.len_chars().max().alias(f"{column_name}_max_length"),
+                    # 3. Blank String Check
+                    # Strips whitespace; if length is 0, it's blank.
+                    # Nulls naturally propagate as Null and are ignored by .sum()
+                    (column.str.strip_chars().str.len_chars() == 0)
+                    .sum()
+                    .alias(f"{column_name}_blank_count"),
                 ]
             )
 

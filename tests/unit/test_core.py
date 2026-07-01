@@ -1,3 +1,5 @@
+from datetime import date
+
 import polars as pl
 import pytest
 
@@ -13,9 +15,17 @@ def sample_df() -> pl.DataFrame:
     """
     return pl.DataFrame(
         {
-            "age": [25, 30, 35, None, 25],  # Numeric with nulls & duplicates
-            "salary": [50000.0, 0.0, 75000.0, 50000.0, None],  # Float with nulls
-            "city": ["Groningen", "Thrissur", "Delhi", None, "Groningen"],  # String
+            "age": [25, 30, 35, None, 25, 40],  # Numeric with nulls & duplicates
+            "salary": [50000.0, 0.0, 75000.0, 50000.0, None, 100000.0],  # Float with nulls
+            "city": ["Groningen", "Thrissur", "Delhi", None, "Groningen", "   "],  # String
+            "join_date": [
+                date(2023, 1, 1),
+                date(2023, 1, 15),
+                date(2023, 2, 1),
+                None,
+                date(2023, 1, 1),
+                date(2023, 3, 1),
+            ],
         }
     )
 
@@ -82,7 +92,7 @@ def test_string_stats(profile: NetraProfile, sample_df: pl.DataFrame) -> None:
     # Lexicographical min/max
     # "Delhi" should be min alphabetical
     # "Thrissur" should be max alphabetical
-    assert city_column.get("min") == "Delhi"
+    assert city_column.get("min") == "   "
     assert city_column.get("max") == "Thrissur"
 
     # String Lengths
@@ -94,6 +104,19 @@ def test_string_stats(profile: NetraProfile, sample_df: pl.DataFrame) -> None:
     city_mean_length = city_column.get("mean_length")
     assert city_mean_length is not None
     assert city_mean_length == pytest.approx(city_lengths.mean())
+
+    assert city_column.get("blank_count") == 1
+
+
+def test_temporal_stats(profile: NetraProfile, sample_df: pl.DataFrame) -> None:
+    """Verifies temporal column statistics (Join Date)."""
+    date_column = profile["columns"]["join_date"]
+
+    assert date_column.get("null_count") == sample_df["join_date"].null_count()
+
+    # Engine is expected to explicitly cast Polars Dates to ISO-compliant Strings
+    assert date_column.get("min") == str(sample_df["join_date"].min())
+    assert date_column.get("max") == str(sample_df["join_date"].max())
 
 
 def test_top_k_stats(profile: NetraProfile, sample_df: pl.DataFrame) -> None:

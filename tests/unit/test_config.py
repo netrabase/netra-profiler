@@ -8,6 +8,7 @@ NULL_COUNT_SHIFT_PCT_THRESHOLD_10_PCT = 0.10
 NULL_COUNT_SHIFT_PCT_THRESHOLD_01_PCT = 0.01
 NULL_CRITICAL_THRESHOLD = 0.95
 SKEW_THRESHOLD = 2.0
+BLANK_WARNING_THRESHOLD = 0.10
 
 
 def test_diff_config_defaults() -> None:
@@ -86,6 +87,7 @@ def test_diagnostic_config_defaults() -> None:
     config = DiagnosticConfig(None)
     assert config.get_rule("null_critical_threshold") == NULL_CRITICAL_THRESHOLD
     assert config.get_rule("constant_check_enabled") is True
+    assert config.get_rule("blank_warning_threshold") == BLANK_WARNING_THRESHOLD
 
 
 def test_config_type_validation_soft_cast() -> None:

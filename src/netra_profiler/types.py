@@ -109,6 +109,7 @@ class ColumnMetrics(TypedDict, total=False):
     min_length: int | None
     max_length: int | None
     mean_length: float | None
+    blank_count: int | None
 
 
 class CorrelationPair(TypedDict):

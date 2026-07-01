@@ -59,6 +59,10 @@ class BaseConfig:
             return str(value).upper()
 
         expected_type = type(defaults[key])
+
+        if expected_type is bool and isinstance(value, (int, float)):
+            return float(value)
+
         if not isinstance(value, expected_type):
             try:
                 # Soft cast (e.g., if they pass int '1' for a float threshold)
@@ -108,6 +112,7 @@ class DiagnosticConfig(BaseConfig):
         "null_warning_threshold": 0.50,
         "skew_threshold": 2.0,
         "zero_inflated_threshold": 0.10,
+        "blank_warning_threshold": 0.10,
         "high_cardinality_threshold": 10000,
         "high_correlation_threshold": 0.95,
         "id_uniqueness_threshold": 0.99,

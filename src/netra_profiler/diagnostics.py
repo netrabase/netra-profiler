@@ -10,7 +10,7 @@ from enum import Enum
 from typing import Any
 
 from netra_profiler.config import DiagnosticConfig
-from netra_profiler.types import NetraProfile, is_numeric_type
+from netra_profiler.types import ColumnMetrics, NetraProfile, is_numeric_type
 
 
 class AlertLevel(str, Enum):
@@ -101,53 +101,65 @@ class DiagnosticEngine:
 
                 self._check_duplicates(column_name, n_unique)
 
-            # 2. Numeric Checks
+            # 2. Type-Specific Checks
             if is_numeric:
-                skew = column_profile.get("skew")
-                if skew is not None:
-                    self._check_skew(column_name, skew)
-
-                zero_count = column_profile.get("zero_count")
-                if zero_count is not None:
-                    self._check_zeros(column_name, zero_count)
-
-                p25 = column_profile.get("p25")
-                p75 = column_profile.get("p75")
-                min_value = column_profile.get("min")
-                max_value = column_profile.get("max")
-
-                if (
-                    isinstance(p25, (int, float))
-                    and isinstance(p75, (int, float))
-                    and isinstance(min_value, (int, float))
-                    and isinstance(max_value, (int, float))
-                ):
-                    self._check_outliers(column_name, p25, p75, min_value, max_value)
-
-            # 3. String / Categorical Checks
-            if not is_numeric:
-                if n_unique is not None:
-                    self._check_cardinality(column_name, n_unique)
-
-                top_k = column_profile.get("top_k")
-                if top_k:
-                    self._check_possible_numeric(column_name, top_k)
-
-                mean_length = column_profile.get("mean_length")
-                max_length = column_profile.get("max_length")
-                min_length = column_profile.get("min_length")
-
-                if (
-                    isinstance(mean_length, (int, float))
-                    and isinstance(max_length, (int, float))
-                    and isinstance(min_length, (int, float))
-                ):
-                    self._check_string_length(column_name, mean_length, max_length, min_length)
+                self._run_numeric_checks(column_name, column_profile)
+            else:
+                self._run_string_checks(column_name, column_profile, n_unique)
 
         # 4. Correlation Check
         self._check_correlations()
 
         return self.alerts
+
+    def _run_numeric_checks(self, column_name: str, column_profile: ColumnMetrics) -> None:
+        """Evaluates all diagnostic rules specific to numeric columns."""
+        skew = column_profile.get("skew")
+        if skew is not None:
+            self._check_skew(column_name, skew)
+
+        zero_count = column_profile.get("zero_count")
+        if zero_count is not None:
+            self._check_zeros(column_name, zero_count)
+
+        p25 = column_profile.get("p25")
+        p75 = column_profile.get("p75")
+        min_value = column_profile.get("min")
+        max_value = column_profile.get("max")
+
+        if (
+            isinstance(p25, (int, float))
+            and isinstance(p75, (int, float))
+            and isinstance(min_value, (int, float))
+            and isinstance(max_value, (int, float))
+        ):
+            self._check_outliers(column_name, p25, p75, min_value, max_value)
+
+    def _run_string_checks(
+        self, column_name: str, column_profile: ColumnMetrics, n_unique: int | None
+    ) -> None:
+        """Evaluates all diagnostic rules specific to string and categorical columns."""
+        if n_unique is not None:
+            self._check_cardinality(column_name, n_unique)
+
+        top_k = column_profile.get("top_k")
+        if top_k:
+            self._check_possible_numeric(column_name, top_k)
+
+        mean_length = column_profile.get("mean_length")
+        max_length = column_profile.get("max_length")
+        min_length = column_profile.get("min_length")
+
+        if (
+            isinstance(mean_length, (int, float))
+            and isinstance(max_length, (int, float))
+            and isinstance(min_length, (int, float))
+        ):
+            self._check_string_length(column_name, mean_length, max_length, min_length)
+
+        blank_count = column_profile.get("blank_count")
+        if blank_count is not None:
+            self._check_blanks(column_name, blank_count)
 
     def _check_nulls(self, column_name: str, null_count: int) -> None:
         """
@@ -192,6 +204,36 @@ class DiagnosticEngine:
                     value=null_percentage,
                 )
             )
+
+    def _check_blanks(self, column_name: str, blank_count: int) -> None:
+        """
+        Evaluates potential blank/whitespace strings.
+
+        Alerts:
+            - BLANK_STRINGS (WARNING): Triggers when the percentage of purely blank
+              strings exceeds the configured threshold.
+        """
+
+        blank_warning_threshold = self.config.get_rule("blank_warning_threshold", column_name)
+        if blank_warning_threshold in (False, None):
+            return
+
+        if blank_count > 0 and self.row_count > 0:
+            blank_percentage = blank_count / self.row_count
+
+            if blank_percentage > blank_warning_threshold:
+                self.alerts.append(
+                    Alert(
+                        column_name=column_name,
+                        type="BLANK_STRINGS",
+                        level=AlertLevel.WARNING,
+                        message=(
+                            f"Column contains {blank_percentage:.1%} blank/whitespace strings. "
+                            "These may bypass standard completeness checks."
+                        ),
+                        value=blank_percentage,
+                    )
+                )
 
     def _check_constant(self, column_name: str, n_unique: int) -> None:
         """

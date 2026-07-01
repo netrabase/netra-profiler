@@ -521,8 +521,20 @@ class Profiler:
                 for metric in numeric_metrics:
                     column_profile[metric] = profile_data.get(f"{column_name}_{metric}")
 
+            elif "Date" in data_type_string or "Time" in data_type_string:
+                temporal_metrics = ["min", "max"]
+                for metric in temporal_metrics:
+                    column_profile[metric] = profile_data.get(f"{column_name}_{metric}")
+
             elif is_string_type(data_type_string):
-                string_metrics = ["min_length", "max_length", "mean_length", "min", "max"]
+                string_metrics = [
+                    "min_length",
+                    "max_length",
+                    "mean_length",
+                    "min",
+                    "max",
+                    "blank_count",
+                ]
                 for metric in string_metrics:
                     column_profile[metric] = profile_data.get(f"{column_name}_{metric}")
 

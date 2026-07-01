@@ -42,6 +42,7 @@ def sample_netra_profile() -> NetraProfile:
                 "n_unique": 800,
                 "min_length": 5,
                 "max_length": 254,
+                # n_unique > 5 triggers distinct count hint
             },
             "order_total": {
                 "data_type": "Float64",
@@ -54,6 +55,31 @@ def sample_netra_profile() -> NetraProfile:
                 "data_type": "Int32",
                 "null_count": 0,
                 "n_unique": 1,
+            },
+            "status": {
+                "data_type": "String",
+                "null_count": 0,
+                "n_unique": 1,
+                "top_k": [{"value": "ACTIVE", "count": 1000}],
+                # n_unique == 1 triggers constant hint
+            },
+            "payment_type": {
+                "data_type": "String",
+                "null_count": 0,
+                "n_unique": 3,
+                "top_k": [
+                    {"value": "CREDIT", "count": 500},
+                    {"value": "CASH", "count": 300},
+                    {"value": "COMPED", "count": 200},
+                ],
+                # n_unique <= 5 triggers enum hint
+            },
+            "created_at": {
+                "data_type": "Datetime",
+                "null_count": 0,
+                "min": "2023-01-01T00:00:00",
+                "max": "2023-12-31T23:59:59",
+                # Datetime triggers temporal hint
             },
         },
     }
@@ -170,22 +196,6 @@ def test_duplicate_percentage_conversion(
     assert duplicate_rule["unit"] == "percent"
 
 
-def test_variance_constant_sql_fallback(
-    sample_netra_profile: NetraProfile, mock_diagnostic_config: DiagnosticConfig
-) -> None:
-    """Verifies custom SQL check injection for single-value column variance boundaries."""
-
-    builder = ODCSBuilder(sample_netra_profile, mock_diagnostic_config)
-    parsed_yaml = yaml.safe_load(builder.build())
-
-    properties = parsed_yaml["schema"][0]["properties"]
-    platform_prop = next(p for p in properties if p["name"] == "platform_id")
-
-    sql_rule = next(r for r in platform_prop["quality"] if r.get("type") == "sql")
-    assert "SELECT COUNT(DISTINCT {property}) FROM {object}" in sql_rule["query"]
-    assert sql_rule["mustBeGreaterThan"] == 1
-
-
 def test_string_replacement_pipeline_and_comments(
     sample_netra_profile: NetraProfile, mock_diagnostic_config: DiagnosticConfig
 ) -> None:
@@ -194,18 +204,47 @@ def test_string_replacement_pipeline_and_comments(
     builder = ODCSBuilder(sample_netra_profile, mock_diagnostic_config)
     yaml_output = builder.build()
 
+    print(yaml_output)
+
     # 1. Verify schema comment substitution happened
     assert "# --- SCHEMA BLOCK ---" in yaml_output
     assert "# Data Quality constraints are drafted from empirical data." in yaml_output
 
     # 2. Verify primary key comment translation replaced the hidden hint tracking key
     assert "__netra_pk_hint" not in yaml_output
-    assert (
-        "# Candidate Primary Key (Highly Unique). Uncomment the line below to enforce:"
-        in yaml_output
-    )
+    assert "# Candidate Primary Key (Highly Unique)." in yaml_output
     assert "# primaryKey: true" in yaml_output
 
-    # 3. Verify that string operations didn't affect parsing of the YAML contract
+    # 3. Verify Dataset-Level Row Count Hint
+    assert "__netra_row_count_hint" not in yaml_output
+    assert "# Candidate Volume (Observed Row Count: 1000)." in yaml_output
+    assert "metric: rowCount" in yaml_output
+
+    # 4. Verify Constant Value Hint (status column)
+    assert "__netra_constant_hint" not in yaml_output
+    assert "# Candidate Constant Value (100% Single Value)." in yaml_output
+    assert "#   pattern: '^ACTIVE$'" in yaml_output
+
+    # 5. Verify Enum/Valid Values Hint (payment_type column)
+    assert "__netra_enum_hint" not in yaml_output
+    assert "# Candidate Valid Values (Low Cardinality)." in yaml_output
+    assert "#       - CREDIT" in yaml_output
+    assert "#       - CASH" in yaml_output
+
+    # 6. Verify Temporal Bounds Hint (created_at column)
+    assert "__netra_temporal_hint" not in yaml_output
+    assert "# Candidate Temporal Bounds (Observed in data)." in yaml_output
+    assert "#   minimum: '2023-01-01T00:00:00'" in yaml_output
+    assert "#   maximum: '2023-12-31T23:59:59'" in yaml_output
+
+    # 7. Verify Distinct Count Hint (customer_email column)
+    assert "__netra_distinct_hint" not in yaml_output
+    assert "# Candidate Distinct Count (Observed Cardinality)." in yaml_output
+    assert "SELECT COUNT(DISTINCT {property}) FROM {object}" in yaml_output
+    assert "mustBeBetween: [800, 800]" in yaml_output
+
+    # 8. Verify that string operations didn't affect parsing of the YAML contract
     parsed_yaml = yaml.safe_load(yaml_output)
     assert parsed_yaml["apiVersion"] == "v3.1.0"
+    # Ensure the root dataset name remained intact despite stripping the row count hint
+    assert parsed_yaml["dataset"]["name"] == "ecommerce_orders"

@@ -29,6 +29,7 @@ def test_dirty_data_alerts() -> None:
         "outlier_column": [10, 11, 12, 13] * 4 + [10, 11, 12, 9999],
         # String anomaly needs a max length much larger than the mean
         "string_column": ["a"] * 19 + ["a" * 100],
+        "blank_column": ["   "] * 5 + ["valid"] * 15,
     }
 
     df = pl.DataFrame(data)
@@ -51,6 +52,7 @@ def test_dirty_data_alerts() -> None:
     assert "OUTLIERS_DETECTED" in alert_types, "Failed to detect IQR outliers."
     assert "INCONSISTENT_STRING_LENGTH" in alert_types, "Failed to detect string length anomaly."
     assert "ALL_DISTINCT" not in alert_types, "ALL_DISTINCT triggered on small dataset."
+    assert "BLANK_STRINGS" in alert_types, "Failed to detect blank strings."
 
 
 def test_diagnostic_config() -> None:
