@@ -60,7 +60,19 @@ class BaseConfig:
 
         expected_type = type(defaults[key])
 
-        if expected_type is bool and isinstance(value, (int, float)):
+        # Reject booleans passed to numeric thresholds (bool is a subclass of int in Python)
+        if expected_type in (int, float) and isinstance(value, bool):
+            raise ValueError(
+                f"Config Error: '{key}' must be of type {expected_type.__name__}. "
+                f"Received: '{value}'"
+            )
+
+        # Allow rules that default to False (disabled) to accept float thresholds when enabled
+        if (
+            defaults[key] is False
+            and isinstance(value, (int, float))
+            and not isinstance(value, bool)
+        ):
             return float(value)
 
         if not isinstance(value, expected_type):

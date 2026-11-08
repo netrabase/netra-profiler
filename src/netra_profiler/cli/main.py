@@ -212,6 +212,7 @@ def _run_json_mode(  # noqa: PLR0913
     top_k: int,
     full_inference: bool,
     ignore_columns: list[str],
+    low_memory: bool,
     fail_on_critical: bool,
     fail_on_warnings: bool,
     config: dict[str, Any] | None,
@@ -223,10 +224,17 @@ def _run_json_mode(  # noqa: PLR0913
     Silences the Rich UI entirely and prints the raw `NetraProfile` contract to stdout.
     Used for piping output directly into downstream systems or files (e.g., `> report.json`).
     """
+
     try:
-        df, _ = _scan_file(path, full_inference=full_inference)
+        df, file_type = _scan_file(path, full_inference=full_inference)
         profiler = Profiler(
-            df, ignore_columns=ignore_columns, config=config, config_source=config_source
+            df,
+            dataset_name=path.name,
+            dataset_format=file_type,
+            ignore_columns=ignore_columns,
+            low_memory=low_memory,
+            config=config,
+            config_source=config_source,
         )
         profile = profiler.run(bins=bins, top_k=top_k)
 
@@ -460,6 +468,7 @@ def profile(  # noqa: PLR0913
             top_k,
             full_inference,
             ignore_columns,
+            low_memory,
             fail_on_critical,
             fail_on_warnings,
             config,
@@ -664,6 +673,39 @@ def info() -> None:
     console.print(f"Netra Version: {__version__}")
     console.print(f"Polars Version: {pl.__version__}")
     console.print(f"Python Version: {sys.version.split()[0]}")
+
+
+def register_profile() -> typer.Typer:
+    """Plugin hook for netra-core (`netra profile`)."""
+    sub_app = typer.Typer(
+        name="profile",
+        help="Profile the connected data source and generate the CLI report.",
+        add_completion=False,
+    )
+    sub_app.callback(invoke_without_command=True)(profile)
+    return sub_app
+
+
+def register_diff() -> typer.Typer:
+    """Plugin hook for netra-core (`netra diff`)."""
+    sub_app = typer.Typer(
+        name="diff",
+        help="Compare two Netra Profiles to detect Schema Changes and Data Drift.",
+        add_completion=False,
+    )
+    sub_app.callback(invoke_without_command=True)(diff)
+    return sub_app
+
+
+def register_contract() -> typer.Typer:
+    """Plugin hook for netra-core (`netra contract`)."""
+    sub_app = typer.Typer(
+        name="contract",
+        help="Generate an Open Data Contract Standard (ODCS) YAML from a Netra Profile.",
+        add_completion=False,
+    )
+    sub_app.callback(invoke_without_command=True)(contract)
+    return sub_app
 
 
 if __name__ == "__main__":

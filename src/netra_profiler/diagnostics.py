@@ -63,7 +63,7 @@ class DiagnosticEngine:
         self.correlations = self.profile.get("correlations", {})
 
         meta = self.profile.get("_meta", {})
-        self.is_memory_safe_run = meta.get("is_memory_safe_run", False)
+        self.is_low_memory_run = meta.get("is_low_memory_run", False)
 
         self.row_count = self.dataset.get("row_count", 0)
         self.alerts: list[Alert] = []
@@ -88,9 +88,14 @@ class DiagnosticEngine:
             null_count = column_profile.get("null_count", 0)
             self._check_nulls(column_name, null_count)
 
+            # If the column is 100% null (0 non-null values), skip all downstream
+            # variance, key, and distribution checks for this column.
+            if null_count >= self.row_count:
+                continue
+
             n_unique = column_profile.get("n_unique")
             if n_unique is not None:
-                self._check_constant(column_name, n_unique)
+                self._check_constant(column_name, n_unique, null_count)
 
                 # Primary Key Checks (Only for Ints, Strings, Categoricals)
                 is_id_candidate = any(
@@ -166,9 +171,9 @@ class DiagnosticEngine:
         Evaluates the column for critical data loss via null/missing values.
 
         Alerts:
-            - EMPTY_COLUMN (CRITICAL): Nulls > 95%. Indicates the column is structurally empty.
-            - HIGH_NULLS (WARNING): Nulls > 50%. Indicates standard imputation methods
-              (mean/median) will likely introduce severe statistical bias.
+            - EMPTY_COLUMN (CRITICAL): 100% Nulls (0 valid values).
+            - NEAR_EMPTY_COLUMN (CRITICAL): Nulls > critical_threshold (default 95%).
+            - HIGH_NULLS (WARNING): Nulls > warning_threshold (default 50%).
         """
         critical_threshold = self.config.get_rule("null_critical_threshold", column_name)
         warning_threshold = self.config.get_rule("null_warning_threshold", column_name)
@@ -179,12 +184,22 @@ class DiagnosticEngine:
 
         null_percentage = null_count / self.row_count
 
-        # 1. Check Critical First
-        if critical_threshold not in (False, None) and null_percentage > critical_threshold:
+        # 1. Check 100% Empty First, then Critical Threshold (Near Empty)
+        if critical_threshold not in (False, None) and null_count >= self.row_count:
             self.alerts.append(
                 Alert(
                     column_name=column_name,
                     type="EMPTY_COLUMN",
+                    level=AlertLevel.CRITICAL,
+                    message="Column is 100% empty (all values are null).",
+                    value=1.0,
+                )
+            )
+        elif critical_threshold not in (False, None) and null_percentage > critical_threshold:
+            self.alerts.append(
+                Alert(
+                    column_name=column_name,
+                    type="NEAR_EMPTY_COLUMN",
                     level=AlertLevel.CRITICAL,
                     message=(
                         f"Column is {null_percentage:.1%} empty. "
@@ -235,16 +250,17 @@ class DiagnosticEngine:
                     )
                 )
 
-    def _check_constant(self, column_name: str, n_unique: int) -> None:
+    def _check_constant(self, column_name: str, n_unique: int, null_count: int = 0) -> None:
         """
         Alerts:
-            - CONSTANT (CRITICAL): Only 1 unique value. The column provides no entropy.
+            - CONSTANT (CRITICAL): Only 1 unique non-null value across >= 2 valid rows.
         """
         constant_check_enabled = self.config.get_rule("constant_check_enabled", column_name)
         if not constant_check_enabled:
             return
 
-        if n_unique == 1:
+        non_null_count = self.row_count - null_count
+        if non_null_count > 1 and n_unique == 1:
             self.alerts.append(
                 Alert(
                     column_name=column_name,
@@ -274,7 +290,7 @@ class DiagnosticEngine:
         if self.row_count > min_rows_for_pk_check and n_unique > (
             self.row_count * id_uniqueness_threshold
         ):
-            if self.is_memory_safe_run:
+            if self.is_low_memory_run:
                 self.alerts.append(
                     Alert(
                         column_name=column_name,

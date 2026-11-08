@@ -77,19 +77,23 @@ class ExecutionMeta(TypedDict):
     pipeline_context: PipelineContext | None
 
 
-class ColumnMetrics(TypedDict, total=False):
-    """
-    Comprehensive statistical profile for a single column.
-
-    Note: total=False is used because numeric and string columns have
-    mutually exclusive fields (e.g., 'mean' vs 'mean_length').
-    """
+class BaseColumnMetrics(TypedDict):
+    """Universal metrics guaranteed to exist on every profiled column."""
 
     data_type: str
     null_count: int
     n_unique: int
     histogram: list[dict[str, Any]]
     top_k: list[dict[str, Any]]
+
+
+class ColumnMetrics(BaseColumnMetrics, total=False):
+    """
+    Comprehensive statistical profile for a single column.
+
+    Inherits required universal metrics from `BaseColumnMetrics` and sets
+    `total=False` for type-specific fields (e.g., 'mean' vs 'mean_length').
+    """
 
     # Numeric & String Shared Metrics
     min: float | int | str | None

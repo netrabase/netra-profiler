@@ -14,6 +14,7 @@ from netra_profiler.config import DiagnosticConfig
 from netra_profiler.types import ColumnMetrics, NetraProfile, is_numeric_type, is_string_type
 
 VALID_VALUES_THRESHOLD = 5
+MAX_ENUM_VALUE_LENGTH = 64
 
 
 class ODCSBuilder:
@@ -52,6 +53,7 @@ class ODCSBuilder:
         Executes the mapping, injects hint comments,
         and returns the serialized YAML string.
         """
+
         self._build_dataset_block()
         self._build_schema_block()
 
@@ -186,11 +188,13 @@ class ODCSBuilder:
 
     def _build_dataset_block(self) -> None:
         """Maps dataset metadata into the ODCS dataset block."""
+
         dataset_name = self.profile["dataset"]["name"]
         self.odcs_document["dataset"] = {"name": dataset_name}
 
     def _map_logical_type(self, polars_type: str) -> str:
         """Maps Polars native data types to ODCS logical types."""
+
         if not polars_type:  # REVIEW FOR DEFENSIVENESS
             return "string"
 
@@ -260,6 +264,12 @@ class ODCSBuilder:
         self, property_entry: dict[str, Any], column_name: str, metrics: ColumnMetrics
     ) -> None:
         """Injects a primary key hint if uniqueness meets the threshold."""
+
+        column_type = metrics.get("data_type", "")
+        is_id_candidate = any(t in column_type for t in ["Int", "String", "Utf8", "Categorical"])
+        if not is_id_candidate or metrics.get("null_count", 0) > 0:
+            return
+
         uniqueness_threshold = self.config.get_rule("id_uniqueness_threshold", column_name)
         if uniqueness_threshold is not False and uniqueness_threshold is not None:
             empirical_uniqueness = metrics.get("n_unique", 0) / max(self.row_count, 1)
@@ -279,17 +289,32 @@ class ODCSBuilder:
 
         n_unique = metrics.get("n_unique")
         top_k = metrics.get("top_k", [])
+        blank_count = metrics.get("blank_count") or 0
+
+        # Helper to verify a string is a clean identifier/category (non-blank, single-line, bounded length)
+        def is_clean_category(val: Any) -> bool:
+            if val is None:
+                return False
+            s = str(val)
+            return bool(s.strip()) and "\n" not in s and len(s) <= MAX_ENUM_VALUE_LENGTH
 
         # Constant (n_unique == 1)
-        if n_unique == 1 and top_k:
+        if n_unique == 1 and top_k and blank_count == 0:
             constant_value = top_k[0].get("value")
-            if constant_value is not None:
+            if is_clean_category(constant_value):
                 self._constant_hints[column_id] = str(constant_value)
                 property_entry["__netra_constant_hint"] = column_id
 
         # Set Membership (1 < n_unique <= 5)
-        elif n_unique is not None and 1 < n_unique <= VALID_VALUES_THRESHOLD and top_k:
-            valid_values = [str(item["value"]) for item in top_k if item.get("value") is not None]
+        elif (
+            n_unique is not None
+            and 1 < n_unique <= VALID_VALUES_THRESHOLD
+            and top_k
+            and blank_count == 0
+        ):
+            valid_values = [
+                str(item["value"]) for item in top_k if is_clean_category(item.get("value"))
+            ]
             if len(valid_values) == n_unique:
                 self._enum_hints[column_id] = valid_values
                 property_entry["__netra_enum_hint"] = column_id
@@ -308,6 +333,7 @@ class ODCSBuilder:
         metrics: ColumnMetrics,
     ) -> None:
         """Injects hints for temporal min/max bounds."""
+
         if "Date" in column_type or "Time" in column_type:
             min_value = metrics.get("min")
             max_value = metrics.get("max")

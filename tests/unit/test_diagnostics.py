@@ -8,7 +8,8 @@ def test_dirty_data_alerts() -> None:
     Verifies that the diagnostic engine correctly flags scalar anomalies:
     - Constant columns (Single value)
     - Empty columns (100% null)
-    - High Null columns (> 95%)
+    - Near-Empty columns (> critical threshold)
+    - High Null columns (> warning threshold)
     - Skewed columns
     - Zero-inflated columns
     - Outliers (IQR method)
@@ -21,9 +22,10 @@ def test_dirty_data_alerts() -> None:
     data = {
         "constant_column": [1] * rows,  # CONSTANT
         "empty_column": [None] * rows,  # 100% Null triggers EMPTY_COLUMN
-        "high_nulls_column": [None] * 12 + [1] * 8,  # 60% Null triggers HIGH_NULLS
+        "near_empty_column": [None] * 19 + [1],  # 95% Null triggers NEAR_EMPTY_COLUMN
+        "high_nulls_column": [None] * 12 + list(range(8)),  # 60% Null triggers HIGH_NULLS
         "id_column": [str(i) for i in range(rows)],  # Negative test for min_rows_for_pk_check
-        "skewed_column": [1] * (rows - 1) + [1000],  # Heavy Skew)
+        "skewed_column": [1] * (rows - 1) + [1000],  # Heavy Skew
         "zero_column": [0] * 15 + [1] * 5,  # ZERO_INFLATED (75% zeros)
         # Outlier needs non-zero IQR (10 to 13) with a massive spike
         "outlier_column": [10, 11, 12, 13] * 4 + [10, 11, 12, 9999],
@@ -34,7 +36,15 @@ def test_dirty_data_alerts() -> None:
 
     df = pl.DataFrame(data)
 
-    test_config = {"diagnostics": {"global_thresholds": {"string_length_anomaly_multiplier": 5.0}}}
+    # Lower thresholds slightly to accommodate the 20-row toy dataset resolution
+    test_config = {
+        "diagnostics": {
+            "global_thresholds": {
+                "string_length_anomaly_multiplier": 5.0,
+                "null_critical_threshold": 0.90,
+            }
+        }
+    }
 
     # 2. Execution
     profiler = Profiler(df, config=test_config)
@@ -46,6 +56,7 @@ def test_dirty_data_alerts() -> None:
 
     assert "CONSTANT" in alert_types, "Failed to detect CONSTANT column."
     assert "EMPTY_COLUMN" in alert_types, "Failed to detect 100% EMPTY_COLUMN."
+    assert "NEAR_EMPTY_COLUMN" in alert_types, "Failed to detect NEAR_EMPTY_COLUMN."
     assert "HIGH_NULLS" in alert_types, "Failed to detect HIGH_NULLS warning."
     assert "SKEWED" in alert_types, f"Failed to detect skew. Found: {alert_types}"
     assert "ZERO_INFLATED" in alert_types, "Failed to detect zero inflation."
@@ -53,6 +64,41 @@ def test_dirty_data_alerts() -> None:
     assert "INCONSISTENT_STRING_LENGTH" in alert_types, "Failed to detect string length anomaly."
     assert "ALL_DISTINCT" not in alert_types, "ALL_DISTINCT triggered on small dataset."
     assert "BLANK_STRINGS" in alert_types, "Failed to detect blank strings."
+
+
+def test_null_tiers_and_nullable_constants() -> None:
+    """
+    Verifies the 3-tier null hierarchy (EMPTY_COLUMN, NEAR_EMPTY_COLUMN, HIGH_NULLS)
+    under default thresholds and ensures null values do not corrupt CONSTANT checks.
+    """
+    rows = 100
+    df = pl.DataFrame(
+        {
+            # Tier 1: 100% null -> EMPTY_COLUMN only (must NOT trigger CONSTANT)
+            "all_null": [None] * rows,
+            # Tier 2: 99% null with 1 surviving row -> NEAR_EMPTY_COLUMN only
+            # (1 surviving value must NOT trigger CONSTANT)
+            "near_empty_single_val": [None] * 99 + [42],
+            # Tier 3: 60% null with varied values -> HIGH_NULLS only
+            "high_nulls_varied": [None] * 60 + list(range(40)),
+            # Nullable Constant: 20% null, remaining 80 rows are all 'ACTIVE' -> CONSTANT
+            "nullable_constant": [None] * 20 + ["ACTIVE"] * 80,
+        }
+    )
+
+    profile = Profiler(df).run()
+    alerts_by_col: dict[str, set[str]] = {}
+    for alert in profile["alerts"]:
+        alerts_by_col.setdefault(alert["column_name"], set()).add(alert["type"])
+
+    assert profile["columns"]["all_null"]["n_unique"] == 0
+    assert alerts_by_col.get("all_null") == {"EMPTY_COLUMN"}
+
+    assert profile["columns"]["near_empty_single_val"]["n_unique"] == 1
+    assert alerts_by_col.get("near_empty_single_val") == {"NEAR_EMPTY_COLUMN"}
+
+    assert alerts_by_col.get("high_nulls_varied") == {"HIGH_NULLS"}
+    assert "CONSTANT" in alerts_by_col.get("nullable_constant", set())
 
 
 def test_diagnostic_config() -> None:
@@ -79,10 +125,10 @@ def test_diagnostic_config() -> None:
         }
     }
 
-    # 2. Rule Overriden (CRITICAL alert should be disabled)
-    overriden_profile = Profiler(df, config=override_config).run()
-    overriden_alert_types = {a["type"] for a in overriden_profile["alerts"]}
-    assert "CONSTANT" not in overriden_alert_types, "Rule override test failed."
+    # 2. Rule Overridden (CRITICAL alert should be disabled)
+    overridden_profile = Profiler(df, config=override_config).run()
+    overridden_alert_types = {a["type"] for a in overridden_profile["alerts"]}
+    assert "CONSTANT" not in overridden_alert_types, "Rule override test failed."
 
 
 def test_diagnostic_typo_warnings() -> None:

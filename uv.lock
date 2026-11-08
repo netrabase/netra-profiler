@@ -1029,11 +1029,24 @@ wheels = [
 ]
 
 [[package]]
+name = "netra-core"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "rich" },
+    { name = "typer" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/00/f7/a25b057b93a97cc2cb415cc285ce7d9165b55a3ec2fa64160345abd2b862/netra_core-0.1.0.tar.gz", hash = "sha256:9949655af5874416d2cec4e00a49fd2e898f567aedfa8fa3fa227c0a0e2a839e", size = 5524, upload-time = "2026-11-04T09:24:45.047Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/74/e8/be1f229bcfaf44e536986a149f5e721ddacdd4ec6040137491946807e439/netra_core-0.1.0-py3-none-any.whl", hash = "sha256:b9e63d42885ec126c91c1b1bf2d6cfeeb8b857843e386c09ecaf1e0331bf7e2a", size = 3950, upload-time = "2026-11-04T09:24:43.221Z" },
+]
+
+[[package]]
 name = "netra-profiler"
-version = "0.4.0"
+version = "0.6.0"
 source = { editable = "." }
 dependencies = [
-    { name = "numpy" },
+    { name = "netra-core" },
     { name = "polars" },
     { name = "psutil" },
     { name = "pyarrow" },
@@ -1046,6 +1059,9 @@ dependencies = [
 benchmark = [
     { name = "aiofiles" },
     { name = "httpx" },
+    { name = "numpy" },
+    { name = "polars" },
+    { name = "psutil" },
     { name = "setuptools" },
     { name = "tqdm" },
     { name = "ydata-profiling" },
@@ -1060,7 +1076,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "numpy", specifier = ">=2.2.6" },
+    { name = "netra-core", specifier = ">=0.1.0" },
     { name = "polars", specifier = ">=1.0.0" },
     { name = "psutil", specifier = ">=7.2.2" },
     { name = "pyarrow", specifier = ">=14.0.0" },
@@ -1073,13 +1089,16 @@ requires-dist = [
 benchmark = [
     { name = "aiofiles", specifier = ">=23.2.1" },
     { name = "httpx", specifier = ">=0.27.0" },
+    { name = "numpy", specifier = ">=2.2.6" },
+    { name = "polars", specifier = ">=1.0.0" },
+    { name = "psutil", specifier = ">=7.2.2" },
     { name = "setuptools", specifier = "<70.0.0" },
     { name = "tqdm", specifier = ">=4.66.0" },
     { name = "ydata-profiling", specifier = ">=4.18.0" },
 ]
 dev = [
-    { name = "mypy", specifier = ">=1.8.0" },
-    { name = "pytest", specifier = ">=8.0.0" },
+    { name = "mypy", specifier = ">=1.10.0" },
+    { name = "pytest", specifier = ">=8.2.0" },
     { name = "ruff", specifier = ">=0.3.0" },
     { name = "types-aiofiles", specifier = ">=25.1.0.20260409" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20260408" },

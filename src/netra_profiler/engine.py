@@ -57,11 +57,14 @@ def build_scalar_plan(lf: pl.LazyFrame, low_memory: bool = False) -> pl.LazyFram
         # We handle NaN for Float columns before doing Null counts
         column = pl.col(column_name).fill_nan(None) if data_type.is_float() else pl.col(column_name)
 
-        n_unique_expression = (
-            column.approx_n_unique().alias(f"{column_name}_n_unique")
-            if low_memory
-            else column.n_unique().alias(f"{column_name}_n_unique")
-        )
+        # Polars' `.n_unique()` and `.approx_n_unique()` treat `null` as a
+        # distinct value (e.g., `[42.0, 42.0, null]` yields `n_unique == 2`, and an
+        # all-null column `[null, null]` yields `n_unique == 1`).
+        # Subtracting `int(null_count > 0)` recovers the correct non-null cardinality with
+        # zero memory allocation. Null count is a O(1) metadata lookup operation, so it's cheap.
+        raw_n_unique = column.approx_n_unique() if low_memory else column.n_unique()
+        has_nulls = (column.null_count() > 0).cast(pl.UInt32)
+        n_unique_expression = (raw_n_unique - has_nulls).alias(f"{column_name}_n_unique")
 
         # Universal Stats (All Columns)
         expressions.extend(
@@ -240,7 +243,7 @@ def build_top_k_plan(lf: pl.LazyFrame, k: int = 10) -> list[pl.LazyFrame]:
                 .drop_nulls()  # Prevent null from consuming a Top-K slot
                 .group_by("value")
                 .len()  # counts the group size
-                .sort("len", descending=True)
+                .sort(["len", "value"], descending=[True, False])
                 .head(k)
                 .select(
                     pl.lit(column_name).alias("column_name"),

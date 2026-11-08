@@ -249,7 +249,7 @@ class Profiler:
 
                     profile_data[f"{column}_histogram"] = [
                         {
-                            "break_point": max_value,
+                            "breakpoint": max_value,
                             "bin": f"[{min_value:g}, {max_value:g}]",
                             "count": count,
                         }
@@ -335,62 +335,72 @@ class Profiler:
                 correlation_df = correlation_plan.select(pl.all().cast(pl.Float64)).collect()
                 correlations_sampling_method = "exact"
 
-            # We drop Nulls to prevent NaN propagation in the matrix
-            correlation_df = correlation_df.drop_nulls()
+            # Pairwise-Complete Correlation Evaluation:
+            # 1. Convert float NaNs to Null so 'missingness' masks catch both NaN and Null.
+            # 2. Exclude constant or empty columns (`n_unique <= 1`) upfront to prevent
+            #    0/0 division-by-zero NaN computations.
+            # 3. Evaluate `pl.corr()` strictly on the upper triangle (i < j) using pairwise
+            #    validity masks (`col_a.is_not_null() & col_b.is_not_null()`). This ensures
+            #    every column pair uses 100% of its overlapping valid observations while
+            #    cutting redundant matrix computations (diagonal + mirrored lower triangle)
+            #    in half.
+            correlation_df = correlation_df.select(pl.all().fill_nan(None))
 
-            # Compute Matrices
-            if correlation_df.height > 0 and correlation_df.width > 1:
+            valid_columns = [
+                column
+                for column in correlation_df.columns
+                if profile_data.get(f"{column}_n_unique", 0) > 1
+            ]
+
+            if correlation_df.height > 1 and len(valid_columns) > 1:
                 profile_data["correlations"] = {
                     "pearson": [],
                     "spearman": [],
                     "sampling_method": correlations_sampling_method,
                 }
 
-                # We expect RuntimeWarnings (Divide by Zero) when correlating constant columns.
-                # This is normal behavior for dirty data, so we suppress the log noise locally.
+                pearson_expressions: list[pl.Expr] = []
+                spearman_expressions: list[pl.Expr] = []
+                pair_keys: list[tuple[str, str]] = []
+
+                for i, column_a in enumerate(valid_columns):
+                    for column_b in valid_columns[i + 1 :]:
+                        pair_key = f"{column_a}::{column_b}"
+                        pair_keys.append((column_a, column_b))
+                        valid_mask = pl.col(column_a).is_not_null() & pl.col(column_b).is_not_null()
+
+                        a_valid = pl.col(column_a).filter(valid_mask)
+                        b_valid = pl.col(column_b).filter(valid_mask)
+
+                        pearson_expressions.append(pl.corr(a_valid, b_valid).alias(pair_key))
+                        spearman_expressions.append(
+                            pl.corr(a_valid.rank(), b_valid.rank()).alias(pair_key)
+                        )
+
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore", RuntimeWarning)
 
-                    # Compute PEARSON (Standard .corr())
-                    try:
-                        # Format: Add a 'column' column so we know which row is which
-                        # Output structure: [{'column': 'age', 'age': 1.0, 'income': 0.8}, ...]
-                        pearson_matrix = correlation_df.corr().with_columns(
-                            pl.Series(name="column", values=correlation_df.columns)
-                        )
-                        # Reorder so that "column" appears first and
-                        # Clean NaNs (for JSON safety)
-                        pearson_matrix = pearson_matrix.select(
-                            pl.col("column"), pl.exclude("column").fill_nan(None)
-                        )
-
-                        profile_data["correlations"]["pearson"] = self._extract_correlation_pairs(
-                            pearson_matrix
-                        )
-                    except Exception as e:
-                        profiler_warnings.append(f"Correlations (pearson) calculation failed: {e}")
-
-                    # Compute SPEARMAN (Ranks -> .corr())
-                    try:
-                        # Spearman is just Pearson on the ranks
-                        spearman_matrix = (
-                            correlation_df.select(pl.all().rank())
-                            .corr()
-                            .with_columns(pl.Series(name="column", values=correlation_df.columns))
-                        )
-
-                        spearman_matrix = spearman_matrix.select(
-                            pl.col("column"), pl.exclude("column").fill_nan(None)
-                        )
-
-                        profile_data["correlations"]["spearman"] = self._extract_correlation_pairs(
-                            spearman_matrix
-                        )
-                    except Exception as e:
-                        profiler_warnings.append(f"Correlations (spearman) calculation failed: {e}")
-
-                # Metadata Injection
-                profile_data["correlations"]["sampling_method"] = correlations_sampling_method
+                    for method, exprs in [
+                        ("pearson", pearson_expressions),
+                        ("spearman", spearman_expressions),
+                    ]:
+                        try:
+                            corr_row = (
+                                correlation_df.select(exprs).fill_nan(None).row(0, named=True)
+                            )
+                            pairs = [
+                                {"column_a": col_a, "column_b": col_b, "score": float(score)}
+                                for (col_a, col_b), score in zip(
+                                    pair_keys, corr_row.values(), strict=True
+                                )
+                                if score is not None
+                            ]
+                            pairs.sort(key=lambda x: abs(x["score"]), reverse=True)
+                            profile_data["correlations"][method] = pairs
+                        except Exception as e:
+                            profiler_warnings.append(
+                                f"Correlations ({method}) calculation failed: {e}"
+                            )
 
     def _extract_correlation_pairs(self, matrix_df: pl.DataFrame) -> list[dict[str, Any]]:
         """
