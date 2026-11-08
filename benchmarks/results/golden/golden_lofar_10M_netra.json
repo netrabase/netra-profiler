@@ -1,0 +1,2635 @@
+{
+  "dataset": {
+    "name": "lofar_10M",
+    "format": "Parquet",
+    "row_count": 10000000
+  },
+  "columns": {
+    "ambient_temp_c": {
+      "data_type": "Float64",
+      "null_count": 0,
+      "n_unique": 5581,
+      "histogram": [
+        {
+          "breakpoint": -226.99249999999998,
+          "bin": "[-273.15, -226.992]",
+          "count": 4950
+        },
+        {
+          "breakpoint": -180.83499999999998,
+          "bin": "(-226.992, -180.835]",
+          "count": 0
+        },
+        {
+          "breakpoint": -134.67749999999998,
+          "bin": "(-180.835, -134.677]",
+          "count": 0
+        },
+        {
+          "breakpoint": -88.51999999999998,
+          "bin": "(-134.677, -88.52]",
+          "count": 0
+        },
+        {
+          "breakpoint": -42.36249999999998,
+          "bin": "(-88.52, -42.3625]",
+          "count": 0
+        },
+        {
+          "breakpoint": 3.795000000000016,
+          "bin": "(-42.3625, 3.795]",
+          "count": 903728
+        },
+        {
+          "breakpoint": 49.952499999999986,
+          "bin": "(3.795, 49.9525]",
+          "count": 9086428
+        },
+        {
+          "breakpoint": 96.11000000000001,
+          "bin": "(49.9525, 96.11]",
+          "count": 0
+        },
+        {
+          "breakpoint": 142.26750000000004,
+          "bin": "(96.11, 142.268]",
+          "count": 0
+        },
+        {
+          "breakpoint": 188.425,
+          "bin": "(142.268, 188.425]",
+          "count": 0
+        },
+        {
+          "breakpoint": 234.58249999999998,
+          "bin": "(188.425, 234.582]",
+          "count": 0
+        },
+        {
+          "breakpoint": 280.74,
+          "bin": "(234.582, 280.74]",
+          "count": 0
+        },
+        {
+          "breakpoint": 326.89750000000004,
+          "bin": "(280.74, 326.898]",
+          "count": 0
+        },
+        {
+          "breakpoint": 373.05499999999995,
+          "bin": "(326.898, 373.055]",
+          "count": 0
+        },
+        {
+          "breakpoint": 419.2125,
+          "bin": "(373.055, 419.212]",
+          "count": 0
+        },
+        {
+          "breakpoint": 465.37,
+          "bin": "(419.212, 465.37]",
+          "count": 0
+        },
+        {
+          "breakpoint": 511.52750000000003,
+          "bin": "(465.37, 511.528]",
+          "count": 0
+        },
+        {
+          "breakpoint": 557.6850000000001,
+          "bin": "(511.528, 557.685]",
+          "count": 0
+        },
+        {
+          "breakpoint": 603.8425,
+          "bin": "(557.685, 603.842]",
+          "count": 0
+        },
+        {
+          "breakpoint": 650.0,
+          "bin": "(603.842, 650]",
+          "count": 4894
+        }
+      ],
+      "top_k": [],
+      "min": -273.15,
+      "max": 650.0,
+      "mean": 12.668653007000001,
+      "zero_count": 1016,
+      "std": 16.777292968844996,
+      "skew": 24.376365554293432,
+      "kurtosis": 1057.9110912010963,
+      "p25": 8.11,
+      "p50": 12.5,
+      "p75": 16.89
+    },
+    "antenna_type": {
+      "data_type": "Enum(categories=['LBA', 'HBA'])",
+      "null_count": 0,
+      "n_unique": 2,
+      "histogram": [],
+      "top_k": [
+        {
+          "value": "HBA",
+          "count": 5000617
+        },
+        {
+          "value": "LBA",
+          "count": 4999383
+        }
+      ],
+      "min_length": 3,
+      "max_length": 3,
+      "mean_length": 3.0,
+      "min": "HBA",
+      "max": "LBA",
+      "blank_count": 0
+    },
+    "board_temp_c": {
+      "data_type": "Float64",
+      "null_count": 0,
+      "n_unique": 10010,
+      "histogram": [
+        {
+          "breakpoint": -404.9385,
+          "bin": "[-490.33, -404.938]",
+          "count": 4950
+        },
+        {
+          "breakpoint": -319.547,
+          "bin": "(-404.938, -319.547]",
+          "count": 0
+        },
+        {
+          "breakpoint": -234.15550000000002,
+          "bin": "(-319.547, -234.156]",
+          "count": 0
+        },
+        {
+          "breakpoint": -148.764,
+          "bin": "(-234.156, -148.764]",
+          "count": 0
+        },
+        {
+          "breakpoint": -63.3725,
+          "bin": "(-148.764, -63.3725]",
+          "count": 0
+        },
+        {
+          "breakpoint": 22.01899999999995,
+          "bin": "(-63.3725, 22.019]",
+          "count": 903552
+        },
+        {
+          "breakpoint": 107.41050000000001,
+          "bin": "(22.019, 107.411]",
+          "count": 9086604
+        },
+        {
+          "breakpoint": 192.80199999999996,
+          "bin": "(107.411, 192.802]",
+          "count": 0
+        },
+        {
+          "breakpoint": 278.1934999999999,
+          "bin": "(192.802, 278.193]",
+          "count": 0
+        },
+        {
+          "breakpoint": 363.585,
+          "bin": "(278.193, 363.585]",
+          "count": 0
+        },
+        {
+          "breakpoint": 448.97649999999993,
+          "bin": "(363.585, 448.976]",
+          "count": 0
+        },
+        {
+          "breakpoint": 534.3679999999999,
+          "bin": "(448.976, 534.368]",
+          "count": 0
+        },
+        {
+          "breakpoint": 619.7594999999999,
+          "bin": "(534.368, 619.759]",
+          "count": 0
+        },
+        {
+          "breakpoint": 705.1510000000001,
+          "bin": "(619.759, 705.151]",
+          "count": 0
+        },
+        {
+          "breakpoint": 790.5425,
+          "bin": "(705.151, 790.543]",
+          "count": 0
+        },
+        {
+          "breakpoint": 875.934,
+          "bin": "(790.543, 875.934]",
+          "count": 0
+        },
+        {
+          "breakpoint": 961.3254999999999,
+          "bin": "(875.934, 961.325]",
+          "count": 0
+        },
+        {
+          "breakpoint": 1046.7169999999999,
+          "bin": "(961.325, 1046.72]",
+          "count": 0
+        },
+        {
+          "breakpoint": 1132.1085,
+          "bin": "(1046.72, 1132.11]",
+          "count": 0
+        },
+        {
+          "breakpoint": 1217.5,
+          "bin": "(1132.11, 1217.5]",
+          "count": 4894
+        }
+      ],
+      "top_k": [],
+      "min": -490.33,
+      "max": 1217.5,
+      "mean": 38.437056711000004,
+      "zero_count": 25,
+      "std": 31.039474920964437,
+      "skew": 24.372826285988396,
+      "kurtosis": 1057.70908422113,
+      "p25": 30.0,
+      "p50": 38.12,
+      "p75": 46.25
+    },
+    "calibration_offset": {
+      "data_type": "Float64",
+      "null_count": 5996503,
+      "n_unique": 7936,
+      "histogram": [
+        {
+          "breakpoint": -4.6495,
+          "bin": "[-5.149, -4.6495]",
+          "count": 8
+        },
+        {
+          "breakpoint": -4.15,
+          "bin": "(-4.6495, -4.15]",
+          "count": 52
+        },
+        {
+          "breakpoint": -3.6505,
+          "bin": "(-4.15, -3.6505]",
+          "count": 466
+        },
+        {
+          "breakpoint": -3.151,
+          "bin": "(-3.6505, -3.151]",
+          "count": 2688
+        },
+        {
+          "breakpoint": -2.6515,
+          "bin": "(-3.151, -2.6515]",
+          "count": 12777
+        },
+        {
+          "breakpoint": -2.152,
+          "bin": "(-2.6515, -2.152]",
+          "count": 47035
+        },
+        {
+          "breakpoint": -1.6524999999999999,
+          "bin": "(-2.152, -1.6525]",
+          "count": 134270
+        },
+        {
+          "breakpoint": -1.153,
+          "bin": "(-1.6525, -1.153]",
+          "count": 300715
+        },
+        {
+          "breakpoint": -0.6535000000000002,
+          "bin": "(-1.153, -0.6535]",
+          "count": 529385
+        },
+        {
+          "breakpoint": -0.15399999999999991,
+          "bin": "(-0.6535, -0.154]",
+          "count": 727774
+        },
+        {
+          "breakpoint": 0.34550000000000036,
+          "bin": "(-0.154, 0.3455]",
+          "count": 787209
+        },
+        {
+          "breakpoint": 0.8449999999999998,
+          "bin": "(0.3455, 0.845]",
+          "count": 664001
+        },
+        {
+          "breakpoint": 1.3445,
+          "bin": "(0.845, 1.3445]",
+          "count": 439226
+        },
+        {
+          "breakpoint": 1.8440000000000003,
+          "bin": "(1.3445, 1.844]",
+          "count": 227950
+        },
+        {
+          "breakpoint": 2.3434999999999997,
+          "bin": "(1.844, 2.3435]",
+          "count": 91991
+        },
+        {
+          "breakpoint": 2.843,
+          "bin": "(2.3435, 2.843]",
+          "count": 28872
+        },
+        {
+          "breakpoint": 3.3425000000000002,
+          "bin": "(2.843, 3.3425]",
+          "count": 7448
+        },
+        {
+          "breakpoint": 3.8419999999999996,
+          "bin": "(3.3425, 3.842]",
+          "count": 1398
+        },
+        {
+          "breakpoint": 4.341500000000001,
+          "bin": "(3.842, 4.3415]",
+          "count": 211
+        },
+        {
+          "breakpoint": 4.841,
+          "bin": "(4.3415, 4.841]",
+          "count": 21
+        }
+      ],
+      "top_k": [],
+      "min": -5.149,
+      "max": 4.841,
+      "mean": 1.2987645550877056e-05,
+      "zero_count": 1667,
+      "std": 0.9998270908338429,
+      "skew": -0.0016198589931117244,
+      "kurtosis": -0.0011000052906164903,
+      "p25": -0.674,
+      "p50": -0.0,
+      "p75": 0.675
+    },
+    "decommissioned_sensor": {
+      "data_type": "Float64",
+      "null_count": 9900314,
+      "n_unique": 1,
+      "histogram": [
+        {
+          "breakpoint": 42.0,
+          "bin": "[42, 42]",
+          "count": 99686
+        }
+      ],
+      "top_k": [],
+      "min": 42.0,
+      "max": 42.0,
+      "mean": 42.0,
+      "zero_count": 0,
+      "std": 0.0,
+      "skew": NaN,
+      "kurtosis": NaN,
+      "p25": 42.0,
+      "p50": 42.0,
+      "p75": 42.0
+    },
+    "firmware_version": {
+      "data_type": "String",
+      "null_count": 0,
+      "n_unique": 1,
+      "histogram": [],
+      "top_k": [
+        {
+          "value": "LOFAR2.0-rc4",
+          "count": 10000000
+        }
+      ],
+      "min_length": 12,
+      "max_length": 12,
+      "mean_length": 12.0,
+      "min": "LOFAR2.0-rc4",
+      "max": "LOFAR2.0-rc4",
+      "blank_count": 0
+    },
+    "frequency_mhz": {
+      "data_type": "Float64",
+      "null_count": 0,
+      "n_unique": 210002,
+      "histogram": [
+        {
+          "breakpoint": 21.5,
+          "bin": "[10, 21.5]",
+          "count": 718687
+        },
+        {
+          "breakpoint": 33.0,
+          "bin": "(21.5, 33]",
+          "count": 717876
+        },
+        {
+          "breakpoint": 44.5,
+          "bin": "(33, 44.5]",
+          "count": 718448
+        },
+        {
+          "breakpoint": 56.0,
+          "bin": "(44.5, 56]",
+          "count": 719119
+        },
+        {
+          "breakpoint": 67.5,
+          "bin": "(56, 67.5]",
+          "count": 718924
+        },
+        {
+          "breakpoint": 79.0,
+          "bin": "(67.5, 79]",
+          "count": 717400
+        },
+        {
+          "breakpoint": 90.5,
+          "bin": "(79, 90.5]",
+          "count": 688929
+        },
+        {
+          "breakpoint": 102.0,
+          "bin": "(90.5, 102]",
+          "count": 0
+        },
+        {
+          "breakpoint": 113.5,
+          "bin": "(102, 113.5]",
+          "count": 134642
+        },
+        {
+          "breakpoint": 125.0,
+          "bin": "(113.5, 125]",
+          "count": 442505
+        },
+        {
+          "breakpoint": 136.5,
+          "bin": "(125, 136.5]",
+          "count": 442043
+        },
+        {
+          "breakpoint": 148.0,
+          "bin": "(136.5, 148]",
+          "count": 442476
+        },
+        {
+          "breakpoint": 159.5,
+          "bin": "(148, 159.5]",
+          "count": 442008
+        },
+        {
+          "breakpoint": 171.0,
+          "bin": "(159.5, 171]",
+          "count": 442441
+        },
+        {
+          "breakpoint": 182.5,
+          "bin": "(171, 182.5]",
+          "count": 443475
+        },
+        {
+          "breakpoint": 194.0,
+          "bin": "(182.5, 194]",
+          "count": 441567
+        },
+        {
+          "breakpoint": 205.5,
+          "bin": "(194, 205.5]",
+          "count": 443090
+        },
+        {
+          "breakpoint": 217.0,
+          "bin": "(205.5, 217]",
+          "count": 441911
+        },
+        {
+          "breakpoint": 228.5,
+          "bin": "(217, 228.5]",
+          "count": 442126
+        },
+        {
+          "breakpoint": 240.0,
+          "bin": "(228.5, 240]",
+          "count": 442333
+        }
+      ],
+      "top_k": [],
+      "min": 10.0,
+      "max": 240.0,
+      "mean": 112.51060973890002,
+      "zero_count": 0,
+      "std": 69.8291944776832,
+      "skew": 0.24058069121725953,
+      "kurtosis": -1.3160874926573296,
+      "p25": 50.022,
+      "p50": 110.015,
+      "p75": 175.013
+    },
+    "gps_sync_status": {
+      "data_type": "Enum(categories=['LOCKED', 'DRIFTING', 'LOST_SYNC'])",
+      "null_count": 0,
+      "n_unique": 3,
+      "histogram": [],
+      "top_k": [
+        {
+          "value": "LOCKED",
+          "count": 9800059
+        },
+        {
+          "value": "DRIFTING",
+          "count": 149722
+        },
+        {
+          "value": "LOST_SYNC",
+          "count": 50219
+        }
+      ],
+      "min_length": 6,
+      "max_length": 9,
+      "mean_length": 6.0450101,
+      "min": "DRIFTING",
+      "max": "LOST_SYNC",
+      "blank_count": 0
+    },
+    "hardware_status": {
+      "data_type": "Enum(categories=['OK', 'DOWN', 'SHORT', 'FLAT', 'SPURIOUS', 'OSCILLATING'])",
+      "null_count": 0,
+      "n_unique": 6,
+      "histogram": [],
+      "top_k": [
+        {
+          "value": "OK",
+          "count": 9500229
+        },
+        {
+          "value": "SHORT",
+          "count": 100327
+        },
+        {
+          "value": "SPURIOUS",
+          "count": 100170
+        },
+        {
+          "value": "OSCILLATING",
+          "count": 99995
+        },
+        {
+          "value": "FLAT",
+          "count": 99751
+        },
+        {
+          "value": "DOWN",
+          "count": 99528
+        }
+      ],
+      "min_length": 2,
+      "max_length": 11,
+      "mean_length": 2.2200514,
+      "min": "DOWN",
+      "max": "SPURIOUS",
+      "blank_count": 0
+    },
+    "operator_notes": {
+      "data_type": "String",
+      "null_count": 0,
+      "n_unique": 3,
+      "histogram": [],
+      "top_k": [
+        {
+          "value": "NOMINAL_OP",
+          "count": 8496072
+        },
+        {
+          "value": "   ",
+          "count": 1499806
+        },
+        {
+          "value": "STACK_TRACE_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "count": 4122
+        }
+      ],
+      "min_length": 3,
+      "max_length": 812,
+      "mean_length": 9.2807202,
+      "min": "   ",
+      "max": "STACK_TRACE_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "blank_count": 1499806
+    },
+    "packet_drop_rate": {
+      "data_type": "Float64",
+      "null_count": 0,
+      "n_unique": 25531,
+      "histogram": [
+        {
+          "breakpoint": 0.05,
+          "bin": "[0, 0.05]",
+          "count": 9924877
+        },
+        {
+          "breakpoint": 0.1,
+          "bin": "(0.05, 0.1]",
+          "count": 47480
+        },
+        {
+          "breakpoint": 0.15000000000000002,
+          "bin": "(0.1, 0.15]",
+          "count": 12391
+        },
+        {
+          "breakpoint": 0.2,
+          "bin": "(0.15, 0.2]",
+          "count": 5243
+        },
+        {
+          "breakpoint": 0.25,
+          "bin": "(0.2, 0.25]",
+          "count": 2809
+        },
+        {
+          "breakpoint": 0.30000000000000004,
+          "bin": "(0.25, 0.3]",
+          "count": 1705
+        },
+        {
+          "breakpoint": 0.35000000000000003,
+          "bin": "(0.3, 0.35]",
+          "count": 1129
+        },
+        {
+          "breakpoint": 0.4,
+          "bin": "(0.35, 0.4]",
+          "count": 804
+        },
+        {
+          "breakpoint": 0.45,
+          "bin": "(0.4, 0.45]",
+          "count": 570
+        },
+        {
+          "breakpoint": 0.5,
+          "bin": "(0.45, 0.5]",
+          "count": 468
+        },
+        {
+          "breakpoint": 0.55,
+          "bin": "(0.5, 0.55]",
+          "count": 355
+        },
+        {
+          "breakpoint": 0.6000000000000001,
+          "bin": "(0.55, 0.6]",
+          "count": 262
+        },
+        {
+          "breakpoint": 0.65,
+          "bin": "(0.6, 0.65]",
+          "count": 211
+        },
+        {
+          "breakpoint": 0.7000000000000001,
+          "bin": "(0.65, 0.7]",
+          "count": 168
+        },
+        {
+          "breakpoint": 0.75,
+          "bin": "(0.7, 0.75]",
+          "count": 142
+        },
+        {
+          "breakpoint": 0.8,
+          "bin": "(0.75, 0.8]",
+          "count": 128
+        },
+        {
+          "breakpoint": 0.8500000000000001,
+          "bin": "(0.8, 0.85]",
+          "count": 111
+        },
+        {
+          "breakpoint": 0.9,
+          "bin": "(0.85, 0.9]",
+          "count": 84
+        },
+        {
+          "breakpoint": 0.9500000000000001,
+          "bin": "(0.9, 0.95]",
+          "count": 84
+        },
+        {
+          "breakpoint": 1.0,
+          "bin": "(0.95, 1]",
+          "count": 979
+        }
+      ],
+      "top_k": [],
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.0038284938709999996,
+      "zero_count": 37476,
+      "std": 0.01775060561401513,
+      "skew": 31.38904118435163,
+      "kurtosis": 1418.5416121606766,
+      "p25": 0.00042,
+      "p50": 0.00118,
+      "p75": 0.00304
+    },
+    "packet_id": {
+      "data_type": "Int64",
+      "null_count": 0,
+      "n_unique": 10000000,
+      "histogram": [
+        {
+          "breakpoint": 499999.95,
+          "bin": "[0, 500000]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 999999.9,
+          "bin": "(500000, 1e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 1499999.85,
+          "bin": "(1e+06, 1.5e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 1999999.8,
+          "bin": "(1.5e+06, 2e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 2499999.75,
+          "bin": "(2e+06, 2.5e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 2999999.7,
+          "bin": "(2.5e+06, 3e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 3499999.65,
+          "bin": "(3e+06, 3.5e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 3999999.6,
+          "bin": "(3.5e+06, 4e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 4499999.55,
+          "bin": "(4e+06, 4.5e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 4999999.5,
+          "bin": "(4.5e+06, 5e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 5499999.45,
+          "bin": "(5e+06, 5.5e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 5999999.4,
+          "bin": "(5.5e+06, 6e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 6499999.350000001,
+          "bin": "(6e+06, 6.5e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 6999999.3,
+          "bin": "(6.5e+06, 7e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 7499999.25,
+          "bin": "(7e+06, 7.5e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 7999999.2,
+          "bin": "(7.5e+06, 8e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 8499999.15,
+          "bin": "(8e+06, 8.5e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 8999999.1,
+          "bin": "(8.5e+06, 9e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 9499999.05,
+          "bin": "(9e+06, 9.5e+06]",
+          "count": 500000
+        },
+        {
+          "breakpoint": 9999999,
+          "bin": "(9.5e+06, 1e+07]",
+          "count": 500000
+        }
+      ],
+      "top_k": [],
+      "min": 0,
+      "max": 9999999,
+      "mean": 4999999.5,
+      "zero_count": 1,
+      "std": 2886751.4902856923,
+      "skew": -5.433653460654548e-16,
+      "kurtosis": -1.2000000000000262,
+      "p25": 2500000.0,
+      "p50": 4999999.5,
+      "p75": 7499999.0
+    },
+    "pointing_coords_azimuth_deg": {
+      "data_type": "Float64",
+      "null_count": 0,
+      "n_unique": 36001,
+      "histogram": [
+        {
+          "breakpoint": 18.0,
+          "bin": "[0, 18]",
+          "count": 501421
+        },
+        {
+          "breakpoint": 36.0,
+          "bin": "(18, 36]",
+          "count": 498189
+        },
+        {
+          "breakpoint": 54.0,
+          "bin": "(36, 54]",
+          "count": 499659
+        },
+        {
+          "breakpoint": 72.0,
+          "bin": "(54, 72]",
+          "count": 498693
+        },
+        {
+          "breakpoint": 90.0,
+          "bin": "(72, 90]",
+          "count": 500192
+        },
+        {
+          "breakpoint": 108.0,
+          "bin": "(90, 108]",
+          "count": 499396
+        },
+        {
+          "breakpoint": 126.0,
+          "bin": "(108, 126]",
+          "count": 500809
+        },
+        {
+          "breakpoint": 144.0,
+          "bin": "(126, 144]",
+          "count": 500580
+        },
+        {
+          "breakpoint": 162.0,
+          "bin": "(144, 162]",
+          "count": 500846
+        },
+        {
+          "breakpoint": 180.0,
+          "bin": "(162, 180]",
+          "count": 499903
+        },
+        {
+          "breakpoint": 198.0,
+          "bin": "(180, 198]",
+          "count": 500900
+        },
+        {
+          "breakpoint": 216.0,
+          "bin": "(198, 216]",
+          "count": 501127
+        },
+        {
+          "breakpoint": 234.0,
+          "bin": "(216, 234]",
+          "count": 499682
+        },
+        {
+          "breakpoint": 252.0,
+          "bin": "(234, 252]",
+          "count": 500596
+        },
+        {
+          "breakpoint": 270.0,
+          "bin": "(252, 270]",
+          "count": 499237
+        },
+        {
+          "breakpoint": 288.0,
+          "bin": "(270, 288]",
+          "count": 499536
+        },
+        {
+          "breakpoint": 306.0,
+          "bin": "(288, 306]",
+          "count": 500342
+        },
+        {
+          "breakpoint": 324.0,
+          "bin": "(306, 324]",
+          "count": 499416
+        },
+        {
+          "breakpoint": 342.0,
+          "bin": "(324, 342]",
+          "count": 498738
+        },
+        {
+          "breakpoint": 360.0,
+          "bin": "(342, 360]",
+          "count": 500738
+        }
+      ],
+      "top_k": [],
+      "min": 0.0,
+      "max": 360.0,
+      "mean": 179.996352833,
+      "zero_count": 106,
+      "std": 103.90306238155938,
+      "skew": -3.7718577567278306e-05,
+      "kurtosis": -1.1988903129033674,
+      "p25": 90.06,
+      "p50": 180.01,
+      "p75": 269.95
+    },
+    "pointing_coords_elevation_deg": {
+      "data_type": "Float64",
+      "null_count": 0,
+      "n_unique": 7501,
+      "histogram": [
+        {
+          "breakpoint": 18.75,
+          "bin": "[15, 18.75]",
+          "count": 498093
+        },
+        {
+          "breakpoint": 22.5,
+          "bin": "(18.75, 22.5]",
+          "count": 500439
+        },
+        {
+          "breakpoint": 26.25,
+          "bin": "(22.5, 26.25]",
+          "count": 498698
+        },
+        {
+          "breakpoint": 30.0,
+          "bin": "(26.25, 30]",
+          "count": 500032
+        },
+        {
+          "breakpoint": 33.75,
+          "bin": "(30, 33.75]",
+          "count": 500533
+        },
+        {
+          "breakpoint": 37.5,
+          "bin": "(33.75, 37.5]",
+          "count": 499001
+        },
+        {
+          "breakpoint": 41.25,
+          "bin": "(37.5, 41.25]",
+          "count": 499194
+        },
+        {
+          "breakpoint": 45.0,
+          "bin": "(41.25, 45]",
+          "count": 500026
+        },
+        {
+          "breakpoint": 48.75,
+          "bin": "(45, 48.75]",
+          "count": 500310
+        },
+        {
+          "breakpoint": 52.5,
+          "bin": "(48.75, 52.5]",
+          "count": 501162
+        },
+        {
+          "breakpoint": 56.25,
+          "bin": "(52.5, 56.25]",
+          "count": 499744
+        },
+        {
+          "breakpoint": 60.0,
+          "bin": "(56.25, 60]",
+          "count": 499992
+        },
+        {
+          "breakpoint": 63.75,
+          "bin": "(60, 63.75]",
+          "count": 500203
+        },
+        {
+          "breakpoint": 67.5,
+          "bin": "(63.75, 67.5]",
+          "count": 499474
+        },
+        {
+          "breakpoint": 71.25,
+          "bin": "(67.5, 71.25]",
+          "count": 502620
+        },
+        {
+          "breakpoint": 75.0,
+          "bin": "(71.25, 75]",
+          "count": 500371
+        },
+        {
+          "breakpoint": 78.75,
+          "bin": "(75, 78.75]",
+          "count": 498389
+        },
+        {
+          "breakpoint": 82.5,
+          "bin": "(78.75, 82.5]",
+          "count": 500829
+        },
+        {
+          "breakpoint": 86.25,
+          "bin": "(82.5, 86.25]",
+          "count": 499168
+        },
+        {
+          "breakpoint": 90.0,
+          "bin": "(86.25, 90]",
+          "count": 501722
+        }
+      ],
+      "top_k": [],
+      "min": 15.0,
+      "max": 90.0,
+      "mean": 52.511704875,
+      "zero_count": 0,
+      "std": 21.647557974705318,
+      "skew": -0.0005354656055553364,
+      "kurtosis": -1.1996064007627523,
+      "p25": 33.76,
+      "p50": 52.51,
+      "p75": 71.25
+    },
+    "rcu_id": {
+      "data_type": "Int32",
+      "null_count": 0,
+      "n_unique": 192,
+      "histogram": [
+        {
+          "breakpoint": 9.55,
+          "bin": "[0, 9.55]",
+          "count": 521543
+        },
+        {
+          "breakpoint": 19.1,
+          "bin": "(9.55, 19.1]",
+          "count": 521096
+        },
+        {
+          "breakpoint": 28.650000000000002,
+          "bin": "(19.1, 28.65]",
+          "count": 469932
+        },
+        {
+          "breakpoint": 38.2,
+          "bin": "(28.65, 38.2]",
+          "count": 521044
+        },
+        {
+          "breakpoint": 47.75,
+          "bin": "(38.2, 47.75]",
+          "count": 469586
+        },
+        {
+          "breakpoint": 57.300000000000004,
+          "bin": "(47.75, 57.3]",
+          "count": 521260
+        },
+        {
+          "breakpoint": 66.85000000000001,
+          "bin": "(57.3, 66.85]",
+          "count": 467719
+        },
+        {
+          "breakpoint": 76.4,
+          "bin": "(66.85, 76.4]",
+          "count": 521660
+        },
+        {
+          "breakpoint": 85.95,
+          "bin": "(76.4, 85.95]",
+          "count": 469143
+        },
+        {
+          "breakpoint": 95.5,
+          "bin": "(85.95, 95.5]",
+          "count": 520764
+        },
+        {
+          "breakpoint": 105.05000000000001,
+          "bin": "(95.5, 105.05]",
+          "count": 520791
+        },
+        {
+          "breakpoint": 114.60000000000001,
+          "bin": "(105.05, 114.6]",
+          "count": 468031
+        },
+        {
+          "breakpoint": 124.15,
+          "bin": "(114.6, 124.15]",
+          "count": 520532
+        },
+        {
+          "breakpoint": 133.70000000000002,
+          "bin": "(124.15, 133.7]",
+          "count": 467720
+        },
+        {
+          "breakpoint": 143.25,
+          "bin": "(133.7, 143.25]",
+          "count": 521268
+        },
+        {
+          "breakpoint": 152.8,
+          "bin": "(143.25, 152.8]",
+          "count": 468604
+        },
+        {
+          "breakpoint": 162.35000000000002,
+          "bin": "(152.8, 162.35]",
+          "count": 521695
+        },
+        {
+          "breakpoint": 171.9,
+          "bin": "(162.35, 171.9]",
+          "count": 468788
+        },
+        {
+          "breakpoint": 181.45000000000002,
+          "bin": "(171.9, 181.45]",
+          "count": 519777
+        },
+        {
+          "breakpoint": 191,
+          "bin": "(181.45, 191]",
+          "count": 519047
+        }
+      ],
+      "top_k": [],
+      "min": 0,
+      "max": 191,
+      "mean": 95.4523799,
+      "zero_count": 52104,
+      "std": 55.42228279211367,
+      "skew": 0.0007794741158431188,
+      "kurtosis": -1.2004097996443739,
+      "p25": 47.0,
+      "p50": 95.0,
+      "p75": 143.0
+    },
+    "rfi_flag": {
+      "data_type": "Boolean",
+      "null_count": 0,
+      "n_unique": 2,
+      "histogram": [],
+      "top_k": []
+    },
+    "schema_version_num": {
+      "data_type": "Int32",
+      "null_count": 0,
+      "n_unique": 1,
+      "histogram": [
+        {
+          "breakpoint": 2,
+          "bin": "[2, 2]",
+          "count": 10000000
+        }
+      ],
+      "top_k": [],
+      "min": 2,
+      "max": 2,
+      "mean": 2.0,
+      "zero_count": 0,
+      "std": 0.0,
+      "skew": NaN,
+      "kurtosis": NaN,
+      "p25": 2.0,
+      "p50": 2.0,
+      "p75": 2.0
+    },
+    "sequence_id": {
+      "data_type": "Int64",
+      "null_count": 0,
+      "n_unique": 9995082,
+      "histogram": [
+        {
+          "breakpoint": 499999.95,
+          "bin": "[0, 500000]",
+          "count": 500710
+        },
+        {
+          "breakpoint": 999999.9,
+          "bin": "(500000, 1e+06]",
+          "count": 499748
+        },
+        {
+          "breakpoint": 1499999.85,
+          "bin": "(1e+06, 1.5e+06]",
+          "count": 499764
+        },
+        {
+          "breakpoint": 1999999.8,
+          "bin": "(1.5e+06, 2e+06]",
+          "count": 499778
+        },
+        {
+          "breakpoint": 2499999.75,
+          "bin": "(2e+06, 2.5e+06]",
+          "count": 500714
+        },
+        {
+          "breakpoint": 2999999.7,
+          "bin": "(2.5e+06, 3e+06]",
+          "count": 499769
+        },
+        {
+          "breakpoint": 3499999.65,
+          "bin": "(3e+06, 3.5e+06]",
+          "count": 499768
+        },
+        {
+          "breakpoint": 3999999.6,
+          "bin": "(3.5e+06, 4e+06]",
+          "count": 499749
+        },
+        {
+          "breakpoint": 4499999.55,
+          "bin": "(4e+06, 4.5e+06]",
+          "count": 500767
+        },
+        {
+          "breakpoint": 4999999.5,
+          "bin": "(4.5e+06, 5e+06]",
+          "count": 499747
+        },
+        {
+          "breakpoint": 5499999.45,
+          "bin": "(5e+06, 5.5e+06]",
+          "count": 499760
+        },
+        {
+          "breakpoint": 5999999.4,
+          "bin": "(5.5e+06, 6e+06]",
+          "count": 499726
+        },
+        {
+          "breakpoint": 6499999.350000001,
+          "bin": "(6e+06, 6.5e+06]",
+          "count": 500732
+        },
+        {
+          "breakpoint": 6999999.3,
+          "bin": "(6.5e+06, 7e+06]",
+          "count": 499762
+        },
+        {
+          "breakpoint": 7499999.25,
+          "bin": "(7e+06, 7.5e+06]",
+          "count": 499745
+        },
+        {
+          "breakpoint": 7999999.2,
+          "bin": "(7.5e+06, 8e+06]",
+          "count": 499761
+        },
+        {
+          "breakpoint": 8499999.15,
+          "bin": "(8e+06, 8.5e+06]",
+          "count": 500772
+        },
+        {
+          "breakpoint": 8999999.1,
+          "bin": "(8.5e+06, 9e+06]",
+          "count": 499757
+        },
+        {
+          "breakpoint": 9499999.05,
+          "bin": "(9e+06, 9.5e+06]",
+          "count": 499743
+        },
+        {
+          "breakpoint": 9999999,
+          "bin": "(9.5e+06, 1e+07]",
+          "count": 499728
+        }
+      ],
+      "top_k": [],
+      "min": 0,
+      "max": 9999999,
+      "mean": 4999505.0419888,
+      "zero_count": 957,
+      "std": 2886792.5556741823,
+      "skew": 5.550497417561939e-06,
+      "kurtosis": -1.1999136119039462,
+      "p25": 2499286.0,
+      "p50": 4999485.5,
+      "p75": 7499760.0
+    },
+    "signal_power_db": {
+      "data_type": "Float64",
+      "null_count": 10017,
+      "n_unique": 10014,
+      "histogram": [
+        {
+          "breakpoint": -129.8235,
+          "bin": "[-136.19, -129.823]",
+          "count": 24
+        },
+        {
+          "breakpoint": -123.457,
+          "bin": "(-129.823, -123.457]",
+          "count": 270
+        },
+        {
+          "breakpoint": -117.09049999999999,
+          "bin": "(-123.457, -117.09]",
+          "count": 2051
+        },
+        {
+          "breakpoint": -110.72399999999999,
+          "bin": "(-117.09, -110.724]",
+          "count": 12148
+        },
+        {
+          "breakpoint": -104.35749999999999,
+          "bin": "(-110.724, -104.357]",
+          "count": 57590
+        },
+        {
+          "breakpoint": -97.991,
+          "bin": "(-104.357, -97.991]",
+          "count": 204685
+        },
+        {
+          "breakpoint": -91.6245,
+          "bin": "(-97.991, -91.6245]",
+          "count": 550954
+        },
+        {
+          "breakpoint": -85.258,
+          "bin": "(-91.6245, -85.258]",
+          "count": 1133247
+        },
+        {
+          "breakpoint": -78.8915,
+          "bin": "(-85.258, -78.8915]",
+          "count": 1764263
+        },
+        {
+          "breakpoint": -72.52499999999999,
+          "bin": "(-78.8915, -72.525]",
+          "count": 2086419
+        },
+        {
+          "breakpoint": -66.15849999999999,
+          "bin": "(-72.525, -66.1585]",
+          "count": 1875260
+        },
+        {
+          "breakpoint": -59.792,
+          "bin": "(-66.1585, -59.792]",
+          "count": 1278116
+        },
+        {
+          "breakpoint": -53.4255,
+          "bin": "(-59.792, -53.4255]",
+          "count": 664173
+        },
+        {
+          "breakpoint": -47.059,
+          "bin": "(-53.4255, -47.059]",
+          "count": 261731
+        },
+        {
+          "breakpoint": -40.692499999999995,
+          "bin": "(-47.059, -40.6925]",
+          "count": 77920
+        },
+        {
+          "breakpoint": -34.32599999999999,
+          "bin": "(-40.6925, -34.326]",
+          "count": 17573
+        },
+        {
+          "breakpoint": -27.95949999999999,
+          "bin": "(-34.326, -27.9595]",
+          "count": 3093
+        },
+        {
+          "breakpoint": -21.59299999999999,
+          "bin": "(-27.9595, -21.593]",
+          "count": 419
+        },
+        {
+          "breakpoint": -15.226499999999987,
+          "bin": "(-21.593, -15.2265]",
+          "count": 42
+        },
+        {
+          "breakpoint": -8.86,
+          "bin": "(-15.2265, -8.86]",
+          "count": 5
+        }
+      ],
+      "top_k": [],
+      "min": -136.19,
+      "max": -8.86,
+      "mean": -75.00051596884597,
+      "zero_count": 0,
+      "std": 12.000240727074189,
+      "skew": 9.757242715120642e-05,
+      "kurtosis": 0.001605736210773312,
+      "p25": -83.09,
+      "p50": -75.0,
+      "p75": -66.91
+    },
+    "solar_flare_index": {
+      "data_type": "Float64",
+      "null_count": 0,
+      "n_unique": 12512,
+      "histogram": [
+        {
+          "breakpoint": 10.472,
+          "bin": "[0, 10.472]",
+          "count": 8258458
+        },
+        {
+          "breakpoint": 20.944,
+          "bin": "(10.472, 20.944]",
+          "count": 874919
+        },
+        {
+          "breakpoint": 31.415999999999997,
+          "bin": "(20.944, 31.416]",
+          "count": 435795
+        },
+        {
+          "breakpoint": 41.888,
+          "bin": "(31.416, 41.888]",
+          "count": 216514
+        },
+        {
+          "breakpoint": 52.36,
+          "bin": "(41.888, 52.36]",
+          "count": 107815
+        },
+        {
+          "breakpoint": 62.831999999999994,
+          "bin": "(52.36, 62.832]",
+          "count": 53548
+        },
+        {
+          "breakpoint": 73.304,
+          "bin": "(62.832, 73.304]",
+          "count": 26604
+        },
+        {
+          "breakpoint": 83.776,
+          "bin": "(73.304, 83.776]",
+          "count": 13100
+        },
+        {
+          "breakpoint": 94.24799999999999,
+          "bin": "(83.776, 94.248]",
+          "count": 6662
+        },
+        {
+          "breakpoint": 104.72,
+          "bin": "(94.248, 104.72]",
+          "count": 3261
+        },
+        {
+          "breakpoint": 115.192,
+          "bin": "(104.72, 115.192]",
+          "count": 1653
+        },
+        {
+          "breakpoint": 125.66399999999999,
+          "bin": "(115.192, 125.664]",
+          "count": 857
+        },
+        {
+          "breakpoint": 136.136,
+          "bin": "(125.664, 136.136]",
+          "count": 412
+        },
+        {
+          "breakpoint": 146.608,
+          "bin": "(136.136, 146.608]",
+          "count": 187
+        },
+        {
+          "breakpoint": 157.07999999999998,
+          "bin": "(146.608, 157.08]",
+          "count": 110
+        },
+        {
+          "breakpoint": 167.552,
+          "bin": "(157.08, 167.552]",
+          "count": 53
+        },
+        {
+          "breakpoint": 178.024,
+          "bin": "(167.552, 178.024]",
+          "count": 28
+        },
+        {
+          "breakpoint": 188.49599999999998,
+          "bin": "(178.024, 188.496]",
+          "count": 13
+        },
+        {
+          "breakpoint": 198.968,
+          "bin": "(188.496, 198.968]",
+          "count": 5
+        },
+        {
+          "breakpoint": 209.44,
+          "bin": "(198.968, 209.44]",
+          "count": 6
+        }
+      ],
+      "top_k": [],
+      "min": 0.0,
+      "max": 209.44,
+      "mean": 5.2507197990000005,
+      "zero_count": 6499496,
+      "std": 11.397640647613025,
+      "skew": 3.307417662216354,
+      "kurtosis": 14.815704047659032,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 5.05
+    },
+    "station_id": {
+      "data_type": "String",
+      "null_count": 0,
+      "n_unique": 60,
+      "histogram": [],
+      "top_k": [
+        {
+          "value": "CS008",
+          "count": 167650
+        },
+        {
+          "value": "CS011",
+          "count": 167503
+        },
+        {
+          "value": "CS002",
+          "count": 167346
+        },
+        {
+          "value": "CS007",
+          "count": 167332
+        },
+        {
+          "value": "CS003",
+          "count": 167249
+        },
+        {
+          "value": "CS016",
+          "count": 167213
+        },
+        {
+          "value": "RS117",
+          "count": 167120
+        },
+        {
+          "value": "CS022",
+          "count": 167069
+        },
+        {
+          "value": "CS021",
+          "count": 167062
+        },
+        {
+          "value": "PL612",
+          "count": 167061
+        }
+      ],
+      "min_length": 5,
+      "max_length": 5,
+      "mean_length": 5.0,
+      "min": "CS001",
+      "max": "UK608",
+      "blank_count": 0
+    },
+    "subband_channel_str": {
+      "data_type": "String",
+      "null_count": 0,
+      "n_unique": 5,
+      "histogram": [],
+      "top_k": [
+        {
+          "value": "208",
+          "count": 2001770
+        },
+        {
+          "value": "312",
+          "count": 2001129
+        },
+        {
+          "value": "416",
+          "count": 2001027
+        },
+        {
+          "value": "511",
+          "count": 1998603
+        },
+        {
+          "value": "104",
+          "count": 1997471
+        }
+      ],
+      "min_length": 3,
+      "max_length": 3,
+      "mean_length": 3.0,
+      "min": "104",
+      "max": "511",
+      "blank_count": 0
+    },
+    "subband_hash": {
+      "data_type": "String",
+      "null_count": 0,
+      "n_unique": 50000,
+      "histogram": [],
+      "top_k": [
+        {
+          "value": "SB_HASH_39424",
+          "count": 261
+        },
+        {
+          "value": "SB_HASH_3345",
+          "count": 258
+        },
+        {
+          "value": "SB_HASH_29330",
+          "count": 257
+        },
+        {
+          "value": "SB_HASH_35531",
+          "count": 257
+        },
+        {
+          "value": "SB_HASH_19687",
+          "count": 256
+        },
+        {
+          "value": "SB_HASH_28201",
+          "count": 256
+        },
+        {
+          "value": "SB_HASH_38025",
+          "count": 256
+        },
+        {
+          "value": "SB_HASH_22410",
+          "count": 254
+        },
+        {
+          "value": "SB_HASH_10957",
+          "count": 253
+        },
+        {
+          "value": "SB_HASH_14905",
+          "count": 253
+        }
+      ],
+      "min_length": 9,
+      "max_length": 13,
+      "mean_length": 12.7780728,
+      "min": "SB_HASH_0",
+      "max": "SB_HASH_9999",
+      "blank_count": 0
+    },
+    "timestamp_utc": {
+      "data_type": "Datetime(time_unit='ms', time_zone=None)",
+      "null_count": 25129,
+      "n_unique": 9974871,
+      "histogram": [],
+      "top_k": [],
+      "min": "2026-03-01 00:00:00.000",
+      "max": "2026-03-12 13:46:39.900"
+    }
+  },
+  "correlations": {
+    "pearson": [
+      {
+        "column_a": "packet_id",
+        "column_b": "sequence_id",
+        "score": 0.9999740024002798
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "board_temp_c",
+        "score": 0.9999527569717955
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "calibration_offset",
+        "score": 0.010978215827738988
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "calibration_offset",
+        "score": 0.010938998101788657
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "calibration_offset",
+        "score": -0.010443659239178562
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "solar_flare_index",
+        "score": 0.009364984476464647
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "calibration_offset",
+        "score": 0.00706022327098167
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "frequency_mhz",
+        "score": -0.00636023334226679
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "frequency_mhz",
+        "score": -0.006293133347961183
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.0060233694492173966
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "packet_drop_rate",
+        "score": -0.005246481729737042
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "ambient_temp_c",
+        "score": -0.004685993610357423
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "board_temp_c",
+        "score": -0.004659719313024385
+      },
+      {
+        "column_a": "calibration_offset",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.004625578164678711
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.0046225463862171745
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.004083597959855659
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.004032823828997926
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "solar_flare_index",
+        "score": 0.004028357110950888
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.004003054364125556
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "signal_power_db",
+        "score": -0.0036447211518325262
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "signal_power_db",
+        "score": -0.003627996970332247
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "ambient_temp_c",
+        "score": 0.0033921282096358884
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "board_temp_c",
+        "score": 0.003347580623335324
+      },
+      {
+        "column_a": "pointing_coords_azimuth_deg",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0033018210811086527
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "solar_flare_index",
+        "score": -0.0027366834514804387
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "solar_flare_index",
+        "score": -0.002701825968003127
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "board_temp_c",
+        "score": 0.002641445445848408
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "ambient_temp_c",
+        "score": 0.002636623118736126
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "board_temp_c",
+        "score": 0.0026351398183223165
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "ambient_temp_c",
+        "score": 0.00263032081857471
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.002610634816944993
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.002320571656872096
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "packet_drop_rate",
+        "score": 0.0022657146144718964
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "packet_drop_rate",
+        "score": 0.0022545766225296983
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "calibration_offset",
+        "score": -0.00207543042785085
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "calibration_offset",
+        "score": 0.0020216556363727737
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "calibration_offset",
+        "score": 0.002013863885466911
+      },
+      {
+        "column_a": "calibration_offset",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.0019989568547606694
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "packet_drop_rate",
+        "score": -0.001920302536805517
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.0017913557196682392
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "packet_drop_rate",
+        "score": 0.0017749686977479183
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.0017437952310438891
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "solar_flare_index",
+        "score": -0.0016283394964138355
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "signal_power_db",
+        "score": 0.0015650893624960887
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.0014737310447283639
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0011360146088768648
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.0009291311188073232
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.0009079035252357984
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.0008683972985892572
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.0007972166137661373
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "solar_flare_index",
+        "score": 0.0007521273274194799
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "solar_flare_index",
+        "score": 0.0007410001996343842
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "ambient_temp_c",
+        "score": -0.0007272452822643877
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "board_temp_c",
+        "score": -0.0006988370511536191
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0004857303053521327
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "calibration_offset",
+        "score": -0.0003225614351837709
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "calibration_offset",
+        "score": -0.0002971662901113699
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.00029422948812347064
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.00028187015443439516
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "frequency_mhz",
+        "score": 0.00024316753795976205
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "packet_drop_rate",
+        "score": 0.00010298741129163607
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "packet_drop_rate",
+        "score": 8.22461935573265e-05
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "solar_flare_index",
+        "score": 6.613416686067056e-05
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "rcu_id",
+        "score": 6.423071651752665e-05
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "rcu_id",
+        "score": 5.804641453357685e-05
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "signal_power_db",
+        "score": -4.365054729523288e-06
+      }
+    ],
+    "spearman": [
+      {
+        "column_a": "packet_id",
+        "column_b": "sequence_id",
+        "score": 0.9999739993226173
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "board_temp_c",
+        "score": 0.9996616558854936
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "calibration_offset",
+        "score": 0.010986220452659028
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "calibration_offset",
+        "score": 0.010953528842264307
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "calibration_offset",
+        "score": -0.007453597430827293
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.006573072025023901
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "packet_drop_rate",
+        "score": -0.006461341531478217
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "calibration_offset",
+        "score": 0.0061456444987169545
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "frequency_mhz",
+        "score": -0.005841654661668563
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "calibration_offset",
+        "score": 0.005783317426571729
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "frequency_mhz",
+        "score": -0.005771264665617734
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "calibration_offset",
+        "score": 0.00572502134202819
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.005458583855556177
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.00544324848704314
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.005333284627475988
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.004454767640965882
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "packet_drop_rate",
+        "score": 0.004412360851898864
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "packet_drop_rate",
+        "score": 0.004388252685530614
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "solar_flare_index",
+        "score": -0.004313346231790543
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "solar_flare_index",
+        "score": -0.004296467894891607
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "packet_drop_rate",
+        "score": 0.003990680780488052
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "packet_drop_rate",
+        "score": 0.003968707952477384
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "ambient_temp_c",
+        "score": 0.0038747280668945394
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "board_temp_c",
+        "score": 0.0038692591952571554
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "ambient_temp_c",
+        "score": 0.0038541460413064528
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "board_temp_c",
+        "score": 0.0038487644839262252
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.003373681427979518
+      },
+      {
+        "column_a": "calibration_offset",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.003361381324539772
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "ambient_temp_c",
+        "score": 0.003308118871687941
+      },
+      {
+        "column_a": "pointing_coords_azimuth_deg",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.003276046588934382
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "board_temp_c",
+        "score": 0.0032007344654157222
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "solar_flare_index",
+        "score": 0.003156749893433558
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "solar_flare_index",
+        "score": 0.0027033186883613997
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "ambient_temp_c",
+        "score": -0.0026459396687452987
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "board_temp_c",
+        "score": -0.002606711558545396
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.0026044767775272436
+      },
+      {
+        "column_a": "calibration_offset",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.002596014275695004
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0025617111018672455
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "calibration_offset",
+        "score": -0.002402751387112277
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "calibration_offset",
+        "score": 0.002367539953822585
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "solar_flare_index",
+        "score": 0.002312113174508476
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "signal_power_db",
+        "score": -0.002214841677164154
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "signal_power_db",
+        "score": -0.002204286520189079
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "calibration_offset",
+        "score": -0.0020692965906479338
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "packet_drop_rate",
+        "score": 0.0019772418116178834
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.0017903975915827394
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.0017420497491509401
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0014567093441145815
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "signal_power_db",
+        "score": 0.0013186684842103197
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0011280217125113957
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.0009235155408641872
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.0009025447957871392
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "signal_power_db",
+        "score": -0.00084975296492934
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.0006625508002230018
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0005285515284961275
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "solar_flare_index",
+        "score": 0.0005101295401006662
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "solar_flare_index",
+        "score": 0.0004961497144396465
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "solar_flare_index",
+        "score": -0.0004433752491498568
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "packet_drop_rate",
+        "score": -0.0004398687201648053
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "board_temp_c",
+        "score": 0.00042463348890496425
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "ambient_temp_c",
+        "score": 0.00037928698022917615
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "frequency_mhz",
+        "score": 0.00037135846490013555
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 9.036284949613911e-05
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "rcu_id",
+        "score": 8.784642851571327e-05
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "rcu_id",
+        "score": 8.227010985992382e-05
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 4.5880379036032556e-05
+      }
+    ],
+    "sampling_method": "systematic_sample (~100000)"
+  },
+  "alerts": [
+    {
+      "column_name": "ambient_temp_c",
+      "type": "SKEWED",
+      "level": "WARNING",
+      "message": "Distribution is highly skewed (24.38). Linear models may require transformation.",
+      "value": 24.376365554293432
+    },
+    {
+      "column_name": "ambient_temp_c",
+      "type": "OUTLIERS_DETECTED",
+      "level": "WARNING",
+      "message": "Extreme outliers present. The value 650.00 significantly exceeds the normal expected bounds.",
+      "value": 650.0
+    },
+    {
+      "column_name": "board_temp_c",
+      "type": "SKEWED",
+      "level": "WARNING",
+      "message": "Distribution is highly skewed (24.37). Linear models may require transformation.",
+      "value": 24.372826285988396
+    },
+    {
+      "column_name": "board_temp_c",
+      "type": "OUTLIERS_DETECTED",
+      "level": "WARNING",
+      "message": "Extreme outliers present. The value 1217.50 significantly exceeds the normal expected bounds.",
+      "value": 1217.5
+    },
+    {
+      "column_name": "calibration_offset",
+      "type": "HIGH_NULLS",
+      "level": "WARNING",
+      "message": "Column is 60.0% empty. Imputation may be difficult.",
+      "value": 0.5996503
+    },
+    {
+      "column_name": "calibration_offset",
+      "type": "OUTLIERS_DETECTED",
+      "level": "WARNING",
+      "message": "Extreme outliers present. The value 4.84 significantly exceeds the normal expected bounds.",
+      "value": 4.841
+    },
+    {
+      "column_name": "decommissioned_sensor",
+      "type": "NEAR_EMPTY_COLUMN",
+      "level": "CRITICAL",
+      "message": "Column is 99.0% empty. It likely contains no useful information.",
+      "value": 0.9900314
+    },
+    {
+      "column_name": "decommissioned_sensor",
+      "type": "CONSTANT",
+      "level": "CRITICAL",
+      "message": "Column has only 1 unique value. It adds no variance to the dataset.",
+      "value": 1.0
+    },
+    {
+      "column_name": "firmware_version",
+      "type": "CONSTANT",
+      "level": "CRITICAL",
+      "message": "Column has only 1 unique value. It adds no variance to the dataset.",
+      "value": 1.0
+    },
+    {
+      "column_name": "operator_notes",
+      "type": "INCONSISTENT_STRING_LENGTH",
+      "level": "WARNING",
+      "message": "Max string length (812) is highly disproportionate to the mean length (9.3). Possible data corruption.",
+      "value": 812
+    },
+    {
+      "column_name": "operator_notes",
+      "type": "BLANK_STRINGS",
+      "level": "WARNING",
+      "message": "Column contains 15.0% blank/whitespace strings. These may bypass standard completeness checks.",
+      "value": 0.1499806
+    },
+    {
+      "column_name": "packet_drop_rate",
+      "type": "SKEWED",
+      "level": "WARNING",
+      "message": "Distribution is highly skewed (31.39). Linear models may require transformation.",
+      "value": 31.38904118435163
+    },
+    {
+      "column_name": "packet_drop_rate",
+      "type": "OUTLIERS_DETECTED",
+      "level": "WARNING",
+      "message": "Extreme outliers present. The value 1.00 significantly exceeds the normal expected bounds.",
+      "value": 1.0
+    },
+    {
+      "column_name": "packet_id",
+      "type": "ALL_DISTINCT",
+      "level": "INFO",
+      "message": "Column is 100% distinct. Likely a Primary Key or ID.",
+      "value": 10000000
+    },
+    {
+      "column_name": "schema_version_num",
+      "type": "CONSTANT",
+      "level": "CRITICAL",
+      "message": "Column has only 1 unique value. It adds no variance to the dataset.",
+      "value": 1.0
+    },
+    {
+      "column_name": "sequence_id",
+      "type": "DUPLICATE_KEYS",
+      "level": "WARNING",
+      "message": "Column is almost unique, but contains 4918 duplicate values.",
+      "value": 9995082
+    },
+    {
+      "column_name": "signal_power_db",
+      "type": "OUTLIERS_DETECTED",
+      "level": "WARNING",
+      "message": "Extreme outliers present. The value -8.86 significantly exceeds the normal expected bounds.",
+      "value": -8.86
+    },
+    {
+      "column_name": "solar_flare_index",
+      "type": "SKEWED",
+      "level": "WARNING",
+      "message": "Distribution is highly skewed (3.31). Linear models may require transformation.",
+      "value": 3.307417662216354
+    },
+    {
+      "column_name": "solar_flare_index",
+      "type": "ZERO_INFLATED",
+      "level": "WARNING",
+      "message": "Column is 65.0% zeros. Check if '0' represents missing data.",
+      "value": 0.6499496
+    },
+    {
+      "column_name": "solar_flare_index",
+      "type": "OUTLIERS_DETECTED",
+      "level": "WARNING",
+      "message": "Extreme outliers present. The value 209.44 significantly exceeds the normal expected bounds.",
+      "value": 209.44
+    },
+    {
+      "column_name": "station_id",
+      "type": "EXCESSIVE_DUPLICATES",
+      "level": "WARNING",
+      "message": "Column contains 100.0% duplicate rows, exceeding the configured limit of 80.0%.",
+      "value": 0.999994
+    },
+    {
+      "column_name": "subband_channel_str",
+      "type": "POSSIBLE_NUMERIC",
+      "level": "INFO",
+      "message": "Top values look like numbers. Consider casting to Integer/Float.",
+      "value": null
+    },
+    {
+      "column_name": "subband_hash",
+      "type": "HIGH_CARDINALITY",
+      "level": "WARNING",
+      "message": "High cardinality (50000 unique values). Avoid One-Hot Encoding.",
+      "value": 50000
+    },
+    {
+      "column_name": "timestamp_utc",
+      "type": "HIGH_CARDINALITY",
+      "level": "WARNING",
+      "message": "High cardinality (9974871 unique values). Avoid One-Hot Encoding.",
+      "value": 9974871
+    },
+    {
+      "column_name": "packet_id <-> sequence_id",
+      "type": "HIGH_CORRELATION",
+      "level": "WARNING",
+      "message": "Columns are highly correlated (1.0000) via pearson. They contain redundant information.",
+      "value": 0.9999740024002798
+    },
+    {
+      "column_name": "ambient_temp_c <-> board_temp_c",
+      "type": "HIGH_CORRELATION",
+      "level": "WARNING",
+      "message": "Columns are highly correlated (1.0000) via pearson. They contain redundant information.",
+      "value": 0.9999527569717955
+    },
+    {
+      "column_name": "packet_id <-> sequence_id",
+      "type": "HIGH_CORRELATION",
+      "level": "WARNING",
+      "message": "Columns are highly correlated (1.0000) via spearman. They contain redundant information.",
+      "value": 0.9999739993226173
+    },
+    {
+      "column_name": "ambient_temp_c <-> board_temp_c",
+      "type": "HIGH_CORRELATION",
+      "level": "WARNING",
+      "message": "Columns are highly correlated (0.9997) via spearman. They contain redundant information.",
+      "value": 0.9996616558854936
+    }
+  ],
+  "_meta": {
+    "created_at": "2026-11-07T17:46:17.214061+00:00",
+    "execution_start_epoch": 1794073569.7257988,
+    "execution_end_epoch": 1794073577.2140565,
+    "engine_time_seconds": 7.4883,
+    "profiler_version": "0.5.1",
+    "is_low_memory_run": false,
+    "config_source": "lofar_netra_config.yaml",
+    "profiler_warnings": [],
+    "pipeline_context": null
+  }
+}

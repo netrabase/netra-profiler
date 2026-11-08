@@ -16,8 +16,6 @@ The profiler ships with a configurable diagnostic engine to detect data quality 
 
 ## Performance Benchmarks
 
-> *Note: All the scripts used to fetch the dataset, run the benchmarks and generate the results can be found in the ['benchmarks/'](https://github.com/netrabase/netra-profiler/tree/main/benchmarks) directory.*
-
 ### Dataset
 
 To ensure the benchmarks reflect the real-world friction of a typical data workload, we use the [New York City TLC Yellow Taxi Trip Records](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) dataset. It contains high-cardinality columns, high-nulls or missing data, and shifting schemas.

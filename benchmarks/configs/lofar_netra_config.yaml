@@ -1,0 +1,31 @@
+# ---------------------------------------------------------
+# PIPELINE: CI/CD Execution State
+# ---------------------------------------------------------
+pipeline:
+  fail_on_critical: true
+  fail_on_warnings: false
+
+# ---------------------------------------------------------
+# DIAGNOSTICS: Dataset Quality Rules (LOFAR 2.0 Suite)
+# ---------------------------------------------------------
+diagnostics:
+  global_thresholds:
+    null_critical_threshold: 0.95
+    null_warning_threshold: 0.50
+    constant_check_enabled: true
+    zero_inflated_threshold: 0.10
+    blank_warning_threshold: 0.10
+    skew_threshold: 2.0
+    outlier_iqr_multiplier: 3.0
+    high_cardinality_threshold: 10000
+    string_length_anomaly_multiplier: 50.0
+    id_uniqueness_threshold: 0.99
+    min_rows_for_pk_check: 100
+    possible_numeric_sample_size: 5
+    high_correlation_threshold: 0.95
+    max_duplicate_percent: false
+
+  column_overrides:
+    # Intentionally enforce duplicate limit on station_id to test column override resolution
+    station_id:
+      max_duplicate_percent: 0.80
