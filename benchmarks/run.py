@@ -334,13 +334,13 @@ def main() -> None:
         )
 
     HISTORY_DIR.mkdir(parents=True, exist_ok=True)
-    timestamp_utc = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S")
+    timestamp_utc = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
     git_hash = get_git_commit()
 
     first_target_results = target_payloads[targets[0]]["raw_iterations"]
     run_payload = {
         "metadata": {
-            "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "timestamp_utc": datetime.datetime.now(datetime.UTC).isoformat(),
             "git_commit": git_hash,
             "suite": args.suite,
             "scale": args.scale,

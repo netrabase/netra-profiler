@@ -2,12 +2,11 @@
 Unit tests for the ODCS contract generation functionality.
 """
 
-from typing import cast
+from typing import Any, cast
 from unittest.mock import MagicMock
 
 import pytest
 import yaml
-from typing_extensions import Any
 
 from netra_profiler.config import DiagnosticConfig
 from netra_profiler.odcs import ODCSBuilder

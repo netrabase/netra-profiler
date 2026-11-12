@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "timestamp_utc": "2026-11-07T17:54:53.287985+00:00",
-    "git_commit": "0086cd6",
+    "timestamp_utc": "2026-11-12T20:17:41.426640+00:00",
+    "git_commit": "96e45ee",
     "suite": "lofar",
     "scale": "10M",
     "targets": [
@@ -14,10 +14,10 @@
     "cpu_model": "Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz",
     "cpu_cores": "6 Physical / 12 Logical",
     "ram_total_gb": 31.16,
-    "python_version": "3.12.3",
+    "python_version": "3.11.14",
     "versions": {
-      "netra_profiler": "0.5.1",
-      "polars": "1.37.1",
+      "netra_profiler": "0.6.0",
+      "polars": "2.1.0",
       "numpy": "2.2.6",
       "pyarrow": "23.0.0",
       "pyyaml": "6.0.3"
@@ -34,51 +34,51 @@
     "netra": {
       "statistics": {
         "wall_time_seconds": {
-          "median": 8.1833,
-          "mean": 8.1833,
+          "median": 13.2314,
+          "mean": 13.2314,
           "std": 0.0,
-          "min": 8.1833,
-          "max": 8.1833
+          "min": 13.2314,
+          "max": 13.2314
         },
         "engine_time_seconds": {
-          "median": 8.1814,
-          "mean": 8.1814,
+          "median": 13.2277,
+          "mean": 13.2277,
           "std": 0.0,
-          "min": 8.1814,
-          "max": 8.1814
+          "min": 13.2277,
+          "max": 13.2277
         },
         "peak_rss_mb": {
-          "median": 4161.79,
-          "mean": 4161.79,
+          "median": 2549.37,
+          "mean": 2549.37,
           "std": 0.0,
-          "min": 4161.79,
-          "max": 4161.79
+          "min": 2549.37,
+          "max": 2549.37
         },
         "throughput_mb_s": {
-          "median": 42.87,
-          "mean": 42.87,
+          "median": 26.51,
+          "mean": 26.51,
           "std": 0.0,
-          "min": 42.87,
-          "max": 42.87
+          "min": 26.51,
+          "max": 26.51
         },
         "row_velocity_m_rows_s": {
-          "median": 1.22,
-          "mean": 1.22,
+          "median": 0.76,
+          "mean": 0.76,
           "std": 0.0,
-          "min": 1.22,
-          "max": 1.22
+          "min": 0.76,
+          "max": 0.76
         }
       },
       "raw_iterations": [
         {
           "target_name": "netra",
-          "wall_time_seconds": 8.1833,
-          "engine_time_seconds": 8.1814,
-          "peak_rss_mb": 4161.79,
+          "wall_time_seconds": 13.2314,
+          "engine_time_seconds": 13.2277,
+          "peak_rss_mb": 2549.37,
           "rows_evaluated": 10000000,
           "columns_profiled": 24,
-          "throughput_mb_s": 42.87,
-          "row_velocity_m_rows_s": 1.22,
+          "throughput_mb_s": 26.51,
+          "row_velocity_m_rows_s": 0.76,
           "passed": false,
           "anomalies_detected": 28,
           "critical_alerts": 4,

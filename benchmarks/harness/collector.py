@@ -102,7 +102,7 @@ def _execute_worker_mode(
 ) -> None:
     """Executes the target adapter, extracts OS telemetry, and dumps JSON."""
 
-    from benchmarks.targets.netra import NetraProfilerBenchmarkTarget # noqa: PLC0415
+    from benchmarks.targets.netra import NetraProfilerBenchmarkTarget  # noqa: PLC0415
 
     if target_name == "netra":
         target_adapter = NetraProfilerBenchmarkTarget(low_memory=False)

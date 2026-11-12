@@ -32,8 +32,8 @@ jobs:
           cache-dependency-glob: "uv.lock"
 
       # C. Set up Python
-      - name: Set up Python 3.10
-        run: uv python install 3.10
+      - name: Set up Python 3.11
+        run: uv python install 3.11
 
       # D. Install Dependencies
       - name: Install dependencies

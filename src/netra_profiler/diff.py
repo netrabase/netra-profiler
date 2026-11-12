@@ -58,7 +58,7 @@ class DiffEngine:
             A strictly typed `DiffReport` containing all detected anomalies and metadata.
         """
 
-        start_time = datetime.datetime.now(datetime.timezone.utc).timestamp()
+        start_time = datetime.datetime.now(datetime.UTC).timestamp()
 
         # Layer 1: Structural Integrity
         self._check_schema_changes()
@@ -67,7 +67,7 @@ class DiffEngine:
         self._check_dataset_volume()
         self._check_column_metrics()
 
-        end_time = datetime.datetime.now(datetime.timezone.utc).timestamp()
+        end_time = datetime.datetime.now(datetime.UTC).timestamp()
 
         # Construct the final DiffReport
         report: DiffReport = {
@@ -75,7 +75,7 @@ class DiffEngine:
             "target_dataset": self.target.get("dataset", {}),
             "alerts": self.alerts,
             "_meta": {
-                "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "created_at": datetime.datetime.now(datetime.UTC).isoformat(),
                 "execution_start_epoch": start_time,
                 "execution_end_epoch": end_time,
                 "engine_time_seconds": round(end_time - start_time, 4),

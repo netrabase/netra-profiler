@@ -487,7 +487,7 @@ class Profiler:
             ),
             "alerts": [],  # Will be populated by Pass 5
             "_meta": {
-                "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "created_at": datetime.datetime.now(datetime.UTC).isoformat(),
                 "execution_start_epoch": profiling_start_time,
                 "execution_end_epoch": profiling_end_time,
                 "engine_time_seconds": round(profiling_end_time - profiling_start_time, 4),
