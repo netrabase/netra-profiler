@@ -1,9 +1,10 @@
 import copy
+from typing import cast
 
 import pytest
 
 from netra_profiler.diff import DiffEngine
-from netra_profiler.types import NetraProfile
+from netra_profiler.types import ColumnMetrics, NetraProfile
 
 DELTA_PERCENTAGE_THRESHOLD = 0.50
 ALERTS_COUNT = 3
@@ -12,18 +13,21 @@ ALERTS_COUNT = 3
 @pytest.fixture
 def baseline_profile() -> NetraProfile:
     """A highly controlled baseline profile for deterministic testing."""
-    return {
-        "dataset": {"name": "test_data", "format": "CSV", "row_count": 1000},
-        "columns": {
-            "id": {"data_type": "Int64", "null_count": 0, "n_unique": 1000},
-            "age": {"data_type": "Int64", "null_count": 50, "mean": 30.0, "max": 100.0},
-            "name": {"data_type": "Utf8", "null_count": 0, "mean_length": 5.0},
-            "balance": {"data_type": "Float64", "mean": 0.0},  # Used for the Infinity zero-test
+    return cast(
+        NetraProfile,
+        {
+            "dataset": {"name": "test_data", "format": "CSV", "row_count": 1000},
+            "columns": {
+                "id": {"data_type": "Int64", "null_count": 0, "n_unique": 1000},
+                "age": {"data_type": "Int64", "null_count": 50, "mean": 30.0, "max": 100.0},
+                "name": {"data_type": "Utf8", "null_count": 0, "mean_length": 5.0},
+                "balance": {"data_type": "Float64", "mean": 0.0},  # Used for the Infinity zero-test
+            },
+            "correlations": {"pearson": [], "spearman": [], "sampling_method": None},
+            "alerts": [],
+            "_meta": {},
         },
-        "correlations": {"pearson": [], "spearman": [], "sampling_method": None},
-        "alerts": [],
-        "_meta": {},  # type: ignore
-    }
+    )
 
 
 def test_diff_identical_profiles(baseline_profile: NetraProfile) -> None:
@@ -43,7 +47,9 @@ def test_schema_changes(baseline_profile: NetraProfile) -> None:
     # 1. Drop 'name'
     del target_profile["columns"]["name"]
     # 2. Add 'income'
-    target_profile["columns"]["income"] = {"data_type": "Float64", "null_count": 0}
+    target_profile["columns"]["income"] = cast(
+        ColumnMetrics, {"data_type": "Float64", "null_count": 0}
+    )
     # 3. Mutate 'id' type
     target_profile["columns"]["id"]["data_type"] = "Utf8"
 

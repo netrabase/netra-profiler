@@ -291,7 +291,8 @@ class ODCSBuilder:
         top_k = metrics.get("top_k", [])
         blank_count = metrics.get("blank_count") or 0
 
-        # Helper to verify a string is a clean identifier/category (non-blank, single-line, bounded length)
+        # Helper to verify a string is a clean identifier/category
+        # (non-blank, single-line, bounded length)
         def is_clean_category(val: Any) -> bool:
             if val is None:
                 return False

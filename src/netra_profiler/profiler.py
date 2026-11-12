@@ -395,7 +395,9 @@ class Profiler:
                                 )
                                 if score is not None
                             ]
-                            pairs.sort(key=lambda x: abs(x["score"]), reverse=True)
+                            pairs.sort(
+                                key=lambda x: abs(float(cast(float, x["score"]))), reverse=True
+                            )
                             profile_data["correlations"][method] = pairs
                         except Exception as e:
                             profiler_warnings.append(
@@ -439,7 +441,7 @@ class Profiler:
                     pairs.append({"column_a": column_a, "column_b": column_b, "score": score})
 
         # Sort by correlation strength (absolute value) descending
-        pairs.sort(key=lambda x: abs(x["score"]), reverse=True)
+        pairs.sort(key=lambda x: abs(float(cast(float, x["score"]))), reverse=True)
         return pairs
 
     def _build_profile_object(

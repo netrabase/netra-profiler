@@ -62,21 +62,6 @@ class DatasetMeta(TypedDict):
     row_count: int
 
 
-class ExecutionMeta(TypedDict):
-    """Telemetry and metadata regarding the profiler's execution environment and performance."""
-
-    created_at: str
-    execution_start_epoch: float
-    execution_end_epoch: float
-    engine_time_seconds: float
-    profiler_version: str
-    is_low_memory_run: bool
-    config_source: str
-    profiler_warnings: list[str]
-    config_warnings: list[str]
-    pipeline_context: PipelineContext | None
-
-
 class BaseColumnMetrics(TypedDict):
     """Universal metrics guaranteed to exist on every profiled column."""
 
