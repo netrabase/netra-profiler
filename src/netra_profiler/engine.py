@@ -1,3 +1,11 @@
+"""
+Polars lazy query-plan builders for Netra Profiler.
+
+This module constructs stateless `pl.LazyFrame` execution graphs for schema
+normalization, scalar aggregations, histograms, and categorical Top-K frequencies.
+All plans are collected by the `Profiler` object in `profiler.py`.
+"""
+
 from typing import Any
 
 import polars as pl
@@ -5,40 +13,34 @@ import polars as pl
 
 def build_scalar_plan(lf: pl.LazyFrame, low_memory: bool = False) -> pl.LazyFrame:
     """
-    PASS 1: Scalar Statistics Plan Generation.
+    Constructs a single-row `pl.LazyFrame` plan computing scalar metrics across all columns.
 
-    Constructs a unified lazy execution graph to compute all single-value statistical
-    metrics (e.g., Min, Max, Mean, Nulls, Quantiles) concurrently across all columns.
+    All column aggregations are bundled into a single `lf.select()` so the Polars query optimizer
+    can apply Common Subexpression Elimination (CSE) and evaluate all metrics in one pass.
 
-    By bundling all column-level aggregations into a single `pl.select()` context,
-    this architecture allows the Polars query optimizer to evaluate the entire dataset
-    in a single, highly-threaded streaming pass, minimizing disk I/O and memory overhead.
+    Design Notes:
+        - Inline Subexpressions vs. `with_columns()`: Helper expressions such as float
+            `fill_nan(None)` and string `str.len_chars()` are kept inline inside `select()`
+            rather than pre-projected via `with_columns()`. When `low_memory=False`, order
+            statistics (`quantile`, `median`) and higher moments (`skew`, `kurtosis`) require
+            full-column materialization. Keeping subexpressions inline allows Polars' CSE to
+            evaluate and free temporary arrays.
+        - Non-Null Cardinality: Polars' `n_unique()` and `approx_n_unique()` count `null` as
+            a distinct value. Subtracting `(null_count() > 0).cast(pl.UInt32)` recovers the
+            exact non-null cardinality using O(1) validity bitmap metadata.
+        - Blank String Detection: Uses `str.len_bytes() == 0` instead of `str.len_chars() == 0`
+            after `str.strip_chars()`. An empty string always has zero bytes, and checking byte
+            length is a O(1) metadata lookup.
 
     Args:
-        lf: The input Polars LazyFrame containing the dataset.
-        low_memory: A boolean flag that toggles bounded-memory execution to safely
-            process massive datasets (e.g., 500M+ rows).
-            - If False (Default): Computes exact `n_unique()`, exact quantiles, and exact
-                moments (skew/kurtosis). This generates global hash-sets and sorting buffers,
-                which will trigger OOM crashes on highly cardinal or large-scale data.
-            - If True: Swaps to the HyperLogLog algorithm (`approx_n_unique()`) for
-                cardinality, and entirely excludes global sorting/multi-pass operations
-                (`median`, `quantile`, `skew`, `kurtosis`). This guarantees a strict,
-                lower bounded RAM footprint.
+        lf: Input Polars LazyFrame with flattened primitive columns.
+        low_memory: If True, uses approximate unique counts (`approx_n_unique()`) and skips
+            quantiles, skewness, and kurtosis (`p25`, `p50`, `p75`, `skew`, `kurtosis`) to
+            keep memory usage low.
 
     Returns:
-        A `pl.LazyFrame` that, when collected, yields a 1-row wide DataFrame containing
-        all computed scalar statistics. Column names are strictly aliased to prevent
-        collisions (e.g., `age_mean`, `age_null_count`).
-
-    Notes:
-        - Floating-Point NaN Coercion: Polars treats `NaN` and `Null` differently. To ensure
-            accurate missing-value counts, `NaN` values in float columns are explicitly
-            coerced to `Null` prior to aggregation.
-        - Eager Fallback Prevention: When `low_memory` is False, the exact `.median()`,
-            `.quantile()`, `.skew()`, and `.kurtosis()` aggregations inherently require multi-pass
-            evaluation or global data sorting. This forces the Polars streaming engine to silently
-            fall back to eager memory materialization for those specific nodes.
+        A `pl.LazyFrame` yielding a 1-row DataFrame with aliased metric columns
+        (e.g., `table_row_count`, `{column_name}_null_count`, `{column_name}_mean`).
     """
 
     expressions: list[pl.Expr] = []
@@ -54,7 +56,8 @@ def build_scalar_plan(lf: pl.LazyFrame, low_memory: bool = False) -> pl.LazyFram
         # Add column data type to the profile
         expressions.append(pl.lit(str(data_type)).alias(f"{column_name}_data_type"))
 
-        # We handle NaN for Float columns before doing Null counts
+        # Convert IEEE 754 NaN to Null on float columns so missingness and aggregations
+        # treat NaN and Null identically.
         column = pl.col(column_name).fill_nan(None) if data_type.is_float() else pl.col(column_name)
 
         # Polars' `.n_unique()` and `.approx_n_unique()` treat `null` as a
@@ -115,22 +118,27 @@ def build_scalar_plan(lf: pl.LazyFrame, low_memory: bool = False) -> pl.LazyFram
 
         # String/Categorical Stats
         elif data_type in (pl.String, pl.Categorical, pl.Enum):
-            # We cast column to String for .str operations
-            column = pl.col(column_name).cast(pl.String)
+            # Avoid redundant cast if already pl.String
+            string_column = (
+                pl.col(column_name)
+                if data_type == pl.String
+                else pl.col(column_name).cast(pl.String)
+            )
+            char_lengths = string_column.str.len_chars()
 
             expressions.extend(
                 [
                     # 1. Lexicographical stats (First/Last alphabetical value)
-                    column.min().alias(f"{column_name}_min"),
-                    column.max().alias(f"{column_name}_max"),
-                    # 2. Length stats
-                    column.str.len_chars().mean().alias(f"{column_name}_mean_length"),
-                    column.str.len_chars().min().alias(f"{column_name}_min_length"),
-                    column.str.len_chars().max().alias(f"{column_name}_max_length"),
+                    string_column.min().alias(f"{column_name}_min"),
+                    string_column.max().alias(f"{column_name}_max"),
+                    # 2. Length stats (Polars CSE deduplicates char_lengths within select)
+                    char_lengths.mean().alias(f"{column_name}_mean_length"),
+                    char_lengths.min().alias(f"{column_name}_min_length"),
+                    char_lengths.max().alias(f"{column_name}_max_length"),
                     # 3. Blank String Check
-                    # Strips whitespace; if length is 0, it's blank.
+                    # Strips whitespace; if byte length is 0 (O(1) check), it's blank.
                     # Nulls naturally propagate as Null and are ignored by .sum()
-                    (column.str.strip_chars().str.len_chars() == 0)
+                    (string_column.str.strip_chars().str.len_bytes() == 0)
                     .sum()
                     .alias(f"{column_name}_blank_count"),
                 ]
@@ -144,34 +152,33 @@ def build_histogram_plans(
     lf: pl.LazyFrame, numeric_columns: list[str], profile_data: dict[str, Any], bins: int
 ) -> dict[str, pl.LazyFrame]:
     """
-    PASS 2: Histogram Map-Reduce Plan Generation.
+    Constructs streaming histogram plans for numeric columns.
 
-    Constructs a dictionary of lazy execution plans to compute frequency distributions
-    for numeric columns using a streaming-compatible Map-Reduce architecture.
+    Because binning requires each column's `[min, max]` bounds, these plans are
+    constructed after the scalar scan completes.
 
-    This approach maps continuous values to discrete bin indices and aggregates them using
-    `group_by().len()`. This guarantees bounded memory usage and prevents Out-Of-Memory (OOM)
-    crashes on massive datasets by keeping the evaluation entirely within the lazy execution graph.
+    Design Notes:
+        - Deferred Null Filtering: Rather than calling `.filter()` on the raw column
+            (which allocates more memory per numeric column), float `NaN`s are converted
+            to `Null` using `fill_nan(None)`. Nulls are grouped into a single `null` group
+            during `group_by`, which is dropped afterwards using `.drop_nulls("bin_index")`.
+        - Boundary Clamping: `.clip(0, bins - 1)` ensures the maximum value (`val == max`)
+            maps to the final bin `bins - 1` rather than spilling into index `bins`.
 
     Args:
-        lf: The input Polars LazyFrame containing the dataset.
-        numeric_columns: A list of column names identified as numeric (integers/floats).
-        profile_data: The dictionary containing Pass 1 scalar statistics. Used to
-            retrieve the pre-calculated `min` and `max` boundaries for each column.
-        bins: The target number of intervals to divide the data range into.
+        lf: Input Polars LazyFrame.
+        numeric_columns: Names of numeric columns in `lf`.
+        profile_data: Flat metric dictionary containing `{col}_min` and `{col}_max` bounds.
+        bins: Target number of equi-width intervals.
 
     Returns:
-        A dictionary mapping column names to their respective `pl.LazyFrame` execution
-        plans. Each plan yields a small 2-column DataFrame (`bin_index`, `len`) when collected.
-
-    Notes:
-        - Right-Edge Clamping: Values exactly equal to the `max_value` are clamped to the
-            final bin (`bins - 1`) to prevent floating-point division from creating an
-            accidental out-of-bounds index.
-        - Null/NaN Safety: Missing and undefined values are explicitly filtered out
-            prior to mathematical mapping to maintain structural integrity.
+        A dictionary mapping each valid numeric column name to a `pl.LazyFrame` yielding
+        (`bin_index`, `len`). Constant (`min == max`) and all-null columns are omitted
+        and handled by the orchestrator (`Profile` object).
     """
+
     plans: dict[str, pl.LazyFrame] = {}
+    schema = lf.collect_schema()
 
     for column in numeric_columns:
         min_value = profile_data.get(f"{column}_min")
@@ -179,26 +186,26 @@ def build_histogram_plans(
 
         if min_value is not None and max_value is not None and min_value < max_value:
             bin_size = (max_value - min_value) / bins
+            data_type = schema.get(column)
 
-            # 1. Cast to Float64 so we can safely evaluate the math and check for NaNs
-            expression = pl.col(column).cast(pl.Float64)
+            # 1. float NaNs to Null so they propagate as Null without pre-filtering
+            base_col = (
+                pl.col(column).fill_nan(None)
+                if data_type is not None and data_type.is_float()
+                else pl.col(column)
+            )
 
-            # 2. Map values to a bin index: floor((val - min) / bin_size)
-            bin_index = ((expression - min_value) / bin_size).floor().cast(pl.Int64)
-
-            # 3. We clamp the absolute max value so it doesn't spill into an out-of-bounds bin
+            # 2. Map values to bin index [0, bins - 1]
             bin_index = (
-                pl.when(bin_index >= bins).then(bins - 1).otherwise(bin_index).alias("bin_index")
+                ((base_col.cast(pl.Float64) - min_value) / bin_size)
+                .floor()
+                .cast(pl.Int64)
+                .clip(0, bins - 1)
+                .alias("bin_index")
             )
 
-            # 4. The Streaming Plan: Filter -> Math -> Group
-            plan = (
-                lf.select(expression)
-                .filter(pl.col(column).is_not_null() & pl.col(column).is_not_nan())
-                .select(bin_index)
-                .group_by("bin_index")
-                .len()
-            )
+            # 3. Group without pre-filtering the raw column; drop the single Null group after
+            plan = lf.select(bin_index).group_by("bin_index").len().drop_nulls("bin_index")
             plans[column] = plan
 
     return plans
@@ -206,32 +213,21 @@ def build_histogram_plans(
 
 def build_top_k_plan(lf: pl.LazyFrame, k: int = 10) -> list[pl.LazyFrame]:
     """
-    PASS 3: Top-K Frequent Items Plan Generation.
+    Constructs streaming Top-K frequency plans for all string, categorical, and enum columns.
 
-    Constructs a list of lazy execution plans to identify the `k` most frequently
-    occurring values for all text-based columns (String, Categorical, Enum).
-
-    This plan leverages a streaming Map-Reduce pattern (`group_by().len()`) followed
-    by an optimized Top-K reduction (`sort().head()`). This allows the engine to compute
-    exact string frequencies without pulling massive, high-cardinality text arrays into
-    Python's memory, ensuring large datasets remain safely bounded.
+    Each plan groups non-null string values via `group_by("value").len()` and sorts by
+    `["len", "value"]` (`descending=[True, False]`) so frequency ties resolve
+    deterministically in alphabetical order.
 
     Args:
-        lf: The input Polars LazyFrame containing the dataset.
-        k: The maximum number of frequent items to return per column (default: 10).
+        lf: Input Polars LazyFrame.
+        k: Maximum number of frequent values to retain per column.
 
     Returns:
-        A list of `pl.LazyFrame` execution plans. When collected, each plan yields
-        a DataFrame containing exactly three columns: `column_name`, the string `value`,
-        and its occurrence `count`.
-
-    Notes:
-        - Type Normalization: Categoricals and Enums are explicitly cast to standard
-            Strings early in the execution graph to guarantee safe and consistent JSON
-            serialization in the final Data Contract.
-        - Null Exclusion: Missing values (`null`) are explicitly dropped prior to
-            aggregation.
+        A list of `pl.LazyFrame` plans, each yielding a DataFrame with columns
+        (`column_name`, `value`, `count`).
     """
+
     plans: list[pl.LazyFrame] = []
     schema = lf.collect_schema()
 
@@ -258,29 +254,16 @@ def build_top_k_plan(lf: pl.LazyFrame, k: int = 10) -> list[pl.LazyFrame]:
 
 def build_correlation_plan(lf: pl.LazyFrame) -> pl.LazyFrame:
     """
-    PASS 4: Correlation Data Fetcher Plan Generation.
-
-    Constructs a lazy execution plan that isolates and selects strictly numeric
-    columns from the dataset. This acts as the foundational type-safety filter
-    before Pearson and Spearman correlation matrices are computed.
-
-    Unlike the scalar and histogram passes, the actual mathematical computation
-    of the correlation matrix (and rank calculations for Spearman) is deliberately
-    deferred to the orchestrator (`profiler.py`). Computing a global correlation
-    matrix requires eager materialization and cannot currently be fully streamed
-    natively in Polars. By returning just the isolated numeric blueprint here,
-    the orchestrator can safely apply systematic sampling before pulling the data
-    into physical memory, preventing OOM crashes on massive datasets.
+    Constructs a `pl.LazyFrame` projection isolating numeric columns for correlation analysis.
 
     Args:
-        lf: The input Polars LazyFrame containing the full dataset.
+        lf: Input Polars LazyFrame.
 
     Returns:
-        A `pl.LazyFrame` execution plan that selects only columns with numeric
-        data types (Integers, Floats). If the dataset contains no numeric
-        columns, it safely returns an empty `pl.LazyFrame({})` to gracefully
-        bypass the correlation pass without triggering downstream panics.
+        A `pl.LazyFrame` selecting only numeric columns, or an empty `pl.LazyFrame({})`
+        if no numeric columns exist in the schema.
     """
+
     schema = lf.collect_schema()
     numeric_columns = []
 
@@ -297,36 +280,24 @@ def build_correlation_plan(lf: pl.LazyFrame) -> pl.LazyFrame:
 
 def preprocess_complex_types(lf: pl.LazyFrame) -> pl.LazyFrame:
     """
-    PRE-PROCESSING: Complex Type Normalization.
-
-    Transforms nested and multi-dimensional data types (Structs, Lists, Arrays) into
-    flat, 1D scalar columns prior to execution.
-
-    The core statistical and correlation steps (Passes 1-4) operate
-    exclusively on primitive scalar types (Integers, Floats, Strings). Nested data cannot
-    be passed directly into mathematical aggregations would cause the lazy execution graph.
-    This function intercepts the data source and projects it into a flat schema, ensuring
-    engine stability regardless of the source file's complexity.
-
-    Args:
-        lf: The raw input Polars LazyFrame containing potentially nested data.
-
-    Returns:
-        A transformed `pl.LazyFrame` where all columns are guaranteed to be 1D primitives.
+    Normalizes nested Polars types (`Struct`, `List`, `Array`) into flat 1D scalar columns.
 
     Transformation Rules:
-        - Structs: Flattened into individual columns. A Struct named 'user' with fields
-          'name' and 'age' is unnested into two columns: 'user_name' and 'user_age'.
-          This strict namespace aliasing prevents downstream naming collisions.
-        - Lists & Arrays: Replaced by their integer lengths. A list column named
-          'tags' becomes an integer column 'tags_length', allowing the engine to
-          profile the statistical distribution of the array sizes rather than failing
-          on the nested arrays.
-        - Scalars: All primitive types are passed through the graph unmodified.
+        - `pl.Struct`: Unnested into individual fields aliased as `{struct_column}_{field}`
+          to prevent column name collisions.
+        - `pl.List` / `pl.Array`: Projected to their integer element counts (`{column}_length`)
+          so downstream passes profile array length distributions.
+        - Primitive Scalars: Passed through unchanged.
+
+    Args:
+        lf: Input Polars LazyFrame potentially containing nested columns.
+
+    Returns:
+        A `pl.LazyFrame` containing strictly 1D scalar columns.
     """
+
     schema = lf.collect_schema()
 
-    # We will build a list of expressions to select/transform
     expressions = []
 
     for column_name, data_type in schema.items():

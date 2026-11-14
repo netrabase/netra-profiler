@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "timestamp_utc": "2026-11-12T20:17:41.426640+00:00",
-    "git_commit": "96e45ee",
+    "timestamp_utc": "2026-11-14T19:24:26.575959+00:00",
+    "git_commit": "99bc755",
     "suite": "lofar",
     "scale": "10M",
     "targets": [
@@ -10,7 +10,7 @@
     "iterations": 1
   },
   "system": {
-    "os": "Linux 7.0.0-42-generic (#42~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Oct 19 14:43:01 UTC 2)",
+    "os": "Linux 7.0.0-43-generic (#43~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Sat Oct 31 06:52:47 UTC 2)",
     "cpu_model": "Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz",
     "cpu_cores": "6 Physical / 12 Logical",
     "ram_total_gb": 31.16,
@@ -34,51 +34,51 @@
     "netra": {
       "statistics": {
         "wall_time_seconds": {
-          "median": 13.2314,
-          "mean": 13.2314,
+          "median": 12.8776,
+          "mean": 12.8776,
           "std": 0.0,
-          "min": 13.2314,
-          "max": 13.2314
+          "min": 12.8776,
+          "max": 12.8776
         },
         "engine_time_seconds": {
-          "median": 13.2277,
-          "mean": 13.2277,
+          "median": 12.8741,
+          "mean": 12.8741,
           "std": 0.0,
-          "min": 13.2277,
-          "max": 13.2277
+          "min": 12.8741,
+          "max": 12.8741
         },
         "peak_rss_mb": {
-          "median": 2549.37,
-          "mean": 2549.37,
+          "median": 2560.81,
+          "mean": 2560.81,
           "std": 0.0,
-          "min": 2549.37,
-          "max": 2549.37
+          "min": 2560.81,
+          "max": 2560.81
         },
         "throughput_mb_s": {
-          "median": 26.51,
-          "mean": 26.51,
+          "median": 27.24,
+          "mean": 27.24,
           "std": 0.0,
-          "min": 26.51,
-          "max": 26.51
+          "min": 27.24,
+          "max": 27.24
         },
         "row_velocity_m_rows_s": {
-          "median": 0.76,
-          "mean": 0.76,
+          "median": 0.78,
+          "mean": 0.78,
           "std": 0.0,
-          "min": 0.76,
-          "max": 0.76
+          "min": 0.78,
+          "max": 0.78
         }
       },
       "raw_iterations": [
         {
           "target_name": "netra",
-          "wall_time_seconds": 13.2314,
-          "engine_time_seconds": 13.2277,
-          "peak_rss_mb": 2549.37,
+          "wall_time_seconds": 12.8776,
+          "engine_time_seconds": 12.8741,
+          "peak_rss_mb": 2560.81,
           "rows_evaluated": 10000000,
           "columns_profiled": 24,
-          "throughput_mb_s": 26.51,
-          "row_velocity_m_rows_s": 0.76,
+          "throughput_mb_s": 27.24,
+          "row_velocity_m_rows_s": 0.78,
           "passed": false,
           "anomalies_detected": 28,
           "critical_alerts": 4,

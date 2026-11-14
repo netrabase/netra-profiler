@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "timestamp_utc": "2026-11-12T17:21:08.210116+00:00",
-    "git_commit": "96e45ee",
+    "timestamp_utc": "2026-11-13T18:43:25.347277+00:00",
+    "git_commit": "99bc755",
     "suite": "lofar",
     "scale": "10M",
     "targets": [
@@ -14,10 +14,10 @@
     "cpu_model": "Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz",
     "cpu_cores": "6 Physical / 12 Logical",
     "ram_total_gb": 31.16,
-    "python_version": "3.12.3",
+    "python_version": "3.11.14",
     "versions": {
       "netra_profiler": "0.6.0",
-      "polars": "1.37.1",
+      "polars": "2.1.0",
       "numpy": "2.2.6",
       "pyarrow": "23.0.0",
       "pyyaml": "6.0.3"
@@ -34,51 +34,51 @@
     "netra": {
       "statistics": {
         "wall_time_seconds": {
-          "median": 7.9904,
-          "mean": 7.9907,
-          "std": 0.0216,
-          "min": 7.9693,
-          "max": 8.0124
+          "median": 6.6253,
+          "mean": 6.6254,
+          "std": 0.0021,
+          "min": 6.6234,
+          "max": 6.6275
         },
         "engine_time_seconds": {
-          "median": 7.9887,
-          "mean": 7.989,
-          "std": 0.0215,
-          "min": 7.9677,
-          "max": 8.0107
+          "median": 6.6229,
+          "mean": 6.6233,
+          "std": 0.002,
+          "min": 6.6215,
+          "max": 6.6254
         },
         "peak_rss_mb": {
-          "median": 4412.62,
-          "mean": 4375.43,
-          "std": 97.3284,
-          "min": 4264.99,
-          "max": 4448.68
+          "median": 2593.23,
+          "mean": 2587.7133,
+          "std": 10.8172,
+          "min": 2575.25,
+          "max": 2594.66
         },
         "throughput_mb_s": {
-          "median": 43.9,
-          "mean": 43.9,
-          "std": 0.12,
-          "min": 43.78,
-          "max": 44.02
+          "median": 52.96,
+          "mean": 52.9567,
+          "std": 0.0153,
+          "min": 52.94,
+          "max": 52.97
         },
         "row_velocity_m_rows_s": {
-          "median": 1.25,
-          "mean": 1.2533,
-          "std": 0.0058,
-          "min": 1.25,
-          "max": 1.26
+          "median": 1.51,
+          "mean": 1.51,
+          "std": 0.0,
+          "min": 1.51,
+          "max": 1.51
         }
       },
       "raw_iterations": [
         {
           "target_name": "netra",
-          "wall_time_seconds": 7.9693,
-          "engine_time_seconds": 7.9677,
-          "peak_rss_mb": 4264.99,
+          "wall_time_seconds": 6.6275,
+          "engine_time_seconds": 6.6254,
+          "peak_rss_mb": 2593.23,
           "rows_evaluated": 10000000,
           "columns_profiled": 24,
-          "throughput_mb_s": 44.02,
-          "row_velocity_m_rows_s": 1.26,
+          "throughput_mb_s": 52.94,
+          "row_velocity_m_rows_s": 1.51,
           "passed": false,
           "anomalies_detected": 28,
           "critical_alerts": 4,
@@ -97,13 +97,13 @@
         },
         {
           "target_name": "netra",
-          "wall_time_seconds": 8.0124,
-          "engine_time_seconds": 8.0107,
-          "peak_rss_mb": 4448.68,
+          "wall_time_seconds": 6.6234,
+          "engine_time_seconds": 6.6215,
+          "peak_rss_mb": 2575.25,
           "rows_evaluated": 10000000,
           "columns_profiled": 24,
-          "throughput_mb_s": 43.78,
-          "row_velocity_m_rows_s": 1.25,
+          "throughput_mb_s": 52.97,
+          "row_velocity_m_rows_s": 1.51,
           "passed": false,
           "anomalies_detected": 28,
           "critical_alerts": 4,
@@ -122,13 +122,13 @@
         },
         {
           "target_name": "netra",
-          "wall_time_seconds": 7.9904,
-          "engine_time_seconds": 7.9887,
-          "peak_rss_mb": 4412.62,
+          "wall_time_seconds": 6.6253,
+          "engine_time_seconds": 6.6229,
+          "peak_rss_mb": 2594.66,
           "rows_evaluated": 10000000,
           "columns_profiled": 24,
-          "throughput_mb_s": 43.9,
-          "row_velocity_m_rows_s": 1.25,
+          "throughput_mb_s": 52.96,
+          "row_velocity_m_rows_s": 1.51,
           "passed": false,
           "anomalies_detected": 28,
           "critical_alerts": 4,
