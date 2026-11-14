@@ -15,21 +15,21 @@ CORRELATION_SAMPLE_SIZE = 100_000
 
 class Profiler:
     """
-    The core orchestrator class for Netra Profiler.
+    Orchestrates dataset profiling from a Polars `DataFrame` or `LazyFrame`.
 
-    This class manages the complete lifecycle of a profiling session, decoupling the
-    execution flow from the mathematical plan generation (which is delegated to `engine.py`).
-    It is responsible for transforming raw Polars data into a strictly typed `NetraProfile`
-    Enterprise Data Contract.
-
-    Architecture Notes:
-    1. Optimization First: Forces all data into Polars' `LazyFrame` to utilize
-       the Rust-based query optimizer and streaming engine.
-    2. Schema Flattening: Pre-processes complex nested types (Structs/Lists) into
-       flat scalar columns to prevent engine panics and simplify downstream math.
-    3. Multi-Pass Execution: Evaluates the execution graph in distinct, sequential
-       stages. This manages memory state and allows downstream passes (e.g., Histograms)
-       to rely on the outputs of upstream computations (e.g., global Min/Max).
+    Execution Architecture:
+        1.  Schema Normalization (`__init__`): Converts eager inputs to `LazyFrame`, drops
+            user-ignored columns, and flattens nested `Struct`, `List`, and `Array` columns.
+        2.  Stage 1 — Summary Collection (`_collect_scalars_and_top_k`): Evaluates the global
+            scalar aggregation plan and per-column string Top-K plans concurrently in a single
+            `pl.collect_all()` (`SinkMultiple`) pass.
+        3.  Stage 2 — Distribution & Correlation Scan (`_collect_histograms_and_correlations`):
+            Uses the `[min, max]` bounds, `n_unique`, and `table_row_count` from Stage 1 to
+            build the histogram plans and a sampled correlation plan, evaluating them together
+            in a second `pl.collect_all()` pass.
+        4.  Profile Assembly & Diagnostics (`_build_profile`, `_run_diagnostics`): Compiles
+            collected metrics into a typed `NetraProfile` dictionary and runs `DiagnosticEngine`
+            in memory to generate data quality alerts.
     """
 
     def __init__(  # noqa: PLR0913
@@ -43,29 +43,17 @@ class Profiler:
         config_source: str = "Default",
     ):
         """
-        Initializes the profiling session.
-
-        During initialization, the Profiler prepares the dataset for optimized execution:
-        1. Eager-to-Lazy Conversion: If a raw DataFrame is passed, it is immediately
-           converted to a LazyFrame. This forces all downstream operations to pass through
-           the Polars query optimizer.
-        2. Cardinality Bypassing: Processes the `ignore_columns` list, preemptively dropping
-           primary keys or other listed columns from the graph to prevent memory-crushing hash
-           set allocations during Pass 1.
-        3. Type Flattening: Unpacks nested structs and lists so the core engine can process
-           deeply nested JSON/Parquet files as standard scalar columns.
+        Initializes the profiling session and normalizes the input schema.
 
         Args:
-            df: The input Polars DataFrame (eager) or LazyFrame (streaming).
-            dataset_name: The human-readable name of the dataset (e.g., filename).
-            dataset_format: The file format or source type (e.g., 'CSV', 'Parquet').
-            ignore_columns: A list of column names to explicitly exclude from profiling.
-                Highly recommended for unique Primary Keys to preserve RAM.
-            memory_safe: If True, invokes bounded-memory execution. Replaces exact unique
-                counts with HyperLogLog approximations and strips global sorts (quantiles)
-                from the execution graph to prevent OOM panics on massive datasets.
-            diagnostic_config: A dictionary containing YAML-parsed threshold overrides for
-                the Data Quality checks (e.g., altering null threshold from 0.95 to 0.50).
+            df: Input Polars `DataFrame` or `LazyFrame`.
+            dataset_name: Identifier or filename for the dataset.
+            dataset_format: Source format label (e.g., `'Parquet'`, `'CSV'`).
+            ignore_columns: Column names to exclude from profiling prior to plan construction.
+            low_memory: If True, uses HyperLogLog cardinality (`approx_n_unique`) and omits
+                exact quantiles, skewness, and kurtosis to bound memory consumption.
+            config: Optional dictionary of threshold overrides parsed from `netra_config.yaml`.
+            config_source: Label indicating where the configuration was loaded from.
         """
 
         # If a DataFrame is passed, it is converted to LazyFrame to
@@ -94,149 +82,190 @@ class Profiler:
 
     def run(self, bins: int = 20, top_k: int = 10) -> NetraProfile:
         """
-        Executes the 5-pass profiling architecture and generates the final data contract.
-
-        This method orchestrates the sequential execution of the profiling graph. Because certain
-        operations (like histogram bin sizing) mathematically require the global bounds (min/max)
-        of the data, the execution is split into sequential passes, passing the `profile_data`
-        state dictionary between them.
-
-        The Execution Graph:
-        - PASS 1 (Scalars): Streaming pass for row count, data type, min, max, mean, skew,
-            kurtosis, percentiles, and nulls, zeros and unique counts.
-        - PASS 2 (Histograms): Streaming Map-Reduce pass for continuous distribution grouping.
-        - PASS 3 (Top-K): Streaming pass for frequent categorical item extraction.
-        - PASS 4 (Correlations): Eager, sampled pass to compute Pearson & Spearman matrices.
-        - PASS 5 (Diagnostics): Rule-based alerting engine run against the compiled profile.
+        Executes the profiling pipeline and returns the finalized `NetraProfile` report.
 
         Args:
-            bins: The target number of intervals to generate for numeric histograms. Defaults to 20.
-            top_k: The maximum number of frequent items to compute for categorical/string columns.
-                Defaults to 10.
+            bins: Number of equi-width intervals for numeric histograms (default: 20).
+            top_k: Maximum number of frequent values to retain for string columns (default: 10).
 
         Returns:
-            A `NetraProfile` typed dictionary containing the rigidly structured, JSON-serializable
-            Data Contract, including all column statistics, correlation matrices, data quality
-            alerts, and engine telemetry metadata.
+            A typed, JSON-serializable `NetraProfile` dictionary containing dataset metadata,
+            column statistics, correlation edges, diagnostic alerts, and execution telemetry.
         """
 
         profiling_start_time = time.time()
         profiler_warnings: list[str] = []
 
-        # PASS 1: Scalar Statistics (Foundation)
-        profile_data = self._run_scalar_pass()
+        # Scalar Statistics + Top-K Values (Shared Scan 1)
+        profile_data = self._collect_scalars_and_top_k(top_k)
 
-        # PASS 2: Histograms
-        self._run_histogram_pass(profile_data, bins, profiler_warnings)
-
-        # PASS 3: Top-K Values
-        self._run_top_k_pass(profile_data, top_k)
-
-        # PASS 4: Correlations
-        self._run_correlation_pass(profile_data, profiler_warnings)
+        # Histograms + Correlations (Shared Scan 2)
+        self._collect_histograms_and_correlations(profile_data, bins, profiler_warnings)
 
         # Build the structured Profile object based on our Profile Object Schema
-        profile = self._build_profile_object(profile_data, profiling_start_time, profiler_warnings)
+        profile = self._build_profile(profile_data, profiling_start_time, profiler_warnings)
 
-        # PASS 5: Diagnostics
-        self._run_diagnostics_pass(profile)
+        # Quality Diagnostics
+        self._run_diagnostics(profile)
 
         return profile
 
-    def _run_scalar_pass(self) -> dict[str, Any]:
+    def _collect_scalars_and_top_k(self, top_k: int) -> dict[str, Any]:
         """
-        Executes PASS 1: Scalar Statistics.
+        Collects scalar statistics and string Top-K frequency tables in a single `collect_all` pass.
 
-        Triggers the evaluation of the scalar blueprint generated by the engine.
-        Executed entirely within Polars' streaming engine (unless `memory_safe=False` forces
-        eager fallback for quantiles).
-
-        Returns:
-            A flat dictionary containing all computed scalar statistics with strictly
-            aliased keys (e.g., `{'age_mean': 34.2, 'status_null_count': 0}`).
+        Because neither plan depends on prior summary statistics, submitting them together to
+        `pl.collect_all()` allows the Polars streaming engine to schedule all plans concurrently
+        within a single execution graph rather than on sequential Python-level `.collect()`.
         """
 
         scalar_plan = engine.build_scalar_plan(self._df, low_memory=self.low_memory)
-        scalar_df = scalar_plan.collect(engine="streaming")
-        return scalar_df.rows(named=True)[0]
+        top_k_plans = engine.build_top_k_plan(self._df, k=top_k)
 
-    def _run_histogram_pass(
+        wave_1_results = pl.collect_all([scalar_plan, *top_k_plans], engine="streaming")
+
+        scalar_df = wave_1_results[0]
+        profile_data: dict[str, Any] = scalar_df.rows(named=True)[0]
+
+        for top_k_df in wave_1_results[1:]:
+            if top_k_df.height > 0:
+                column_name = top_k_df["column_name"][0]
+                top_k_values = top_k_df.select("value", "count").to_dicts()
+                profile_data[f"{column_name}_top_k"] = top_k_values
+
+        return profile_data
+
+    def _collect_histograms_and_correlations(
         self, profile_data: dict[str, Any], bins: int, profiler_warnings: list[str]
     ) -> None:
         """
-        Executes PASS 2: Histograms.
+        Collects numeric histograms and the correlation sample in a second `collect_all` pass.
 
-        Evaluates the Map-Reduce histogram execution plans in parallel across all numeric
-        columns. Once Polars returns the discrete bin counts, this method performs
-        post-processing to construct contiguous, formatted distribution intervals.
-
-        Args:
-            profile_data: The state dictionary containing Pass 1 boundaries (Min/Max).
-                The constructed histograms are appended directly into this dictionary.
-            bins: The target number of intervals.
-            profiler_warnings: A mutable list to capture runtime execution errors.
-
-        Notes:
-            - Sparsity Handling: The Map-Reduce engine drops bins with a count of zero.
-              The post-processing loop here reconstructs the full geometric space,
-              re-injecting `count: 0` for empty intervals to ensure chart integrity.
-            - Constant Fallback: If a column has zero variance (`min == max`), a single
-              interval encompassing all non-null rows is generated.
+        Both operations depend on metrics computed in `_collect_scalars_and_top_k`:
+            - Histograms require each column's `[min, max]` bounds to compute bin widths.
+            - Correlation sampling requires `table_row_count` to compute the `gather_every`
+                stride and `{col}_n_unique` to exclude constant or empty numeric columns upfront.
         """
 
-        # 1. Select numeric columns
         schema = self._df.collect_schema()
         numeric_columns = [column for column, dtype in schema.items() if dtype.is_numeric()]
 
-        # 2. Build plans
         histogram_plans = engine.build_histogram_plans(
             self._df, numeric_columns, profile_data, bins
         )
+        hist_columns = list(histogram_plans.keys())
+        wave_2_plans: list[pl.LazyFrame] = list(histogram_plans.values())
 
-        if histogram_plans:
-            columns = list(histogram_plans.keys())
-            plans = list(histogram_plans.values())
+        # Prepare Correlation Sampling Plan (only for numeric columns with variance > 0)
+        row_count = profile_data.get("table_row_count", 0)
+        valid_corr_columns = [
+            col for col in numeric_columns if profile_data.get(f"{col}_n_unique", 0) > 1
+        ]
+        has_correlation_plan = row_count > 1 and len(valid_corr_columns) > 1
+        correlations_sampling_method: str | None = None
 
-            # 3. Parallel streaming execution
-            results = pl.collect_all(plans, engine="streaming")
+        if has_correlation_plan:
+            corr_plan = self._df.select(valid_corr_columns)
+            if row_count > CORRELATION_SAMPLE_SIZE:
+                step_size = max(1, row_count // CORRELATION_SAMPLE_SIZE)
+                corr_plan = corr_plan.gather_every(step_size)
+                correlations_sampling_method = f"systematic_sample (~{CORRELATION_SAMPLE_SIZE})"
+            else:
+                correlations_sampling_method = "exact"
 
-            # 4. Post-processing (Handling sparsity and formatting)
-            for column_name, hist_df in zip(columns, results, strict=True):
-                try:
-                    min_value = profile_data.get(f"{column_name}_min")
-                    max_value = profile_data.get(f"{column_name}_max")
+            # Cast and coerce NaNs AFTER gather_every so we only transform the sampled rows
+            corr_plan = corr_plan.select(pl.all().cast(pl.Float64).fill_nan(None))
+            wave_2_plans.append(corr_plan)
 
-                    if min_value is None or max_value is None:
-                        continue
-                    step = (max_value - min_value) / bins
+        if not wave_2_plans:
+            self._fill_constant_histograms(numeric_columns, histogram_plans, profile_data)
+            return
 
-                    if hist_df.height > 0:
-                        counts_dict = dict(zip(hist_df["bin_index"], hist_df["len"], strict=True))
-                    else:
-                        counts_dict = {}
+        wave_2_results = pl.collect_all(wave_2_plans, engine="streaming")
 
-                    histogram = []
-                    for bin in range(bins):
-                        left_edge = min_value + (step * bin)
-                        right_edge = min_value + (step * (bin + 1)) if bin < bins - 1 else max_value
-                        count = counts_dict.get(bin, 0)  # 0 if the bin was dropped by group_by
+        hist_results = wave_2_results[: len(hist_columns)]
+        self._build_histograms(
+            hist_columns,
+            hist_results,
+            numeric_columns,
+            histogram_plans,
+            profile_data,
+            bins,
+            profiler_warnings,
+        )
 
-                        # Format left/right bracket notation
-                        left_bracket = "(" if bin > 0 else "["
-                        bin_label = f"{left_bracket}{left_edge:g}, {right_edge:g}]"
+        if has_correlation_plan:
+            correlation_df = wave_2_results[-1]
+            self._compute_correlations(
+                correlation_df,
+                valid_corr_columns,
+                correlations_sampling_method,
+                profile_data,
+                profiler_warnings,
+            )
 
-                        histogram.append(
-                            {"breakpoint": right_edge, "bin": bin_label, "count": count}
-                        )
+    def _build_histograms(  # noqa: PLR0913
+        self,
+        hist_columns: list[str],
+        hist_results: list[pl.DataFrame],
+        numeric_columns: list[str],
+        histogram_plans: dict[str, pl.LazyFrame],
+        profile_data: dict[str, Any],
+        bins: int,
+        profiler_warnings: list[str],
+    ) -> None:
+        """
+        Builds contiguous histogram intervals from sparse `group_by` bin counts.
 
-                    profile_data[f"{column_name}_histogram"] = histogram
+        Because `group_by("bin_index")` omits empty bins, this method iterates over
+        `range(bins)` and fills missing indices with `count: 0` to preserve interval
+        continuity.
+        """
 
-                except Exception as e:
-                    profiler_warnings.append(
-                        f"Histogram generation failed for column '{column_name}': {e}"
+        for column_name, hist_df in zip(hist_columns, hist_results, strict=True):
+            try:
+                min_value = profile_data.get(f"{column_name}_min")
+                max_value = profile_data.get(f"{column_name}_max")
+
+                if min_value is None or max_value is None:
+                    continue
+                step = (max_value - min_value) / bins
+
+                if hist_df.height > 0:
+                    counts_dict = dict(zip(hist_df["bin_index"], hist_df["len"], strict=True))
+                else:
+                    counts_dict = {}
+
+                histogram = []
+                for bin_idx in range(bins):
+                    left_edge = min_value + (step * bin_idx)
+                    right_edge = (
+                        min_value + (step * (bin_idx + 1)) if bin_idx < bins - 1 else max_value
                     )
+                    count = counts_dict.get(bin_idx, 0)
 
-        # 5. Fallback for constant columns (min == max)
+                    left_bracket = "(" if bin_idx > 0 else "["
+                    bin_label = f"{left_bracket}{left_edge:g}, {right_edge:g}]"
+
+                    histogram.append({"breakpoint": right_edge, "bin": bin_label, "count": count})
+
+                profile_data[f"{column_name}_histogram"] = histogram
+
+            except Exception as e:
+                profiler_warnings.append(
+                    f"Histogram generation failed for column '{column_name}': {e}"
+                )
+
+        self._fill_constant_histograms(numeric_columns, histogram_plans, profile_data)
+
+    def _fill_constant_histograms(
+        self,
+        numeric_columns: list[str],
+        histogram_plans: dict[str, pl.LazyFrame],
+        profile_data: dict[str, Any],
+    ) -> None:
+        """Populates a single-bin histogram for constant numeric columns (`min == max`)."""
+
         for column in numeric_columns:
             if column not in histogram_plans:
                 min_value = profile_data.get(f"{column}_min")
@@ -255,221 +284,83 @@ class Profiler:
                         }
                     ]
 
-    def _run_top_k_pass(self, profile_data: dict[str, Any], top_k: int) -> None:
-        """
-        Executes PASS 3: Top-K Frequent Items.
-
-        Evaluates the categorical frequency plans in parallel using the streaming engine.
-        The resulting DataFrames are serialized into JSON-friendly lists of dictionaries
-        and injected into the state payload.
-
-        Args:
-            profile_data: The state dictionary. Mutated in-place to add `[column]_top_k`.
-            top_k: The maximum number of frequent items requested.
-        """
-
-        top_k_plans = engine.build_top_k_plan(self._df, k=top_k)
-
-        if top_k_plans:
-            # We execute all columns in parallel using the streaming engine
-            top_k_dfs = pl.collect_all(top_k_plans, engine="streaming")
-
-            for top_k_df in top_k_dfs:
-                if top_k_df.height > 0:
-                    column_name = top_k_df["column_name"][0]
-                    top_k_values = top_k_df.select("value", "count").to_dicts()
-                    profile_data[f"{column_name}_top_k"] = top_k_values
-
-    def _run_correlation_pass(
-        self, profile_data: dict[str, Any], profiler_warnings: list[str]
+    def _compute_correlations(  # noqa: PLR0913
+        self,
+        correlation_df: pl.DataFrame,
+        valid_columns: list[str],
+        correlations_sampling_method: str | None,
+        profile_data: dict[str, Any],
+        profiler_warnings: list[str],
     ) -> None:
         """
-        Executes PASS 4: Correlations.
+        Computes pairwise-complete Pearson and Spearman correlations on the upper triangle.
 
-        Computes the Pearson and Spearman correlation matrices for all numeric columns.
-        Due to the global state requirements of matrix computation and row indexing,
-        this pass fundamentally triggers eager memory materialization.
-
-        To prevent OOM crashes on massive datasets, this method implements an Adaptive
-        Systematic Sampling architecture. If the dataset exceeds `CORRELATION_SAMPLE_SIZE`,
-        it uses `gather_every()` to slice a representative subset before executing the math.
-
-        Args:
-            profile_data: The state dictionary. Mutated in-place to add the `correlations` matrix.
-            profiler_warnings: A mutable list to capture runtime execution errors.
-
-        Notes:
-            - Divide-by-Zero Protection: Constant columns mathematically yield `NaN` in
-              correlation matrices and throw native `RuntimeWarnings`. These warnings are
-              explicitly suppressed here to prevent terminal spam on dirty data.
+        Design Notes:
+            -   Pairwise Null Filtering: Each `(column_a, column_b)` pair filters nulls using only
+                    those two columns rather than calling `drop_nulls()` on the whole table. This
+                    prevents a single mostly-null column from wiping out valid rows for other pairs.
+            -   Unique Pairs Only: Iterating over `valid_columns[i + 1 :]` evaluates only the upper
+                    triangle of the matrix, skipping self-correlations (`column_a == column_b`)
+                    and duplicate mirror pairs (`(B, A)`, `(A, B)`).
         """
 
-        correlation_plan = engine.build_correlation_plan(self._df)
+        if correlation_df.height <= 1 or len(valid_columns) <= 1:
+            return
 
-        # Check if we actually have columns to correlate
-        # We use collect_schema() to check cheaply
-        if len(correlation_plan.collect_schema()) > 1:
-            # Adaptive sampling logic
+        profile_data["correlations"] = {
+            "pearson": [],
+            "spearman": [],
+            "sampling_method": correlations_sampling_method,
+        }
 
-            # We reuse the row count from Pass 1 (cost = 0)
-            row_count = profile_data.get("table_row_count", 0)
+        pearson_expressions: list[pl.Expr] = []
+        spearman_expressions: list[pl.Expr] = []
+        pair_keys: list[tuple[str, str]] = []
 
-            # Fetch Data (Sampled or Full)
-            if row_count > CORRELATION_SAMPLE_SIZE:
-                # Case 1: Big Data -> Sample
-                # We use Systematic Sampling
-                step_size = max(1, row_count // CORRELATION_SAMPLE_SIZE)
+        for i, column_a in enumerate(valid_columns):
+            for column_b in valid_columns[i + 1 :]:
+                pair_key = f"{column_a}::{column_b}"
+                pair_keys.append((column_a, column_b))
+                valid_mask = pl.col(column_a).is_not_null() & pl.col(column_b).is_not_null()
 
-                correlation_df = (
-                    # We cast to Float64 to handle potential integer overflow
-                    correlation_plan.select(pl.all().cast(pl.Float64))
-                    # gather_every() only uses every step_size row in the dataset
-                    # which is more robust than using head or tail and closest to
-                    # random sampling in streaming mode. High disk I/O, low RAM usage
-                    .gather_every(step_size)
-                    .collect()
-                )
-                correlations_sampling_method = f"systematic_sample (~{CORRELATION_SAMPLE_SIZE})"
-            else:
-                # Case 2: Small Data -> Exact
-                correlation_df = correlation_plan.select(pl.all().cast(pl.Float64)).collect()
-                correlations_sampling_method = "exact"
+                a_valid = pl.col(column_a).filter(valid_mask)
+                b_valid = pl.col(column_b).filter(valid_mask)
 
-            # Pairwise-Complete Correlation Evaluation:
-            # 1. Convert float NaNs to Null so 'missingness' masks catch both NaN and Null.
-            # 2. Exclude constant or empty columns (`n_unique <= 1`) upfront to prevent
-            #    0/0 division-by-zero NaN computations.
-            # 3. Evaluate `pl.corr()` strictly on the upper triangle (i < j) using pairwise
-            #    validity masks (`col_a.is_not_null() & col_b.is_not_null()`). This ensures
-            #    every column pair uses 100% of its overlapping valid observations while
-            #    cutting redundant matrix computations (diagonal + mirrored lower triangle)
-            #    in half.
-            correlation_df = correlation_df.select(pl.all().fill_nan(None))
+                pearson_expressions.append(pl.corr(a_valid, b_valid).alias(pair_key))
+                spearman_expressions.append(pl.corr(a_valid.rank(), b_valid.rank()).alias(pair_key))
 
-            valid_columns = [
-                column
-                for column in correlation_df.columns
-                if profile_data.get(f"{column}_n_unique", 0) > 1
-            ]
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
 
-            if correlation_df.height > 1 and len(valid_columns) > 1:
-                profile_data["correlations"] = {
-                    "pearson": [],
-                    "spearman": [],
-                    "sampling_method": correlations_sampling_method,
-                }
+            for method, exprs in [
+                ("pearson", pearson_expressions),
+                ("spearman", spearman_expressions),
+            ]:
+                try:
+                    corr_row = correlation_df.select(exprs).fill_nan(None).row(0, named=True)
+                    pairs = [
+                        {"column_a": col_a, "column_b": col_b, "score": float(score)}
+                        for (col_a, col_b), score in zip(pair_keys, corr_row.values(), strict=True)
+                        if score is not None
+                    ]
+                    pairs.sort(key=lambda x: abs(float(cast(float, x["score"]))), reverse=True)
+                    profile_data["correlations"][method] = pairs
+                except Exception as e:
+                    profiler_warnings.append(f"Correlations ({method}) calculation failed: {e}")
 
-                pearson_expressions: list[pl.Expr] = []
-                spearman_expressions: list[pl.Expr] = []
-                pair_keys: list[tuple[str, str]] = []
-
-                for i, column_a in enumerate(valid_columns):
-                    for column_b in valid_columns[i + 1 :]:
-                        pair_key = f"{column_a}::{column_b}"
-                        pair_keys.append((column_a, column_b))
-                        valid_mask = pl.col(column_a).is_not_null() & pl.col(column_b).is_not_null()
-
-                        a_valid = pl.col(column_a).filter(valid_mask)
-                        b_valid = pl.col(column_b).filter(valid_mask)
-
-                        pearson_expressions.append(pl.corr(a_valid, b_valid).alias(pair_key))
-                        spearman_expressions.append(
-                            pl.corr(a_valid.rank(), b_valid.rank()).alias(pair_key)
-                        )
-
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore", RuntimeWarning)
-
-                    for method, exprs in [
-                        ("pearson", pearson_expressions),
-                        ("spearman", spearman_expressions),
-                    ]:
-                        try:
-                            corr_row = (
-                                correlation_df.select(exprs).fill_nan(None).row(0, named=True)
-                            )
-                            pairs = [
-                                {"column_a": col_a, "column_b": col_b, "score": float(score)}
-                                for (col_a, col_b), score in zip(
-                                    pair_keys, corr_row.values(), strict=True
-                                )
-                                if score is not None
-                            ]
-                            pairs.sort(
-                                key=lambda x: abs(float(cast(float, x["score"]))), reverse=True
-                            )
-                            profile_data["correlations"][method] = pairs
-                        except Exception as e:
-                            profiler_warnings.append(
-                                f"Correlations ({method}) calculation failed: {e}"
-                            )
-
-    def _extract_correlation_pairs(self, matrix_df: pl.DataFrame) -> list[dict[str, Any]]:
-        """
-        Transforms a dense symmetric correlation matrix into a sparse Edge-List format.
-
-        Standard matrices compute $N^2$ relationships, resulting in heavy redundancy.
-        This method parses the DataFrame and drops:
-        1. Self-correlations (the diagonal, where A correlates with A at 1.0).
-        2. Mirrored duplicates (if A-B is recorded, B-A is skipped via tuple signatures).
-
-        Args:
-            matrix_df: The eager Polars DataFrame containing the computed `.corr()` matrix.
-
-        Returns:
-            A list of dictionary objects (e.g., `{'column_a': 'X', 'column_b': 'Y', 'score': 0.8}`),
-            sorted by absolute correlation strength descending.
-        """
-
-        matrix_dicts = matrix_df.to_dicts()
-        pairs = []
-        seen = set()
-
-        for row in matrix_dicts:
-            column_a = row["column"]
-            for column_b, score in row.items():
-                if column_b == "column" or score is None:
-                    continue
-                if column_a == column_b:  # Drop diagonal (self-correlation = 1.0)
-                    continue
-
-                # Tuple sorting ensures A-B and B-A generate the same signature
-                pair_signature = tuple(sorted([column_a, column_b]))
-
-                if pair_signature not in seen:
-                    seen.add(pair_signature)
-                    pairs.append({"column_a": column_a, "column_b": column_b, "score": score})
-
-        # Sort by correlation strength (absolute value) descending
-        pairs.sort(key=lambda x: abs(float(cast(float, x["score"]))), reverse=True)
-        return pairs
-
-    def _build_profile_object(
+    def _build_profile(
         self,
         profile_data: dict[str, Any],
         profiling_start_time: float,
         profiler_warnings: list[str],
     ) -> NetraProfile:
         """
-        Compiles the flat state dictionary into the strict Enterprise Data Contract.
+        Assembles the flat state dictionary into the `NetraProfile` schema.
 
-        Acts as the final schema mapping layer. It extracts telemetry metadata, normalizes
-        missing values, and guarantees structural type stability (e.g., ensuring arrays are
-        empty `[]` rather than omitted from the JSON if an operation fails).
-
-        Args:
-            profile_data: The fully populated state dictionary from Passes 1-4.
-            profiling_start_time: Epoch timestamp to calculate final engine throughput.
-            profiler_warnings: The accumulated list of non-fatal execution errors.
-
-        Returns:
-            A strictly typed `NetraProfile` dictionary ready for JSON serialization.
-
-        Notes:
-            - HyperLogLog Clamping: If `memory_safe` mode is active, the HLL algorithm's
-              ±2% standard error margin can cause exact primary keys to report a unique count
-              higher than the total row count. This function explicitly clamps `n_unique` to
-              `row_count` to prevent mathematical impossibilities in downstream alerts.
+        Design Notes:
+            -   When `low_memory=True`, HyperLogLog's standard error (~2%) can estimate `n_unique`
+                slightly above `row_count` on unique key columns, which is handled by using
+                `min(n_unique_value, row_count)` which clamps cardinality to the physical row count.
         """
 
         row_count = profile_data.get("table_row_count", 0)
@@ -554,16 +445,9 @@ class Profiler:
 
         return cast(NetraProfile, profile)
 
-    def _run_diagnostics_pass(self, profile: NetraProfile) -> None:
+    def _run_diagnostics(self, profile: NetraProfile) -> None:
         """
-        Executes PASS 5: Diagnostics.
-
-        Initializes and runs the standalone `DiagnosticEngine` against the finalized Data Contract.
-        The resulting alert objects are serialized into dictionaries and injected into the
-        `profile["alerts"]` list.
-
-        Args:
-            profile: The finalized `NetraProfile` contract. Mutated in-place.
+        Evaluates data quality diagnostic rules against `profile`.
         """
 
         diagnostic_engine = DiagnosticEngine(profile, config=self.diagnostic_config)

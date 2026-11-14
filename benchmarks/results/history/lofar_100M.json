@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "timestamp_utc": "2026-11-12T17:32:31.474202+00:00",
-    "git_commit": "96e45ee",
+    "timestamp_utc": "2026-11-13T18:51:42.853357+00:00",
+    "git_commit": "99bc755",
     "suite": "lofar",
     "scale": "100M",
     "targets": [
@@ -14,10 +14,10 @@
     "cpu_model": "Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz",
     "cpu_cores": "6 Physical / 12 Logical",
     "ram_total_gb": 31.16,
-    "python_version": "3.12.3",
+    "python_version": "3.11.14",
     "versions": {
       "netra_profiler": "0.6.0",
-      "polars": "1.37.1",
+      "polars": "2.1.0",
       "numpy": "2.2.6",
       "pyarrow": "23.0.0",
       "pyyaml": "6.0.3"
@@ -34,51 +34,51 @@
     "netra": {
       "statistics": {
         "wall_time_seconds": {
-          "median": 85.7187,
-          "mean": 85.8995,
-          "std": 0.7682,
-          "min": 85.2378,
-          "max": 86.742
+          "median": 76.8414,
+          "mean": 76.8525,
+          "std": 0.667,
+          "min": 76.1912,
+          "max": 77.525
         },
         "engine_time_seconds": {
-          "median": 85.7126,
-          "mean": 85.8936,
-          "std": 0.7685,
-          "min": 85.2318,
-          "max": 86.7365
+          "median": 76.8385,
+          "mean": 76.8492,
+          "std": 0.6664,
+          "min": 76.1883,
+          "max": 77.5209
         },
         "peak_rss_mb": {
-          "median": 28748.14,
-          "mean": 28057.9167,
-          "std": 1815.4258,
-          "min": 25998.61,
-          "max": 29427.0
+          "median": 23691.02,
+          "mean": 23686.0767,
+          "std": 119.9814,
+          "min": 23563.7,
+          "max": 23803.51
         },
         "throughput_mb_s": {
-          "median": 40.97,
-          "mean": 40.8867,
-          "std": 0.3623,
-          "min": 40.49,
-          "max": 41.2
+          "median": 45.7,
+          "mean": 45.6967,
+          "std": 0.395,
+          "min": 45.3,
+          "max": 46.09
         },
         "row_velocity_m_rows_s": {
-          "median": 1.17,
-          "mean": 1.1633,
-          "std": 0.0115,
-          "min": 1.15,
-          "max": 1.17
+          "median": 1.3,
+          "mean": 1.3,
+          "std": 0.01,
+          "min": 1.29,
+          "max": 1.31
         }
       },
       "raw_iterations": [
         {
           "target_name": "netra",
-          "wall_time_seconds": 85.2378,
-          "engine_time_seconds": 85.2318,
-          "peak_rss_mb": 25998.61,
+          "wall_time_seconds": 76.8414,
+          "engine_time_seconds": 76.8385,
+          "peak_rss_mb": 23691.02,
           "rows_evaluated": 100000000,
           "columns_profiled": 24,
-          "throughput_mb_s": 41.2,
-          "row_velocity_m_rows_s": 1.17,
+          "throughput_mb_s": 45.7,
+          "row_velocity_m_rows_s": 1.3,
           "passed": false,
           "anomalies_detected": 28,
           "critical_alerts": 3,
@@ -97,13 +97,13 @@
         },
         {
           "target_name": "netra",
-          "wall_time_seconds": 86.742,
-          "engine_time_seconds": 86.7365,
-          "peak_rss_mb": 28748.14,
+          "wall_time_seconds": 76.1912,
+          "engine_time_seconds": 76.1883,
+          "peak_rss_mb": 23803.51,
           "rows_evaluated": 100000000,
           "columns_profiled": 24,
-          "throughput_mb_s": 40.49,
-          "row_velocity_m_rows_s": 1.15,
+          "throughput_mb_s": 46.09,
+          "row_velocity_m_rows_s": 1.31,
           "passed": false,
           "anomalies_detected": 28,
           "critical_alerts": 3,
@@ -122,13 +122,13 @@
         },
         {
           "target_name": "netra",
-          "wall_time_seconds": 85.7187,
-          "engine_time_seconds": 85.7126,
-          "peak_rss_mb": 29427.0,
+          "wall_time_seconds": 77.525,
+          "engine_time_seconds": 77.5209,
+          "peak_rss_mb": 23563.7,
           "rows_evaluated": 100000000,
           "columns_profiled": 24,
-          "throughput_mb_s": 40.97,
-          "row_velocity_m_rows_s": 1.17,
+          "throughput_mb_s": 45.3,
+          "row_velocity_m_rows_s": 1.29,
           "passed": false,
           "anomalies_detected": 28,
           "critical_alerts": 3,
