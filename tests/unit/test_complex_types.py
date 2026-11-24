@@ -8,34 +8,31 @@ def test_complex_types_flattening() -> None:
     """
     Verifies that:
     1. Structs are flattened into separate columns.
-    2. Lists are converted to length integers.
+    2. Lists and fixed-size Arrays are converted to length integers.
     3. The profiler generates stats for these new columns.
     """
-    # 1. Setup: Create nested data (Simulating a JSON log)
     df = pl.DataFrame(
         {
             "user": [
                 {"name": "Alice", "age": 30},
                 {"name": "Bob", "age": 25},
-                {"name": None, "age": None},  # Null inside struct
+                {"name": None, "age": None},
             ],
             "tags": [
                 ["pro", "admin"],
                 ["newbie"],
-                [],  # Empty list
+                [],
             ],
+            "coords": pl.Series(
+                "coords",
+                [[10, 20], [30, 40], [50, 60]],
+                dtype=pl.Array(pl.Int64, 2),
+            ),
         }
     )
 
-    # 2. Execution
-    # Initialize the profiler (This triggers preprocess_complex_types)
     profiler = Profiler(df)
-    # Run Profile
     profile = profiler.run()
-
-    # 3. Validation
-    # We first inspect the transformed schema to ensure flattening happened
-    # Note: We access the internal lazyframe's schema to see the transformation
     schema = profiler._df.collect_schema()
 
     # Check Struct Flattening (user -> user_name, user_age)
@@ -43,13 +40,16 @@ def test_complex_types_flattening() -> None:
     assert "user_name" in schema, "Struct field 'name' was not flattened."
     assert "user_age" in schema, "Struct field 'age' was not flattened."
 
-    # Check List Transformation (tags -> tags_len)
+    # Check List & Array Transformation (tags -> tags_length, coords -> coords_length)
     assert "tags" not in schema, "Original list column was not removed."
     assert "tags_length" in schema, "List column was not converted to length."
+    assert "coords" not in schema, "Original array column was not removed."
+    assert "coords_length" in schema, "Array column was not converted to length."
+    assert profile["columns"]["coords_length"].get("min") == 2
+    assert profile["columns"]["coords_length"].get("max") == 2
+    assert profile["columns"]["coords_length"].get("n_unique") == 1
 
-    # 4. Dynamic Assertion
     # Expected Age Mean
-    # Extract the 'age' field from the struct and calculate mean
     expected_age_mean = df.select(pl.col("user").struct.field("age").mean()).item()
     user_age_mean = profile["columns"]["user_age"].get("mean")
     assert user_age_mean is not None
@@ -60,9 +60,7 @@ def test_complex_types_flattening() -> None:
     assert profile["columns"]["user_name"].get("null_count") == expected_null_count
 
     # Expected List Length Stats
-    # Calculate lengths of the lists
     lengths_df = df.select(pl.col("tags").list.len().alias("length"))
-
     expected_min_length = lengths_df.select(pl.min("length")).item()
     expected_max_length = lengths_df.select(pl.max("length")).item()
     expected_mean_length = lengths_df.select(pl.mean("length")).item()

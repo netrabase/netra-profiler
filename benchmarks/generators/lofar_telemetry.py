@@ -159,8 +159,8 @@ def generate_chunk(start_index: int, number_of_rows: int, seed: int) -> pl.DataF
     # 17. Complex Nested Types (Tests preprocess_complex_types: Structs & Fixed-Size Arrays/Lists)
     az_el_struct = pl.DataFrame(
         {
-            "azimuth_deg": rng.uniform(0.0, 360.0, size=number_of_rows).round(2),
-            "elevation_deg": rng.uniform(15.0, 90.0, size=number_of_rows).round(2),
+            "azimuth_deg": rng.uniform(0.0, 360.0, size=number_of_rows),
+            "elevation_deg": rng.uniform(15.0, 90.0, size=number_of_rows),
         }
     ).to_struct("pointing_coords")
 
@@ -172,25 +172,19 @@ def generate_chunk(start_index: int, number_of_rows: int, seed: int) -> pl.DataF
             "station_id": pl.Series("station_id", stations, dtype=pl.String),
             "rcu_id": pl.Series("rcu_id", rcu_ids, dtype=pl.Int32),
             "antenna_type": pl.Series("antenna_type", antenna_types, dtype=ANTENNA_ENUM),
-            "frequency_mhz": pl.Series("frequency_mhz", np.round(frequencies, 3), dtype=pl.Float64),
+            "frequency_mhz": pl.Series("frequency_mhz", frequencies, dtype=pl.Float64),
             "hardware_status": pl.Series("hardware_status", hardware_status, dtype=HARDWARE_ENUM),
-            "signal_power_db": pl.Series(
-                "signal_power_db", np.round(signal_power, 2), dtype=pl.Float64
-            ),
+            "signal_power_db": pl.Series("signal_power_db", signal_power, dtype=pl.Float64),
             "rfi_flag": pl.Series("rfi_flag", rfi_detected, dtype=pl.Boolean),
-            "ambient_temp_c": pl.Series(
-                "ambient_temp_c", np.round(ambient_temp, 2), dtype=pl.Float64
-            ),
-            "board_temp_c": pl.Series("board_temp_c", np.round(board_temp, 2), dtype=pl.Float64),
+            "ambient_temp_c": pl.Series("ambient_temp_c", ambient_temp, dtype=pl.Float64),
+            "board_temp_c": pl.Series("board_temp_c", board_temp, dtype=pl.Float64),
             "gps_sync_status": pl.Series("gps_sync_status", gps_sync_status, dtype=GPS_ENUM),
-            "packet_drop_rate": pl.Series(
-                "packet_drop_rate", np.round(packet_drop_rate, 5), dtype=pl.Float64
-            ),
+            "packet_drop_rate": pl.Series("packet_drop_rate", packet_drop_rate, dtype=pl.Float64),
             "solar_flare_index": pl.Series(
-                "solar_flare_index", np.round(solar_flare_index, 2), dtype=pl.Float64
+                "solar_flare_index", solar_flare_index, dtype=pl.Float64
             ),
             "calibration_offset": pl.Series(
-                "calibration_offset", np.round(calibration_offset, 3), dtype=pl.Float64
+                "calibration_offset", calibration_offset, dtype=pl.Float64
             ),
             "decommissioned_sensor": pl.Series(
                 "decommissioned_sensor", decommissioned_sensor, dtype=pl.Float64

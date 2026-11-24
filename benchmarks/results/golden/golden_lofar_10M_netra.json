@@ -8,7 +8,7 @@
     "ambient_temp_c": {
       "data_type": "Float64",
       "null_count": 0,
-      "n_unique": 5581,
+      "n_unique": 9990158,
       "histogram": [
         {
           "breakpoint": -226.99249999999998,
@@ -114,14 +114,14 @@
       "top_k": [],
       "min": -273.15,
       "max": 650.0,
-      "mean": 12.668653007000001,
-      "zero_count": 1016,
-      "std": 16.777292968844996,
-      "skew": 24.376365554293432,
-      "kurtosis": 1057.9110912010963,
-      "p25": 8.11,
-      "p50": 12.5,
-      "p75": 16.89
+      "mean": 12.668653533647063,
+      "zero_count": 0,
+      "std": 16.777293004891423,
+      "skew": 24.376365282266537,
+      "kurtosis": 1057.9110790251812,
+      "p25": 8.107282561810987,
+      "p50": 12.499200650546268,
+      "p75": 16.8888440952109
     },
     "antenna_type": {
       "data_type": "Enum(categories=['LBA', 'HBA'])",
@@ -148,100 +148,100 @@
     "board_temp_c": {
       "data_type": "Float64",
       "null_count": 0,
-      "n_unique": 10010,
+      "n_unique": 9990158,
       "histogram": [
         {
-          "breakpoint": -404.9385,
-          "bin": "[-490.33, -404.938]",
+          "breakpoint": -404.936125,
+          "bin": "[-490.327, -404.936]",
           "count": 4950
         },
         {
-          "breakpoint": -319.547,
-          "bin": "(-404.938, -319.547]",
+          "breakpoint": -319.54475,
+          "bin": "(-404.936, -319.545]",
           "count": 0
         },
         {
-          "breakpoint": -234.15550000000002,
-          "bin": "(-319.547, -234.156]",
+          "breakpoint": -234.15337499999998,
+          "bin": "(-319.545, -234.153]",
           "count": 0
         },
         {
-          "breakpoint": -148.764,
-          "bin": "(-234.156, -148.764]",
+          "breakpoint": -148.762,
+          "bin": "(-234.153, -148.762]",
           "count": 0
         },
         {
-          "breakpoint": -63.3725,
-          "bin": "(-148.764, -63.3725]",
+          "breakpoint": -63.37062500000002,
+          "bin": "(-148.762, -63.3706]",
           "count": 0
         },
         {
-          "breakpoint": 22.01899999999995,
-          "bin": "(-63.3725, 22.019]",
-          "count": 903552
+          "breakpoint": 22.02075000000002,
+          "bin": "(-63.3706, 22.0208]",
+          "count": 904321
         },
         {
-          "breakpoint": 107.41050000000001,
-          "bin": "(22.019, 107.411]",
-          "count": 9086604
+          "breakpoint": 107.41212499999995,
+          "bin": "(22.0208, 107.412]",
+          "count": 9085835
         },
         {
-          "breakpoint": 192.80199999999996,
-          "bin": "(107.411, 192.802]",
+          "breakpoint": 192.80349999999999,
+          "bin": "(107.412, 192.803]",
           "count": 0
         },
         {
-          "breakpoint": 278.1934999999999,
-          "bin": "(192.802, 278.193]",
+          "breakpoint": 278.194875,
+          "bin": "(192.803, 278.195]",
           "count": 0
         },
         {
-          "breakpoint": 363.585,
-          "bin": "(278.193, 363.585]",
+          "breakpoint": 363.58624999999995,
+          "bin": "(278.195, 363.586]",
           "count": 0
         },
         {
-          "breakpoint": 448.97649999999993,
-          "bin": "(363.585, 448.976]",
+          "breakpoint": 448.977625,
+          "bin": "(363.586, 448.978]",
           "count": 0
         },
         {
-          "breakpoint": 534.3679999999999,
-          "bin": "(448.976, 534.368]",
+          "breakpoint": 534.369,
+          "bin": "(448.978, 534.369]",
           "count": 0
         },
         {
-          "breakpoint": 619.7594999999999,
-          "bin": "(534.368, 619.759]",
+          "breakpoint": 619.760375,
+          "bin": "(534.369, 619.76]",
           "count": 0
         },
         {
-          "breakpoint": 705.1510000000001,
-          "bin": "(619.759, 705.151]",
+          "breakpoint": 705.1517499999999,
+          "bin": "(619.76, 705.152]",
           "count": 0
         },
         {
-          "breakpoint": 790.5425,
-          "bin": "(705.151, 790.543]",
+          "breakpoint": 790.543125,
+          "bin": "(705.152, 790.543]",
           "count": 0
         },
         {
-          "breakpoint": 875.934,
+          "breakpoint": 875.9345,
           "bin": "(790.543, 875.934]",
           "count": 0
         },
         {
-          "breakpoint": 961.3254999999999,
-          "bin": "(875.934, 961.325]",
+          "breakpoint": 961.3258749999999,
+          "bin": "(875.934, 961.326]",
           "count": 0
         },
         {
-          "breakpoint": 1046.7169999999999,
-          "bin": "(961.325, 1046.72]",
+          "breakpoint": 1046.7172500000001,
+          "bin": "(961.326, 1046.72]",
           "count": 0
         },
         {
-          "breakpoint": 1132.1085,
+          "breakpoint": 1132.1086249999998,
           "bin": "(1046.72, 1132.11]",
           "count": 0
         },
@@ -252,157 +252,252 @@
         }
       ],
       "top_k": [],
-      "min": -490.33,
+      "min": -490.3275,
       "max": 1217.5,
-      "mean": 38.437056711000004,
-      "zero_count": 25,
-      "std": 31.039474920964437,
-      "skew": 24.372826285988396,
-      "kurtosis": 1057.70908422113,
-      "p25": 30.0,
-      "p50": 38.12,
-      "p75": 46.25
+      "mean": 38.43705677896207,
+      "zero_count": 0,
+      "std": 31.039453302264207,
+      "skew": 24.372911887925692,
+      "kurtosis": 1057.7112507018485,
+      "p25": 29.995836174924385,
+      "p50": 38.12363833225264,
+      "p75": 46.24623803786703
     },
     "calibration_offset": {
       "data_type": "Float64",
       "null_count": 5996503,
-      "n_unique": 7936,
+      "n_unique": 4003497,
       "histogram": [
         {
-          "breakpoint": -4.6495,
-          "bin": "[-5.149, -4.6495]",
+          "breakpoint": -4.649227760242974,
+          "bin": "[-5.14869, -4.64923]",
           "count": 8
         },
         {
-          "breakpoint": -4.15,
-          "bin": "(-4.6495, -4.15]",
+          "breakpoint": -4.149765596344266,
+          "bin": "(-4.64923, -4.14977]",
           "count": 52
         },
         {
-          "breakpoint": -3.6505,
-          "bin": "(-4.15, -3.6505]",
-          "count": 466
+          "breakpoint": -3.6503034324455577,
+          "bin": "(-4.14977, -3.6503]",
+          "count": 467
         },
         {
-          "breakpoint": -3.151,
-          "bin": "(-3.6505, -3.151]",
-          "count": 2688
+          "breakpoint": -3.1508412685468494,
+          "bin": "(-3.6503, -3.15084]",
+          "count": 2697
         },
         {
-          "breakpoint": -2.6515,
-          "bin": "(-3.151, -2.6515]",
-          "count": 12777
+          "breakpoint": -2.651379104648141,
+          "bin": "(-3.15084, -2.65138]",
+          "count": 12775
         },
         {
-          "breakpoint": -2.152,
-          "bin": "(-2.6515, -2.152]",
-          "count": 47035
+          "breakpoint": -2.151916940749433,
+          "bin": "(-2.65138, -2.15192]",
+          "count": 47117
         },
         {
-          "breakpoint": -1.6524999999999999,
-          "bin": "(-2.152, -1.6525]",
-          "count": 134270
+          "breakpoint": -1.6524547768507247,
+          "bin": "(-2.15192, -1.65245]",
+          "count": 134201
         },
         {
-          "breakpoint": -1.153,
-          "bin": "(-1.6525, -1.153]",
-          "count": 300715
+          "breakpoint": -1.1529926129520165,
+          "bin": "(-1.65245, -1.15299]",
+          "count": 301142
         },
         {
-          "breakpoint": -0.6535000000000002,
-          "bin": "(-1.153, -0.6535]",
-          "count": 529385
+          "breakpoint": -0.6535304490533083,
+          "bin": "(-1.15299, -0.65353]",
+          "count": 528894
         },
         {
-          "breakpoint": -0.15399999999999991,
-          "bin": "(-0.6535, -0.154]",
-          "count": 727774
+          "breakpoint": -0.15406828515460003,
+          "bin": "(-0.65353, -0.154068]",
+          "count": 728489
         },
         {
-          "breakpoint": 0.34550000000000036,
-          "bin": "(-0.154, 0.3455]",
-          "count": 787209
+          "breakpoint": 0.3453938787441082,
+          "bin": "(-0.154068, 0.345394]",
+          "count": 786398
         },
         {
-          "breakpoint": 0.8449999999999998,
-          "bin": "(0.3455, 0.845]",
-          "count": 664001
+          "breakpoint": 0.8448560426428164,
+          "bin": "(0.345394, 0.844856]",
+          "count": 664525
         },
         {
-          "breakpoint": 1.3445,
-          "bin": "(0.845, 1.3445]",
-          "count": 439226
+          "breakpoint": 1.3443182065415247,
+          "bin": "(0.844856, 1.34432]",
+          "count": 438711
         },
         {
-          "breakpoint": 1.8440000000000003,
-          "bin": "(1.3445, 1.844]",
-          "count": 227950
+          "breakpoint": 1.843780370440233,
+          "bin": "(1.34432, 1.84378]",
+          "count": 228167
         },
         {
-          "breakpoint": 2.3434999999999997,
-          "bin": "(1.844, 2.3435]",
-          "count": 91991
+          "breakpoint": 2.343242534338941,
+          "bin": "(1.84378, 2.34324]",
+          "count": 91878
         },
         {
-          "breakpoint": 2.843,
-          "bin": "(2.3435, 2.843]",
-          "count": 28872
+          "breakpoint": 2.8427046982376494,
+          "bin": "(2.34324, 2.8427]",
+          "count": 28907
         },
         {
-          "breakpoint": 3.3425000000000002,
-          "bin": "(2.843, 3.3425]",
-          "count": 7448
+          "breakpoint": 3.3421668621363585,
+          "bin": "(2.8427, 3.34217]",
+          "count": 7438
         },
         {
-          "breakpoint": 3.8419999999999996,
-          "bin": "(3.3425, 3.842]",
-          "count": 1398
+          "breakpoint": 3.841629026035066,
+          "bin": "(3.34217, 3.84163]",
+          "count": 1399
         },
         {
-          "breakpoint": 4.341500000000001,
-          "bin": "(3.842, 4.3415]",
+          "breakpoint": 4.341091189933773,
+          "bin": "(3.84163, 4.34109]",
           "count": 211
         },
         {
-          "breakpoint": 4.841,
-          "bin": "(4.3415, 4.841]",
+          "breakpoint": 4.840553353832482,
+          "bin": "(4.34109, 4.84055]",
           "count": 21
         }
       ],
       "top_k": [],
-      "min": -5.149,
-      "max": 4.841,
-      "mean": 1.2987645550877056e-05,
-      "zero_count": 1667,
-      "std": 0.9998270908338429,
-      "skew": -0.0016198589931117244,
-      "kurtosis": -0.0011000052906164903,
-      "p25": -0.674,
-      "p50": -0.0,
-      "p75": 0.675
+      "min": -5.148689924141682,
+      "max": 4.840553353832482,
+      "mean": 1.3086712850424515e-05,
+      "zero_count": 0,
+      "std": 0.9998270156160417,
+      "skew": -0.0016204624283275718,
+      "kurtosis": -0.00110025042709605,
+      "p25": -0.6740739365521832,
+      "p50": 1.0140671165824521e-05,
+      "p75": 0.6747042756455648
     },
     "decommissioned_sensor": {
       "data_type": "Float64",
       "null_count": 9900314,
-      "n_unique": 1,
+      "n_unique": 1374,
       "histogram": [
         {
-          "breakpoint": 42.0,
-          "bin": "[42, 42]",
-          "count": 99686
+          "breakpoint": 34.7475,
+          "bin": "[33.93, 34.7475]",
+          "count": 17
+        },
+        {
+          "breakpoint": 35.565,
+          "bin": "(34.7475, 35.565]",
+          "count": 52
+        },
+        {
+          "breakpoint": 36.3825,
+          "bin": "(35.565, 36.3825]",
+          "count": 185
+        },
+        {
+          "breakpoint": 37.2,
+          "bin": "(36.3825, 37.2]",
+          "count": 569
+        },
+        {
+          "breakpoint": 38.0175,
+          "bin": "(37.2, 38.0175]",
+          "count": 1508
+        },
+        {
+          "breakpoint": 38.835,
+          "bin": "(38.0175, 38.835]",
+          "count": 3356
+        },
+        {
+          "breakpoint": 39.6525,
+          "bin": "(38.835, 39.6525]",
+          "count": 6302
+        },
+        {
+          "breakpoint": 40.47,
+          "bin": "(39.6525, 40.47]",
+          "count": 10245
+        },
+        {
+          "breakpoint": 41.2875,
+          "bin": "(40.47, 41.2875]",
+          "count": 13753
+        },
+        {
+          "breakpoint": 42.105000000000004,
+          "bin": "(41.2875, 42.105]",
+          "count": 15913
+        },
+        {
+          "breakpoint": 42.9225,
+          "bin": "(42.105, 42.9225]",
+          "count": 15785
+        },
+        {
+          "breakpoint": 43.74,
+          "bin": "(42.9225, 43.74]",
+          "count": 12905
+        },
+        {
+          "breakpoint": 44.557500000000005,
+          "bin": "(43.74, 44.5575]",
+          "count": 9145
+        },
+        {
+          "breakpoint": 45.375,
+          "bin": "(44.5575, 45.375]",
+          "count": 5388
+        },
+        {
+          "breakpoint": 46.1925,
+          "bin": "(45.375, 46.1925]",
+          "count": 2786
+        },
+        {
+          "breakpoint": 47.010000000000005,
+          "bin": "(46.1925, 47.01]",
+          "count": 1179
+        },
+        {
+          "breakpoint": 47.8275,
+          "bin": "(47.01, 47.8275]",
+          "count": 405
+        },
+        {
+          "breakpoint": 48.645,
+          "bin": "(47.8275, 48.645]",
+          "count": 137
+        },
+        {
+          "breakpoint": 49.462500000000006,
+          "bin": "(48.645, 49.4625]",
+          "count": 47
+        },
+        {
+          "breakpoint": 50.28,
+          "bin": "(49.4625, 50.28]",
+          "count": 9
         }
       ],
       "top_k": [],
-      "min": 42.0,
-      "max": 42.0,
-      "mean": 42.0,
+      "min": 33.93,
+      "max": 50.28,
+      "mean": 41.99689675581326,
       "zero_count": 0,
-      "std": 0.0,
-      "skew": NaN,
-      "kurtosis": NaN,
-      "p25": 42.0,
+      "std": 1.9991930671677296,
+      "skew": -0.00030748342222172237,
+      "kurtosis": 0.010689729049011998,
+      "p25": 40.65,
       "p50": 42.0,
-      "p75": 42.0
+      "p75": 43.35
     },
     "firmware_version": {
       "data_type": "String",
@@ -425,120 +520,120 @@
     "frequency_mhz": {
       "data_type": "Float64",
       "null_count": 0,
-      "n_unique": 210002,
+      "n_unique": 10000000,
       "histogram": [
         {
-          "breakpoint": 21.5,
+          "breakpoint": 21.50002271337482,
           "bin": "[10, 21.5]",
-          "count": 718687
+          "count": 718715
         },
         {
-          "breakpoint": 33.0,
+          "breakpoint": 33.00002013639987,
           "bin": "(21.5, 33]",
-          "count": 717876
+          "count": 717877
         },
         {
-          "breakpoint": 44.5,
+          "breakpoint": 44.50001755942492,
           "bin": "(33, 44.5]",
-          "count": 718448
+          "count": 718454
         },
         {
-          "breakpoint": 56.0,
+          "breakpoint": 56.00001498244997,
           "bin": "(44.5, 56]",
-          "count": 719119
+          "count": 719120
         },
         {
-          "breakpoint": 67.5,
+          "breakpoint": 67.50001240547502,
           "bin": "(56, 67.5]",
-          "count": 718924
+          "count": 718918
         },
         {
-          "breakpoint": 79.0,
+          "breakpoint": 79.00000982850007,
           "bin": "(67.5, 79]",
-          "count": 717400
+          "count": 717398
         },
         {
-          "breakpoint": 90.5,
+          "breakpoint": 90.50000725152512,
           "bin": "(79, 90.5]",
-          "count": 688929
+          "count": 688901
         },
         {
-          "breakpoint": 102.0,
+          "breakpoint": 102.00000467455017,
           "bin": "(90.5, 102]",
           "count": 0
         },
         {
-          "breakpoint": 113.5,
+          "breakpoint": 113.50000209757522,
           "bin": "(102, 113.5]",
-          "count": 134642
+          "count": 134655
         },
         {
-          "breakpoint": 125.0,
+          "breakpoint": 124.99999952060027,
           "bin": "(113.5, 125]",
-          "count": 442505
+          "count": 442511
         },
         {
-          "breakpoint": 136.5,
+          "breakpoint": 136.49999694362532,
           "bin": "(125, 136.5]",
-          "count": 442043
+          "count": 442034
         },
         {
-          "breakpoint": 148.0,
+          "breakpoint": 147.99999436665038,
           "bin": "(136.5, 148]",
-          "count": 442476
+          "count": 442487
         },
         {
-          "breakpoint": 159.5,
+          "breakpoint": 159.49999178967542,
           "bin": "(148, 159.5]",
-          "count": 442008
+          "count": 441998
         },
         {
-          "breakpoint": 171.0,
+          "breakpoint": 170.99998921270048,
           "bin": "(159.5, 171]",
-          "count": 442441
+          "count": 442447
         },
         {
-          "breakpoint": 182.5,
+          "breakpoint": 182.49998663572555,
           "bin": "(171, 182.5]",
-          "count": 443475
+          "count": 443481
         },
         {
-          "breakpoint": 194.0,
+          "breakpoint": 193.99998405875058,
           "bin": "(182.5, 194]",
-          "count": 441567
+          "count": 441562
         },
         {
-          "breakpoint": 205.5,
+          "breakpoint": 205.49998148177562,
           "bin": "(194, 205.5]",
-          "count": 443090
+          "count": 443092
         },
         {
-          "breakpoint": 217.0,
+          "breakpoint": 216.99997890480068,
           "bin": "(205.5, 217]",
-          "count": 441911
+          "count": 441909
         },
         {
-          "breakpoint": 228.5,
+          "breakpoint": 228.49997632782575,
           "bin": "(217, 228.5]",
-          "count": 442126
+          "count": 442122
         },
         {
-          "breakpoint": 240.0,
+          "breakpoint": 239.99997375085078,
           "bin": "(228.5, 240]",
-          "count": 442333
+          "count": 442319
         }
       ],
       "top_k": [],
-      "min": 10.0,
-      "max": 240.0,
-      "mean": 112.51060973890002,
+      "min": 10.00002529034977,
+      "max": 239.99997375085078,
+      "mean": 112.51060962986188,
       "zero_count": 0,
-      "std": 69.8291944776832,
-      "skew": 0.24058069121725953,
-      "kurtosis": -1.3160874926573296,
-      "p25": 50.022,
-      "p50": 110.015,
-      "p75": 175.013
+      "std": 69.82919434713638,
+      "skew": 0.24058068904606908,
+      "kurtosis": -1.3160874907776792,
+      "p25": 50.022011399897,
+      "p50": 110.01521638937112,
+      "p75": 175.01318503954104
     },
     "gps_sync_status": {
       "data_type": "Enum(categories=['LOCKED', 'DRIFTING', 'LOST_SYNC'])",
@@ -612,141 +707,141 @@
       "top_k": [
         {
           "value": "NOMINAL_OP",
-          "count": 8496072
+          "count": 8496178
         },
         {
           "value": "   ",
-          "count": 1499806
+          "count": 1499696
         },
         {
           "value": "STACK_TRACE_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-          "count": 4122
+          "count": 4126
         }
       ],
       "min_length": 3,
       "max_length": 812,
-      "mean_length": 9.2807202,
+      "mean_length": 9.281118,
       "min": "   ",
       "max": "STACK_TRACE_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-      "blank_count": 1499806
+      "blank_count": 1499696
     },
     "packet_drop_rate": {
       "data_type": "Float64",
       "null_count": 0,
-      "n_unique": 25531,
+      "n_unique": 9999095,
       "histogram": [
         {
-          "breakpoint": 0.05,
-          "bin": "[0, 0.05]",
-          "count": 9924877
+          "breakpoint": 0.050000000040178565,
+          "bin": "[4.22932e-11, 0.05]",
+          "count": 9924894
         },
         {
-          "breakpoint": 0.1,
+          "breakpoint": 0.1000000000380639,
           "bin": "(0.05, 0.1]",
-          "count": 47480
+          "count": 47465
         },
         {
-          "breakpoint": 0.15000000000000002,
+          "breakpoint": 0.15000000003594924,
           "bin": "(0.1, 0.15]",
-          "count": 12391
+          "count": 12392
         },
         {
-          "breakpoint": 0.2,
+          "breakpoint": 0.20000000003383459,
           "bin": "(0.15, 0.2]",
-          "count": 5243
+          "count": 5241
         },
         {
-          "breakpoint": 0.25,
+          "breakpoint": 0.2500000000317199,
           "bin": "(0.2, 0.25]",
-          "count": 2809
+          "count": 2808
         },
         {
-          "breakpoint": 0.30000000000000004,
+          "breakpoint": 0.30000000002960525,
           "bin": "(0.25, 0.3]",
-          "count": 1705
+          "count": 1706
         },
         {
-          "breakpoint": 0.35000000000000003,
+          "breakpoint": 0.3500000000274906,
           "bin": "(0.3, 0.35]",
-          "count": 1129
+          "count": 1128
         },
         {
-          "breakpoint": 0.4,
+          "breakpoint": 0.40000000002537595,
           "bin": "(0.35, 0.4]",
           "count": 804
         },
         {
-          "breakpoint": 0.45,
+          "breakpoint": 0.4500000000232613,
           "bin": "(0.4, 0.45]",
           "count": 570
         },
         {
-          "breakpoint": 0.5,
+          "breakpoint": 0.5000000000211466,
           "bin": "(0.45, 0.5]",
           "count": 468
         },
         {
-          "breakpoint": 0.55,
+          "breakpoint": 0.5500000000190319,
           "bin": "(0.5, 0.55]",
-          "count": 355
+          "count": 356
         },
         {
-          "breakpoint": 0.6000000000000001,
+          "breakpoint": 0.6000000000169172,
           "bin": "(0.55, 0.6]",
-          "count": 262
+          "count": 261
         },
         {
-          "breakpoint": 0.65,
+          "breakpoint": 0.6500000000148026,
           "bin": "(0.6, 0.65]",
           "count": 211
         },
         {
-          "breakpoint": 0.7000000000000001,
+          "breakpoint": 0.7000000000126879,
           "bin": "(0.65, 0.7]",
           "count": 168
         },
         {
-          "breakpoint": 0.75,
+          "breakpoint": 0.7500000000105733,
           "bin": "(0.7, 0.75]",
           "count": 142
         },
         {
-          "breakpoint": 0.8,
+          "breakpoint": 0.8000000000084586,
           "bin": "(0.75, 0.8]",
           "count": 128
         },
         {
-          "breakpoint": 0.8500000000000001,
+          "breakpoint": 0.8500000000063439,
           "bin": "(0.8, 0.85]",
           "count": 111
         },
         {
-          "breakpoint": 0.9,
+          "breakpoint": 0.9000000000042293,
           "bin": "(0.85, 0.9]",
           "count": 84
         },
         {
-          "breakpoint": 0.9500000000000001,
+          "breakpoint": 0.9500000000021146,
           "bin": "(0.9, 0.95]",
-          "count": 84
+          "count": 85
         },
         {
           "breakpoint": 1.0,
           "bin": "(0.95, 1]",
-          "count": 979
+          "count": 978
         }
       ],
       "top_k": [],
-      "min": 0.0,
+      "min": 4.229322435622831e-11,
       "max": 1.0,
-      "mean": 0.0038284938709999996,
-      "zero_count": 37476,
-      "std": 0.01775060561401513,
-      "skew": 31.38904118435163,
-      "kurtosis": 1418.5416121606766,
-      "p25": 0.00042,
-      "p50": 0.00118,
-      "p75": 0.00304
+      "mean": 0.003828497049400894,
+      "zero_count": 0,
+      "std": 0.017750604527523212,
+      "skew": 31.3890487384288,
+      "kurtosis": 1418.5420622162844,
+      "p25": 0.0004231853770776215,
+      "p50": 0.0011752283081656132,
+      "p75": 0.0030442262288615726
     },
     "packet_id": {
       "data_type": "Int64",
@@ -859,9 +954,9 @@
       "max": 9999999,
       "mean": 4999999.5,
       "zero_count": 1,
-      "std": 2886751.4902856923,
-      "skew": -5.433653460654548e-16,
-      "kurtosis": -1.2000000000000262,
+      "std": 2886751.4902856927,
+      "skew": -1.8899967435221272e-17,
+      "kurtosis": -1.2000000000000248,
       "p25": 2500000.0,
       "p50": 4999999.5,
       "p75": 7499999.0
@@ -869,238 +964,238 @@
     "pointing_coords_azimuth_deg": {
       "data_type": "Float64",
       "null_count": 0,
-      "n_unique": 36001,
+      "n_unique": 10000000,
       "histogram": [
         {
-          "breakpoint": 18.0,
-          "bin": "[0, 18]",
-          "count": 501421
+          "breakpoint": 18.000103360185214,
+          "bin": "[0.000108821, 18.0001]",
+          "count": 501578
         },
         {
-          "breakpoint": 36.0,
-          "bin": "(18, 36]",
-          "count": 498189
+          "breakpoint": 36.00009789918009,
+          "bin": "(18.0001, 36.0001]",
+          "count": 498313
         },
         {
-          "breakpoint": 54.0,
-          "bin": "(36, 54]",
-          "count": 499659
+          "breakpoint": 54.00009243817497,
+          "bin": "(36.0001, 54.0001]",
+          "count": 499492
         },
         {
-          "breakpoint": 72.0,
-          "bin": "(54, 72]",
-          "count": 498693
+          "breakpoint": 72.00008697716984,
+          "bin": "(54.0001, 72.0001]",
+          "count": 498766
         },
         {
-          "breakpoint": 90.0,
-          "bin": "(72, 90]",
-          "count": 500192
+          "breakpoint": 90.00008151616473,
+          "bin": "(72.0001, 90.0001]",
+          "count": 499887
         },
         {
-          "breakpoint": 108.0,
-          "bin": "(90, 108]",
-          "count": 499396
+          "breakpoint": 108.0000760551596,
+          "bin": "(90.0001, 108]",
+          "count": 499553
         },
         {
-          "breakpoint": 126.0,
+          "breakpoint": 126.00007059415447,
           "bin": "(108, 126]",
-          "count": 500809
+          "count": 500869
         },
         {
-          "breakpoint": 144.0,
+          "breakpoint": 144.00006513314935,
           "bin": "(126, 144]",
-          "count": 500580
+          "count": 500487
         },
         {
-          "breakpoint": 162.0,
+          "breakpoint": 162.00005967214423,
           "bin": "(144, 162]",
-          "count": 500846
+          "count": 501001
         },
         {
-          "breakpoint": 180.0,
+          "breakpoint": 180.00005421113912,
           "bin": "(162, 180]",
-          "count": 499903
+          "count": 500088
         },
         {
-          "breakpoint": 198.0,
+          "breakpoint": 198.00004875013397,
           "bin": "(180, 198]",
-          "count": 500900
+          "count": 500869
         },
         {
-          "breakpoint": 216.0,
+          "breakpoint": 216.00004328912885,
           "bin": "(198, 216]",
-          "count": 501127
+          "count": 501174
         },
         {
-          "breakpoint": 234.0,
+          "breakpoint": 234.00003782812374,
           "bin": "(216, 234]",
-          "count": 499682
+          "count": 499757
         },
         {
-          "breakpoint": 252.0,
+          "breakpoint": 252.0000323671186,
           "bin": "(234, 252]",
-          "count": 500596
+          "count": 500641
         },
         {
-          "breakpoint": 270.0,
+          "breakpoint": 270.0000269061135,
           "bin": "(252, 270]",
-          "count": 499237
+          "count": 499261
         },
         {
-          "breakpoint": 288.0,
+          "breakpoint": 288.00002144510836,
           "bin": "(270, 288]",
-          "count": 499536
+          "count": 499498
         },
         {
-          "breakpoint": 306.0,
+          "breakpoint": 306.00001598410324,
           "bin": "(288, 306]",
-          "count": 500342
+          "count": 500293
         },
         {
-          "breakpoint": 324.0,
+          "breakpoint": 324.0000105230981,
           "bin": "(306, 324]",
-          "count": 499416
+          "count": 499222
         },
         {
-          "breakpoint": 342.0,
+          "breakpoint": 342.000005062093,
           "bin": "(324, 342]",
-          "count": 498738
+          "count": 498687
         },
         {
-          "breakpoint": 360.0,
+          "breakpoint": 359.9999996010879,
           "bin": "(342, 360]",
-          "count": 500738
+          "count": 500564
         }
       ],
       "top_k": [],
-      "min": 0.0,
-      "max": 360.0,
-      "mean": 179.996352833,
-      "zero_count": 106,
-      "std": 103.90306238155938,
-      "skew": -3.7718577567278306e-05,
-      "kurtosis": -1.1988903129033674,
-      "p25": 90.06,
-      "p50": 180.01,
-      "p75": 269.95
+      "min": 0.00010882119033883697,
+      "max": 359.9999996010879,
+      "mean": 179.99243639732546,
+      "zero_count": 0,
+      "std": 103.89983117836157,
+      "skew": -7.463699619057745e-06,
+      "kurtosis": -1.1987737928140292,
+      "p25": 90.07311399894768,
+      "p50": 179.99865199328178,
+      "p75": 269.9389755914553
     },
     "pointing_coords_elevation_deg": {
       "data_type": "Float64",
       "null_count": 0,
-      "n_unique": 7501,
+      "n_unique": 10000000,
       "histogram": [
         {
-          "breakpoint": 18.75,
+          "breakpoint": 18.75000871197494,
           "bin": "[15, 18.75]",
-          "count": 498093
+          "count": 498539
         },
         {
-          "breakpoint": 22.5,
+          "breakpoint": 22.50000686731935,
           "bin": "(18.75, 22.5]",
-          "count": 500439
+          "count": 500396
         },
         {
-          "breakpoint": 26.25,
+          "breakpoint": 26.25000502266376,
           "bin": "(22.5, 26.25]",
-          "count": 498698
+          "count": 498710
         },
         {
-          "breakpoint": 30.0,
+          "breakpoint": 30.00000317800817,
           "bin": "(26.25, 30]",
-          "count": 500032
+          "count": 499797
         },
         {
-          "breakpoint": 33.75,
+          "breakpoint": 33.750001333352586,
           "bin": "(30, 33.75]",
-          "count": 500533
+          "count": 500694
         },
         {
-          "breakpoint": 37.5,
+          "breakpoint": 37.49999948869699,
           "bin": "(33.75, 37.5]",
-          "count": 499001
+          "count": 498860
         },
         {
-          "breakpoint": 41.25,
+          "breakpoint": 41.2499976440414,
           "bin": "(37.5, 41.25]",
-          "count": 499194
+          "count": 499212
         },
         {
-          "breakpoint": 45.0,
+          "breakpoint": 44.999995799385815,
           "bin": "(41.25, 45]",
-          "count": 500026
+          "count": 500167
         },
         {
-          "breakpoint": 48.75,
+          "breakpoint": 48.74999395473023,
           "bin": "(45, 48.75]",
-          "count": 500310
+          "count": 500170
         },
         {
-          "breakpoint": 52.5,
+          "breakpoint": 52.499992110074636,
           "bin": "(48.75, 52.5]",
-          "count": 501162
+          "count": 501239
         },
         {
-          "breakpoint": 56.25,
+          "breakpoint": 56.249990265419044,
           "bin": "(52.5, 56.25]",
-          "count": 499744
+          "count": 499553
         },
         {
-          "breakpoint": 60.0,
+          "breakpoint": 59.99998842076346,
           "bin": "(56.25, 60]",
-          "count": 499992
+          "count": 499943
         },
         {
-          "breakpoint": 63.75,
+          "breakpoint": 63.74998657610787,
           "bin": "(60, 63.75]",
-          "count": 500203
+          "count": 500336
         },
         {
-          "breakpoint": 67.5,
+          "breakpoint": 67.49998473145229,
           "bin": "(63.75, 67.5]",
-          "count": 499474
+          "count": 499556
         },
         {
-          "breakpoint": 71.25,
+          "breakpoint": 71.24998288679669,
           "bin": "(67.5, 71.25]",
-          "count": 502620
+          "count": 502683
         },
         {
-          "breakpoint": 75.0,
+          "breakpoint": 74.9999810421411,
           "bin": "(71.25, 75]",
-          "count": 500371
+          "count": 500330
         },
         {
-          "breakpoint": 78.75,
+          "breakpoint": 78.74997919748552,
           "bin": "(75, 78.75]",
-          "count": 498389
+          "count": 498540
         },
         {
-          "breakpoint": 82.5,
+          "breakpoint": 82.49997735282993,
           "bin": "(78.75, 82.5]",
-          "count": 500829
+          "count": 500863
         },
         {
-          "breakpoint": 86.25,
+          "breakpoint": 86.24997550817433,
           "bin": "(82.5, 86.25]",
-          "count": 499168
+          "count": 499322
         },
         {
-          "breakpoint": 90.0,
+          "breakpoint": 89.99997366351874,
           "bin": "(86.25, 90]",
-          "count": 501722
+          "count": 501090
         }
       ],
       "top_k": [],
-      "min": 15.0,
-      "max": 90.0,
-      "mean": 52.511704875,
+      "min": 15.000010556630528,
+      "max": 89.99997366351874,
+      "mean": 52.51432027390987,
       "zero_count": 0,
-      "std": 21.647557974705318,
-      "skew": -0.0005354656055553364,
-      "kurtosis": -1.1996064007627523,
-      "p25": 33.76,
-      "p50": 52.51,
-      "p75": 71.25
+      "std": 21.647298252680873,
+      "skew": -0.0006693074912138644,
+      "kurtosis": -1.1996143980333545,
+      "p25": 33.76394768207483,
+      "p50": 52.51619475315506,
+      "p75": 71.2511199283968
     },
     "rcu_id": {
       "data_type": "Int32",
@@ -1213,9 +1308,9 @@
       "max": 191,
       "mean": 95.4523799,
       "zero_count": 52104,
-      "std": 55.42228279211367,
-      "skew": 0.0007794741158431188,
-      "kurtosis": -1.2004097996443739,
+      "std": 55.42228279211368,
+      "skew": 0.0007794741158431194,
+      "kurtosis": -1.2004097996443737,
       "p25": 47.0,
       "p50": 95.0,
       "p75": 143.0
@@ -1362,8 +1457,8 @@
       "mean": 4999505.0419888,
       "zero_count": 957,
       "std": 2886792.5556741823,
-      "skew": 5.550497417561939e-06,
-      "kurtosis": -1.1999136119039462,
+      "skew": 5.55049741739438e-06,
+      "kurtosis": -1.1999136119039453,
       "p25": 2499286.0,
       "p50": 4999485.5,
       "p75": 7499760.0
@@ -1371,238 +1466,238 @@
     "signal_power_db": {
       "data_type": "Float64",
       "null_count": 10017,
-      "n_unique": 10014,
+      "n_unique": 9989983,
       "histogram": [
         {
-          "breakpoint": -129.8235,
-          "bin": "[-136.19, -129.823]",
+          "breakpoint": -129.8265539613102,
+          "bin": "[-136.193, -129.827]",
           "count": 24
         },
         {
-          "breakpoint": -123.457,
-          "bin": "(-129.823, -123.457]",
+          "breakpoint": -123.45973421378393,
+          "bin": "(-129.827, -123.46]",
           "count": 270
         },
         {
-          "breakpoint": -117.09049999999999,
-          "bin": "(-123.457, -117.09]",
-          "count": 2051
+          "breakpoint": -117.09291446625767,
+          "bin": "(-123.46, -117.093]",
+          "count": 2053
         },
         {
-          "breakpoint": -110.72399999999999,
-          "bin": "(-117.09, -110.724]",
-          "count": 12148
+          "breakpoint": -110.72609471873142,
+          "bin": "(-117.093, -110.726]",
+          "count": 12146
         },
         {
-          "breakpoint": -104.35749999999999,
-          "bin": "(-110.724, -104.357]",
-          "count": 57590
+          "breakpoint": -104.35927497120515,
+          "bin": "(-110.726, -104.359]",
+          "count": 57533
         },
         {
-          "breakpoint": -97.991,
-          "bin": "(-104.357, -97.991]",
-          "count": 204685
+          "breakpoint": -97.99245522367889,
+          "bin": "(-104.359, -97.9925]",
+          "count": 204888
         },
         {
-          "breakpoint": -91.6245,
-          "bin": "(-97.991, -91.6245]",
-          "count": 550954
+          "breakpoint": -91.62563547615264,
+          "bin": "(-97.9925, -91.6256]",
+          "count": 550720
         },
         {
-          "breakpoint": -85.258,
-          "bin": "(-91.6245, -85.258]",
-          "count": 1133247
+          "breakpoint": -85.25881572862639,
+          "bin": "(-91.6256, -85.2588]",
+          "count": 1132455
         },
         {
-          "breakpoint": -78.8915,
-          "bin": "(-85.258, -78.8915]",
-          "count": 1764263
+          "breakpoint": -78.89199598110012,
+          "bin": "(-85.2588, -78.892]",
+          "count": 1766070
         },
         {
-          "breakpoint": -72.52499999999999,
-          "bin": "(-78.8915, -72.525]",
-          "count": 2086419
+          "breakpoint": -72.52517623357386,
+          "bin": "(-78.892, -72.5252]",
+          "count": 2085442
         },
         {
-          "breakpoint": -66.15849999999999,
-          "bin": "(-72.525, -66.1585]",
-          "count": 1875260
+          "breakpoint": -66.15835648604761,
+          "bin": "(-72.5252, -66.1584]",
+          "count": 1874463
         },
         {
-          "breakpoint": -59.792,
-          "bin": "(-66.1585, -59.792]",
-          "count": 1278116
+          "breakpoint": -59.791536738521344,
+          "bin": "(-66.1584, -59.7915]",
+          "count": 1279453
         },
         {
-          "breakpoint": -53.4255,
-          "bin": "(-59.792, -53.4255]",
-          "count": 664173
+          "breakpoint": -53.424716990995094,
+          "bin": "(-59.7915, -53.4247]",
+          "count": 663693
         },
         {
-          "breakpoint": -47.059,
-          "bin": "(-53.4255, -47.059]",
-          "count": 261731
+          "breakpoint": -47.05789724346883,
+          "bin": "(-53.4247, -47.0579]",
+          "count": 261648
         },
         {
-          "breakpoint": -40.692499999999995,
-          "bin": "(-47.059, -40.6925]",
-          "count": 77920
+          "breakpoint": -40.69107749594258,
+          "bin": "(-47.0579, -40.6911]",
+          "count": 78010
         },
         {
-          "breakpoint": -34.32599999999999,
-          "bin": "(-40.6925, -34.326]",
-          "count": 17573
+          "breakpoint": -34.324257748416315,
+          "bin": "(-40.6911, -34.3243]",
+          "count": 17556
         },
         {
-          "breakpoint": -27.95949999999999,
-          "bin": "(-34.326, -27.9595]",
+          "breakpoint": -27.95743800089005,
+          "bin": "(-34.3243, -27.9574]",
           "count": 3093
         },
         {
-          "breakpoint": -21.59299999999999,
-          "bin": "(-27.9595, -21.593]",
+          "breakpoint": -21.5906182533638,
+          "bin": "(-27.9574, -21.5906]",
           "count": 419
         },
         {
-          "breakpoint": -15.226499999999987,
-          "bin": "(-21.593, -15.2265]",
+          "breakpoint": -15.223798505837536,
+          "bin": "(-21.5906, -15.2238]",
           "count": 42
         },
         {
-          "breakpoint": -8.86,
-          "bin": "(-15.2265, -8.86]",
+          "breakpoint": -8.856978758311286,
+          "bin": "(-15.2238, -8.85698]",
           "count": 5
         }
       ],
       "top_k": [],
-      "min": -136.19,
-      "max": -8.86,
-      "mean": -75.00051596884597,
+      "min": -136.19337370883645,
+      "max": -8.856978758311286,
+      "mean": -75.0005169388243,
       "zero_count": 0,
-      "std": 12.000240727074189,
-      "skew": 9.757242715120642e-05,
-      "kurtosis": 0.001605736210773312,
-      "p25": -83.09,
-      "p50": -75.0,
-      "p75": -66.91
+      "std": 12.000241435440794,
+      "skew": 9.756923471077419e-05,
+      "kurtosis": 0.0016067762443543465,
+      "p25": -83.08993091141318,
+      "p50": -75.0038828773426,
+      "p75": -66.90698895765922
     },
     "solar_flare_index": {
       "data_type": "Float64",
       "null_count": 0,
-      "n_unique": 12512,
+      "n_unique": 3501641,
       "histogram": [
         {
-          "breakpoint": 10.472,
+          "breakpoint": 10.471971284410243,
           "bin": "[0, 10.472]",
-          "count": 8258458
+          "count": 8258133
         },
         {
-          "breakpoint": 20.944,
-          "bin": "(10.472, 20.944]",
-          "count": 874919
+          "breakpoint": 20.943942568820486,
+          "bin": "(10.472, 20.9439]",
+          "count": 875180
         },
         {
-          "breakpoint": 31.415999999999997,
-          "bin": "(20.944, 31.416]",
-          "count": 435795
+          "breakpoint": 31.415913853230727,
+          "bin": "(20.9439, 31.4159]",
+          "count": 435879
         },
         {
-          "breakpoint": 41.888,
-          "bin": "(31.416, 41.888]",
-          "count": 216514
+          "breakpoint": 41.88788513764097,
+          "bin": "(31.4159, 41.8879]",
+          "count": 216544
         },
         {
-          "breakpoint": 52.36,
-          "bin": "(41.888, 52.36]",
-          "count": 107815
+          "breakpoint": 52.359856422051216,
+          "bin": "(41.8879, 52.3599]",
+          "count": 107792
         },
         {
-          "breakpoint": 62.831999999999994,
-          "bin": "(52.36, 62.832]",
-          "count": 53548
+          "breakpoint": 62.83182770646145,
+          "bin": "(52.3599, 62.8318]",
+          "count": 53507
         },
         {
-          "breakpoint": 73.304,
-          "bin": "(62.832, 73.304]",
-          "count": 26604
+          "breakpoint": 73.3037989908717,
+          "bin": "(62.8318, 73.3038]",
+          "count": 26616
         },
         {
-          "breakpoint": 83.776,
-          "bin": "(73.304, 83.776]",
-          "count": 13100
+          "breakpoint": 83.77577027528194,
+          "bin": "(73.3038, 83.7758]",
+          "count": 13102
         },
         {
-          "breakpoint": 94.24799999999999,
-          "bin": "(83.776, 94.248]",
-          "count": 6662
+          "breakpoint": 94.24774155969219,
+          "bin": "(83.7758, 94.2477]",
+          "count": 6664
         },
         {
-          "breakpoint": 104.72,
-          "bin": "(94.248, 104.72]",
+          "breakpoint": 104.71971284410243,
+          "bin": "(94.2477, 104.72]",
           "count": 3261
         },
         {
-          "breakpoint": 115.192,
+          "breakpoint": 115.19168412851268,
           "bin": "(104.72, 115.192]",
-          "count": 1653
+          "count": 1651
         },
         {
-          "breakpoint": 125.66399999999999,
+          "breakpoint": 125.6636554129229,
           "bin": "(115.192, 125.664]",
           "count": 857
         },
         {
-          "breakpoint": 136.136,
+          "breakpoint": 136.13562669733315,
           "bin": "(125.664, 136.136]",
           "count": 412
         },
         {
-          "breakpoint": 146.608,
+          "breakpoint": 146.6075979817434,
           "bin": "(136.136, 146.608]",
           "count": 187
         },
         {
-          "breakpoint": 157.07999999999998,
+          "breakpoint": 157.07956926615364,
           "bin": "(146.608, 157.08]",
           "count": 110
         },
         {
-          "breakpoint": 167.552,
+          "breakpoint": 167.55154055056389,
           "bin": "(157.08, 167.552]",
           "count": 53
         },
         {
-          "breakpoint": 178.024,
+          "breakpoint": 178.02351183497413,
           "bin": "(167.552, 178.024]",
           "count": 28
         },
         {
-          "breakpoint": 188.49599999999998,
-          "bin": "(178.024, 188.496]",
+          "breakpoint": 188.49548311938437,
+          "bin": "(178.024, 188.495]",
           "count": 13
         },
         {
-          "breakpoint": 198.968,
-          "bin": "(188.496, 198.968]",
+          "breakpoint": 198.96745440379462,
+          "bin": "(188.495, 198.967]",
           "count": 5
         },
         {
-          "breakpoint": 209.44,
-          "bin": "(198.968, 209.44]",
+          "breakpoint": 209.43942568820486,
+          "bin": "(198.967, 209.439]",
           "count": 6
         }
       ],
       "top_k": [],
       "min": 0.0,
-      "max": 209.44,
-      "mean": 5.2507197990000005,
-      "zero_count": 6499496,
-      "std": 11.397640647613025,
-      "skew": 3.307417662216354,
-      "kurtosis": 14.815704047659032,
+      "max": 209.43942568820486,
+      "mean": 5.250720303760778,
+      "zero_count": 6498360,
+      "std": 11.39764142454293,
+      "skew": 3.30741813424731,
+      "kurtosis": 14.815708824376706,
       "p25": 0.0,
       "p50": 0.0,
-      "p75": 5.05
+      "p75": 5.051320481059785
     },
     "station_id": {
       "data_type": "String",
@@ -1666,23 +1761,23 @@
       "top_k": [
         {
           "value": "208",
-          "count": 2001770
+          "count": 2001974
         },
         {
           "value": "312",
-          "count": 2001129
+          "count": 2001069
         },
         {
           "value": "416",
-          "count": 2001027
+          "count": 2001042
         },
         {
           "value": "511",
-          "count": 1998603
+          "count": 1998491
         },
         {
           "value": "104",
-          "count": 1997471
+          "count": 1997424
         }
       ],
       "min_length": 3,
@@ -1699,57 +1794,57 @@
       "histogram": [],
       "top_k": [
         {
-          "value": "SB_HASH_39424",
-          "count": 261
-        },
-        {
           "value": "SB_HASH_3345",
-          "count": 258
+          "count": 263
         },
         {
-          "value": "SB_HASH_29330",
+          "value": "SB_HASH_1211",
           "count": 257
         },
         {
-          "value": "SB_HASH_35531",
+          "value": "SB_HASH_39424",
           "count": 257
+        },
+        {
+          "value": "SB_HASH_10957",
+          "count": 256
         },
         {
           "value": "SB_HASH_19687",
           "count": 256
         },
         {
-          "value": "SB_HASH_28201",
+          "value": "SB_HASH_29330",
           "count": 256
         },
         {
-          "value": "SB_HASH_38025",
+          "value": "SB_HASH_35531",
           "count": 256
+        },
+        {
+          "value": "SB_HASH_9352",
+          "count": 255
         },
         {
           "value": "SB_HASH_22410",
           "count": 254
         },
         {
-          "value": "SB_HASH_10957",
-          "count": 253
-        },
-        {
-          "value": "SB_HASH_14905",
-          "count": 253
+          "value": "SB_HASH_23642",
+          "count": 254
         }
       ],
       "min_length": 9,
       "max_length": 13,
-      "mean_length": 12.7780728,
+      "mean_length": 12.7780677,
       "min": "SB_HASH_0",
       "max": "SB_HASH_9999",
       "blank_count": 0
     },
     "timestamp_utc": {
       "data_type": "Datetime(time_unit='ms', time_zone=None)",
-      "null_count": 25129,
-      "n_unique": 9974871,
+      "null_count": 25079,
+      "n_unique": 9974921,
       "histogram": [],
       "top_k": [],
       "min": "2026-03-01 00:00:00.000",
@@ -1761,332 +1856,392 @@
       {
         "column_a": "packet_id",
         "column_b": "sequence_id",
-        "score": 0.9999740024002798
+        "score": 0.9999740024002796
       },
       {
         "column_a": "ambient_temp_c",
         "column_b": "board_temp_c",
-        "score": 0.9999527569717955
+        "score": 0.9999527842833705
+      },
+      {
+        "column_a": "decommissioned_sensor",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.05365081452922935
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "decommissioned_sensor",
+        "score": 0.045011293980885665
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "decommissioned_sensor",
+        "score": 0.03971627301949277
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "decommissioned_sensor",
+        "score": -0.03951565047665677
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "decommissioned_sensor",
+        "score": 0.039241080947188305
+      },
+      {
+        "column_a": "calibration_offset",
+        "column_b": "decommissioned_sensor",
+        "score": -0.03582222328213177
+      },
+      {
+        "column_a": "decommissioned_sensor",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.030129311452084005
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "decommissioned_sensor",
+        "score": -0.02742853721082834
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "decommissioned_sensor",
+        "score": -0.025225723398832254
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "decommissioned_sensor",
+        "score": -0.025225723398832254
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "decommissioned_sensor",
+        "score": 0.014350316666781496
       },
       {
         "column_a": "packet_id",
         "column_b": "calibration_offset",
-        "score": 0.010978215827738988
+        "score": 0.010980079659856166
       },
       {
         "column_a": "sequence_id",
         "column_b": "calibration_offset",
-        "score": 0.010938998101788657
+        "score": 0.010940851138029109
       },
       {
         "column_a": "solar_flare_index",
         "column_b": "calibration_offset",
-        "score": -0.010443659239178562
+        "score": -0.010440321384480438
       },
       {
         "column_a": "rcu_id",
         "column_b": "solar_flare_index",
-        "score": 0.009364984476464647
+        "score": 0.009364876223510657
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "decommissioned_sensor",
+        "score": -0.008700171856517544
       },
       {
         "column_a": "frequency_mhz",
         "column_b": "calibration_offset",
-        "score": 0.00706022327098167
+        "score": 0.007060824165567479
       },
       {
         "column_a": "packet_id",
         "column_b": "frequency_mhz",
-        "score": -0.00636023334226679
+        "score": -0.006360239388268875
       },
       {
         "column_a": "sequence_id",
         "column_b": "frequency_mhz",
-        "score": -0.006293133347961183
+        "score": -0.006293139322619809
       },
       {
-        "column_a": "frequency_mhz",
+        "column_a": "sequence_id",
         "column_b": "pointing_coords_azimuth_deg",
-        "score": 0.0060233694492173966
+        "score": 0.005586637282498784
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.005540201977716925
       },
       {
         "column_a": "frequency_mhz",
         "column_b": "packet_drop_rate",
-        "score": -0.005246481729737042
-      },
-      {
-        "column_a": "signal_power_db",
-        "column_b": "ambient_temp_c",
-        "score": -0.004685993610357423
-      },
-      {
-        "column_a": "signal_power_db",
-        "column_b": "board_temp_c",
-        "score": -0.004659719313024385
+        "score": -0.00524589912747318
       },
       {
         "column_a": "calibration_offset",
         "column_b": "pointing_coords_azimuth_deg",
-        "score": -0.004625578164678711
+        "score": -0.004730321219466128
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "ambient_temp_c",
+        "score": -0.004685000011659551
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "board_temp_c",
+        "score": -0.0046576777255266195
       },
       {
         "column_a": "packet_drop_rate",
         "column_b": "pointing_coords_azimuth_deg",
-        "score": 0.0046225463862171745
+        "score": -0.004328121818860617
       },
       {
-        "column_a": "frequency_mhz",
+        "column_a": "calibration_offset",
         "column_b": "pointing_coords_elevation_deg",
-        "score": -0.004083597959855659
-      },
-      {
-        "column_a": "ambient_temp_c",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": -0.004032823828997926
+        "score": -0.004302474592032289
       },
       {
         "column_a": "signal_power_db",
         "column_b": "solar_flare_index",
-        "score": 0.004028357110950888
+        "score": 0.004029661231307333
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.0037938445958431086
       },
       {
         "column_a": "board_temp_c",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": -0.004003054364125556
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.003770867104251106
       },
       {
         "column_a": "sequence_id",
         "column_b": "signal_power_db",
-        "score": -0.0036447211518325262
+        "score": -0.00364486454495117
       },
       {
         "column_a": "packet_id",
         "column_b": "signal_power_db",
-        "score": -0.003627996970332247
+        "score": -0.0036281451805345497
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.003557799288376185
       },
       {
         "column_a": "rcu_id",
         "column_b": "ambient_temp_c",
-        "score": 0.0033921282096358884
+        "score": 0.003392563249122243
       },
       {
         "column_a": "rcu_id",
         "column_b": "board_temp_c",
-        "score": 0.003347580623335324
+        "score": 0.003347671822918916
       },
       {
         "column_a": "pointing_coords_azimuth_deg",
         "column_b": "pointing_coords_elevation_deg",
-        "score": 0.0033018210811086527
+        "score": 0.002748121865906359
       },
       {
         "column_a": "board_temp_c",
         "column_b": "solar_flare_index",
-        "score": -0.0027366834514804387
+        "score": -0.002737387116952121
       },
       {
         "column_a": "ambient_temp_c",
         "column_b": "solar_flare_index",
-        "score": -0.002701825968003127
+        "score": -0.002702042347644033
       },
       {
         "column_a": "packet_id",
         "column_b": "board_temp_c",
-        "score": 0.002641445445848408
+        "score": 0.0026417823858761536
       },
       {
         "column_a": "packet_id",
         "column_b": "ambient_temp_c",
-        "score": 0.002636623118736126
+        "score": 0.0026361892352584283
       },
       {
         "column_a": "sequence_id",
         "column_b": "board_temp_c",
-        "score": 0.0026351398183223165
+        "score": 0.002635477898400471
       },
       {
         "column_a": "sequence_id",
         "column_b": "ambient_temp_c",
-        "score": 0.00263032081857471
+        "score": 0.002629890147858713
       },
       {
-        "column_a": "rcu_id",
+        "column_a": "packet_drop_rate",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.00261942094365927
+      },
+      {
+        "column_a": "frequency_mhz",
         "column_b": "pointing_coords_azimuth_deg",
-        "score": 0.002610634816944993
+        "score": 0.002538738958318032
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "packet_drop_rate",
+        "score": 0.0022656316132236547
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "packet_drop_rate",
+        "score": 0.0022544987549335906
       },
       {
         "column_a": "solar_flare_index",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": 0.002320571656872096
-      },
-      {
-        "column_a": "sequence_id",
-        "column_b": "packet_drop_rate",
-        "score": 0.0022657146144718964
-      },
-      {
-        "column_a": "packet_id",
-        "column_b": "packet_drop_rate",
-        "score": 0.0022545766225296983
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.002192984747500931
       },
       {
         "column_a": "signal_power_db",
         "column_b": "calibration_offset",
-        "score": -0.00207543042785085
+        "score": -0.0020753767799082706
       },
       {
         "column_a": "rcu_id",
         "column_b": "calibration_offset",
-        "score": 0.0020216556363727737
+        "score": 0.002021552242888623
       },
       {
         "column_a": "packet_drop_rate",
         "column_b": "calibration_offset",
-        "score": 0.002013863885466911
-      },
-      {
-        "column_a": "calibration_offset",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": -0.0019989568547606694
+        "score": 0.0020142595194745537
       },
       {
         "column_a": "signal_power_db",
         "column_b": "packet_drop_rate",
-        "score": -0.001920302536805517
-      },
-      {
-        "column_a": "sequence_id",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": 0.0017913557196682392
+        "score": -0.001919309984409595
       },
       {
         "column_a": "rcu_id",
         "column_b": "packet_drop_rate",
-        "score": 0.0017749686977479183
-      },
-      {
-        "column_a": "packet_id",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": 0.0017437952310438891
+        "score": 0.0017746020044440993
       },
       {
         "column_a": "frequency_mhz",
         "column_b": "solar_flare_index",
-        "score": -0.0016283394964138355
+        "score": -0.0016276262333044106
       },
       {
         "column_a": "rcu_id",
         "column_b": "signal_power_db",
-        "score": 0.0015650893624960887
+        "score": 0.001564793608671631
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0008468121569190459
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0008347437021207037
       },
       {
         "column_a": "signal_power_db",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": -0.0014737310447283639
-      },
-      {
-        "column_a": "rcu_id",
         "column_b": "pointing_coords_elevation_deg",
-        "score": 0.0011360146088768648
-      },
-      {
-        "column_a": "packet_id",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": -0.0009291311188073232
-      },
-      {
-        "column_a": "sequence_id",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": -0.0009079035252357984
-      },
-      {
-        "column_a": "packet_drop_rate",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": -0.0008683972985892572
-      },
-      {
-        "column_a": "solar_flare_index",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": -0.0007972166137661373
+        "score": -0.0008246425361897358
       },
       {
         "column_a": "sequence_id",
         "column_b": "solar_flare_index",
-        "score": 0.0007521273274194799
+        "score": 0.0007529597908854046
       },
       {
         "column_a": "packet_id",
         "column_b": "solar_flare_index",
-        "score": 0.0007410001996343842
+        "score": 0.000741833751077991
       },
       {
         "column_a": "frequency_mhz",
         "column_b": "ambient_temp_c",
-        "score": -0.0007272452822643877
+        "score": -0.0007272655348995259
       },
       {
         "column_a": "frequency_mhz",
         "column_b": "board_temp_c",
-        "score": -0.0006988370511536191
+        "score": -0.0006990598179243178
       },
       {
         "column_a": "signal_power_db",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.0006173192771556907
+      },
+      {
+        "column_a": "rcu_id",
         "column_b": "pointing_coords_elevation_deg",
-        "score": 0.0004857303053521327
+        "score": 0.0006021339342012988
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.0005747844141123982
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0005552580569591681
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.0004661340240542348
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.000432478050756223
       },
       {
         "column_a": "board_temp_c",
         "column_b": "calibration_offset",
-        "score": -0.0003225614351837709
+        "score": -0.0003222829786547082
       },
       {
         "column_a": "ambient_temp_c",
         "column_b": "calibration_offset",
-        "score": -0.0002971662901113699
-      },
-      {
-        "column_a": "board_temp_c",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": -0.00029422948812347064
-      },
-      {
-        "column_a": "ambient_temp_c",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": -0.00028187015443439516
+        "score": -0.0002989794424808681
       },
       {
         "column_a": "rcu_id",
         "column_b": "frequency_mhz",
-        "score": 0.00024316753795976205
+        "score": 0.0002431547138292306
       },
       {
         "column_a": "ambient_temp_c",
         "column_b": "packet_drop_rate",
-        "score": 0.00010298741129163607
+        "score": 0.00010315589800067107
       },
       {
         "column_a": "board_temp_c",
         "column_b": "packet_drop_rate",
-        "score": 8.22461935573265e-05
+        "score": 8.216096024444944e-05
       },
       {
         "column_a": "packet_drop_rate",
         "column_b": "solar_flare_index",
-        "score": 6.613416686067056e-05
+        "score": 6.490096543501484e-05
       },
       {
         "column_a": "sequence_id",
         "column_b": "rcu_id",
-        "score": 6.423071651752665e-05
+        "score": 6.423071651789256e-05
       },
       {
         "column_a": "packet_id",
         "column_b": "rcu_id",
-        "score": 5.804641453357685e-05
+        "score": 5.804641453394304e-05
       },
       {
         "column_a": "frequency_mhz",
         "column_b": "signal_power_db",
-        "score": -4.365054729523288e-06
+        "score": -5.599193065261461e-06
       }
     ],
     "spearman": [
@@ -2098,312 +2253,372 @@
       {
         "column_a": "ambient_temp_c",
         "column_b": "board_temp_c",
-        "score": 0.9996616558854936
-      },
-      {
-        "column_a": "packet_id",
-        "column_b": "calibration_offset",
-        "score": 0.010986220452659028
-      },
-      {
-        "column_a": "sequence_id",
-        "column_b": "calibration_offset",
-        "score": 0.010953528842264307
-      },
-      {
-        "column_a": "packet_drop_rate",
-        "column_b": "calibration_offset",
-        "score": -0.007453597430827293
-      },
-      {
-        "column_a": "frequency_mhz",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": 0.006573072025023901
-      },
-      {
-        "column_a": "frequency_mhz",
-        "column_b": "packet_drop_rate",
-        "score": -0.006461341531478217
-      },
-      {
-        "column_a": "frequency_mhz",
-        "column_b": "calibration_offset",
-        "score": 0.0061456444987169545
-      },
-      {
-        "column_a": "packet_id",
-        "column_b": "frequency_mhz",
-        "score": -0.005841654661668563
-      },
-      {
-        "column_a": "ambient_temp_c",
-        "column_b": "calibration_offset",
-        "score": 0.005783317426571729
-      },
-      {
-        "column_a": "sequence_id",
-        "column_b": "frequency_mhz",
-        "score": -0.005771264665617734
+        "score": 0.9996618311441996
       },
       {
         "column_a": "board_temp_c",
-        "column_b": "calibration_offset",
-        "score": 0.00572502134202819
+        "column_b": "decommissioned_sensor",
+        "score": 0.04532416801222704
       },
       {
         "column_a": "ambient_temp_c",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": 0.005458583855556177
+        "column_b": "decommissioned_sensor",
+        "score": 0.04495262964285422
       },
       {
-        "column_a": "board_temp_c",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": 0.00544324848704314
-      },
-      {
-        "column_a": "packet_drop_rate",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": -0.005333284627475988
-      },
-      {
-        "column_a": "frequency_mhz",
+        "column_a": "decommissioned_sensor",
         "column_b": "pointing_coords_elevation_deg",
-        "score": -0.004454767640965882
+        "score": -0.04474551655912144
       },
       {
-        "column_a": "sequence_id",
-        "column_b": "packet_drop_rate",
-        "score": 0.004412360851898864
+        "column_a": "frequency_mhz",
+        "column_b": "decommissioned_sensor",
+        "score": -0.04002999373165669
+      },
+      {
+        "column_a": "calibration_offset",
+        "column_b": "decommissioned_sensor",
+        "score": -0.027220836007699884
       },
       {
         "column_a": "packet_id",
-        "column_b": "packet_drop_rate",
-        "score": 0.004388252685530614
+        "column_b": "decommissioned_sensor",
+        "score": -0.0249157486407157
       },
       {
-        "column_a": "board_temp_c",
-        "column_b": "solar_flare_index",
-        "score": -0.004313346231790543
+        "column_a": "sequence_id",
+        "column_b": "decommissioned_sensor",
+        "score": -0.0249157486407157
+      },
+      {
+        "column_a": "decommissioned_sensor",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.022507129472058258
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "decommissioned_sensor",
+        "score": -0.022369356687868908
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "decommissioned_sensor",
+        "score": 0.02102745280556153
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "decommissioned_sensor",
+        "score": 0.014568779577521795
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "calibration_offset",
+        "score": 0.010988285785908224
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "calibration_offset",
+        "score": 0.01095558105623493
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "calibration_offset",
+        "score": -0.007429592673459366
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "packet_drop_rate",
+        "score": -0.006450173032760555
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "calibration_offset",
+        "score": 0.006148106776702067
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "frequency_mhz",
+        "score": -0.005841646215763105
       },
       {
         "column_a": "ambient_temp_c",
-        "column_b": "solar_flare_index",
-        "score": -0.004296467894891607
+        "column_b": "calibration_offset",
+        "score": 0.005778039431655811
       },
       {
-        "column_a": "ambient_temp_c",
-        "column_b": "packet_drop_rate",
-        "score": 0.003990680780488052
+        "column_a": "sequence_id",
+        "column_b": "frequency_mhz",
+        "score": -0.005771256381226626
       },
       {
         "column_a": "board_temp_c",
-        "column_b": "packet_drop_rate",
-        "score": 0.003968707952477384
-      },
-      {
-        "column_a": "packet_id",
-        "column_b": "ambient_temp_c",
-        "score": 0.0038747280668945394
-      },
-      {
-        "column_a": "packet_id",
-        "column_b": "board_temp_c",
-        "score": 0.0038692591952571554
+        "column_b": "calibration_offset",
+        "score": 0.005726698319866718
       },
       {
         "column_a": "sequence_id",
-        "column_b": "ambient_temp_c",
-        "score": 0.0038541460413064528
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.005582992562812774
       },
       {
-        "column_a": "sequence_id",
-        "column_b": "board_temp_c",
-        "score": 0.0038487644839262252
+        "column_a": "packet_id",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.005536238593838078
       },
       {
         "column_a": "signal_power_db",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": -0.003373681427979518
+        "column_b": "decommissioned_sensor",
+        "score": 0.005142173601659414
       },
       {
         "column_a": "calibration_offset",
         "column_b": "pointing_coords_azimuth_deg",
-        "score": -0.003361381324539772
+        "score": -0.004501080047413731
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "packet_drop_rate",
+        "score": 0.004427993397598288
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "packet_drop_rate",
+        "score": 0.004404024242371172
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "solar_flare_index",
+        "score": -0.00431197877620211
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "solar_flare_index",
+        "score": -0.004294875074358554
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "packet_drop_rate",
+        "score": 0.003990070231451293
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "packet_drop_rate",
+        "score": 0.003967660718213993
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "ambient_temp_c",
+        "score": 0.0038731149259907567
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "board_temp_c",
+        "score": 0.0038698484231489043
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "ambient_temp_c",
+        "score": 0.003852544371814978
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "board_temp_c",
+        "score": 0.003849357414129128
+      },
+      {
+        "column_a": "calibration_offset",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": -0.00333582988710795
       },
       {
         "column_a": "rcu_id",
         "column_b": "ambient_temp_c",
-        "score": 0.003308118871687941
+        "score": 0.003309791324243106
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "board_temp_c",
+        "score": 0.003201266542726153
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "solar_flare_index",
+        "score": 0.0031524058505830047
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.0029852278145865263
       },
       {
         "column_a": "pointing_coords_azimuth_deg",
         "column_b": "pointing_coords_elevation_deg",
-        "score": 0.003276046588934382
-      },
-      {
-        "column_a": "rcu_id",
-        "column_b": "board_temp_c",
-        "score": 0.0032007344654157222
-      },
-      {
-        "column_a": "rcu_id",
-        "column_b": "solar_flare_index",
-        "score": 0.003156749893433558
+        "score": 0.0027522667733872203
       },
       {
         "column_a": "packet_drop_rate",
         "column_b": "solar_flare_index",
-        "score": 0.0027033186883613997
+        "score": 0.002667940417595556
       },
       {
         "column_a": "signal_power_db",
         "column_b": "ambient_temp_c",
-        "score": -0.0026459396687452987
+        "score": -0.0026457048316983595
       },
       {
         "column_a": "signal_power_db",
         "column_b": "board_temp_c",
-        "score": -0.002606711558545396
+        "score": -0.0026037557192363603
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "calibration_offset",
+        "score": -0.00240719649520544
       },
       {
         "column_a": "rcu_id",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": 0.0026044767775272436
+        "column_b": "calibration_offset",
+        "score": 0.0023678482379739527
       },
       {
-        "column_a": "calibration_offset",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": -0.002596014275695004
+        "column_a": "signal_power_db",
+        "column_b": "solar_flare_index",
+        "score": 0.002302387075417136
+      },
+      {
+        "column_a": "board_temp_c",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.0022986396101642905
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.0022202236803178514
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "signal_power_db",
+        "score": -0.002215064636000548
+      },
+      {
+        "column_a": "packet_id",
+        "column_b": "signal_power_db",
+        "score": -0.0022045123243217683
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "calibration_offset",
+        "score": -0.002068235633671395
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "packet_drop_rate",
+        "score": 0.0019656281429173447
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.0018101870781862606
+      },
+      {
+        "column_a": "packet_drop_rate",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.0017436187566738518
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "signal_power_db",
+        "score": 0.0013180506082461202
       },
       {
         "column_a": "packet_drop_rate",
         "column_b": "pointing_coords_elevation_deg",
-        "score": 0.0025617111018672455
-      },
-      {
-        "column_a": "solar_flare_index",
-        "column_b": "calibration_offset",
-        "score": -0.002402751387112277
-      },
-      {
-        "column_a": "rcu_id",
-        "column_b": "calibration_offset",
-        "score": 0.002367539953822585
-      },
-      {
-        "column_a": "signal_power_db",
-        "column_b": "solar_flare_index",
-        "score": 0.002312113174508476
-      },
-      {
-        "column_a": "sequence_id",
-        "column_b": "signal_power_db",
-        "score": -0.002214841677164154
-      },
-      {
-        "column_a": "packet_id",
-        "column_b": "signal_power_db",
-        "score": -0.002204286520189079
-      },
-      {
-        "column_a": "signal_power_db",
-        "column_b": "calibration_offset",
-        "score": -0.0020692965906479338
-      },
-      {
-        "column_a": "rcu_id",
-        "column_b": "packet_drop_rate",
-        "score": 0.0019772418116178834
-      },
-      {
-        "column_a": "sequence_id",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": 0.0017903975915827394
-      },
-      {
-        "column_a": "packet_id",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": 0.0017420497491509401
-      },
-      {
-        "column_a": "solar_flare_index",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": 0.0014567093441145815
-      },
-      {
-        "column_a": "rcu_id",
-        "column_b": "signal_power_db",
-        "score": 0.0013186684842103197
-      },
-      {
-        "column_a": "rcu_id",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": 0.0011280217125113957
-      },
-      {
-        "column_a": "packet_id",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": -0.0009235155408641872
-      },
-      {
-        "column_a": "sequence_id",
-        "column_b": "pointing_coords_elevation_deg",
-        "score": -0.0009025447957871392
+        "score": 0.001302741650927389
       },
       {
         "column_a": "frequency_mhz",
         "column_b": "signal_power_db",
-        "score": -0.00084975296492934
+        "score": -0.0008518195724445517
       },
       {
-        "column_a": "solar_flare_index",
-        "column_b": "pointing_coords_azimuth_deg",
-        "score": -0.0006625508002230018
-      },
-      {
-        "column_a": "signal_power_db",
+        "column_a": "packet_id",
         "column_b": "pointing_coords_elevation_deg",
-        "score": 0.0005285515284961275
+        "score": 0.0008467547717275454
+      },
+      {
+        "column_a": "sequence_id",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0008345631510247208
+      },
+      {
+        "column_a": "frequency_mhz",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0006560871800936229
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.0005855138206570515
+      },
+      {
+        "column_a": "rcu_id",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": -0.000580624407120392
       },
       {
         "column_a": "sequence_id",
         "column_b": "solar_flare_index",
-        "score": 0.0005101295401006662
+        "score": 0.0005173776819272282
       },
       {
         "column_a": "packet_id",
         "column_b": "solar_flare_index",
-        "score": 0.0004961497144396465
+        "score": 0.0005033871053877807
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "pointing_coords_azimuth_deg",
+        "score": 0.0005003342748175662
       },
       {
         "column_a": "frequency_mhz",
         "column_b": "solar_flare_index",
-        "score": -0.0004433752491498568
-      },
-      {
-        "column_a": "signal_power_db",
-        "column_b": "packet_drop_rate",
-        "score": -0.0004398687201648053
+        "score": -0.00046101088126770343
       },
       {
         "column_a": "frequency_mhz",
         "column_b": "board_temp_c",
-        "score": 0.00042463348890496425
+        "score": 0.0004245304761757887
+      },
+      {
+        "column_a": "signal_power_db",
+        "column_b": "packet_drop_rate",
+        "score": -0.00042167610763345093
+      },
+      {
+        "column_a": "ambient_temp_c",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.00039164594074404726
       },
       {
         "column_a": "frequency_mhz",
         "column_b": "ambient_temp_c",
-        "score": 0.00037928698022917615
+        "score": 0.0003801604459013516
       },
       {
         "column_a": "rcu_id",
         "column_b": "frequency_mhz",
-        "score": 0.00037135846490013555
+        "score": 0.00037137964155540995
       },
       {
         "column_a": "board_temp_c",
         "column_b": "pointing_coords_elevation_deg",
-        "score": 9.036284949613911e-05
+        "score": 0.00034592342986530843
+      },
+      {
+        "column_a": "solar_flare_index",
+        "column_b": "pointing_coords_elevation_deg",
+        "score": 0.000304895460754646
       },
       {
         "column_a": "sequence_id",
@@ -2416,9 +2631,9 @@
         "score": 8.227010985992382e-05
       },
       {
-        "column_a": "ambient_temp_c",
+        "column_a": "signal_power_db",
         "column_b": "pointing_coords_elevation_deg",
-        "score": 4.5880379036032556e-05
+        "score": -2.242124215500802e-05
       }
     ],
     "sampling_method": "systematic_sample (~100000)"
@@ -2429,7 +2644,7 @@
       "type": "SKEWED",
       "level": "WARNING",
       "message": "Distribution is highly skewed (24.38). Linear models may require transformation.",
-      "value": 24.376365554293432
+      "value": 24.376365282266537
     },
     {
       "column_name": "ambient_temp_c",
@@ -2443,7 +2658,7 @@
       "type": "SKEWED",
       "level": "WARNING",
       "message": "Distribution is highly skewed (24.37). Linear models may require transformation.",
-      "value": 24.372826285988396
+      "value": 24.372911887925692
     },
     {
       "column_name": "board_temp_c",
@@ -2464,7 +2679,7 @@
       "type": "OUTLIERS_DETECTED",
       "level": "WARNING",
       "message": "Extreme outliers present. The value 4.84 significantly exceeds the normal expected bounds.",
-      "value": 4.841
+      "value": 4.840553353832482
     },
     {
       "column_name": "decommissioned_sensor",
@@ -2472,13 +2687,6 @@
       "level": "CRITICAL",
       "message": "Column is 99.0% empty. It likely contains no useful information.",
       "value": 0.9900314
-    },
-    {
-      "column_name": "decommissioned_sensor",
-      "type": "CONSTANT",
-      "level": "CRITICAL",
-      "message": "Column has only 1 unique value. It adds no variance to the dataset.",
-      "value": 1.0
     },
     {
       "column_name": "firmware_version",
@@ -2499,14 +2707,14 @@
       "type": "BLANK_STRINGS",
       "level": "WARNING",
       "message": "Column contains 15.0% blank/whitespace strings. These may bypass standard completeness checks.",
-      "value": 0.1499806
+      "value": 0.1499696
     },
     {
       "column_name": "packet_drop_rate",
       "type": "SKEWED",
       "level": "WARNING",
       "message": "Distribution is highly skewed (31.39). Linear models may require transformation.",
-      "value": 31.38904118435163
+      "value": 31.3890487384288
     },
     {
       "column_name": "packet_drop_rate",
@@ -2541,28 +2749,28 @@
       "type": "OUTLIERS_DETECTED",
       "level": "WARNING",
       "message": "Extreme outliers present. The value -8.86 significantly exceeds the normal expected bounds.",
-      "value": -8.86
+      "value": -8.856978758311286
     },
     {
       "column_name": "solar_flare_index",
       "type": "SKEWED",
       "level": "WARNING",
       "message": "Distribution is highly skewed (3.31). Linear models may require transformation.",
-      "value": 3.307417662216354
+      "value": 3.30741813424731
     },
     {
       "column_name": "solar_flare_index",
       "type": "ZERO_INFLATED",
       "level": "WARNING",
       "message": "Column is 65.0% zeros. Check if '0' represents missing data.",
-      "value": 0.6499496
+      "value": 0.649836
     },
     {
       "column_name": "solar_flare_index",
       "type": "OUTLIERS_DETECTED",
       "level": "WARNING",
       "message": "Extreme outliers present. The value 209.44 significantly exceeds the normal expected bounds.",
-      "value": 209.44
+      "value": 209.43942568820486
     },
     {
       "column_name": "station_id",
@@ -2589,22 +2797,22 @@
       "column_name": "timestamp_utc",
       "type": "HIGH_CARDINALITY",
       "level": "WARNING",
-      "message": "High cardinality (9974871 unique values). Avoid One-Hot Encoding.",
-      "value": 9974871
+      "message": "High cardinality (9974921 unique values). Avoid One-Hot Encoding.",
+      "value": 9974921
     },
     {
       "column_name": "packet_id <-> sequence_id",
       "type": "HIGH_CORRELATION",
       "level": "WARNING",
       "message": "Columns are highly correlated (1.0000) via pearson. They contain redundant information.",
-      "value": 0.9999740024002798
+      "value": 0.9999740024002796
     },
     {
       "column_name": "ambient_temp_c <-> board_temp_c",
       "type": "HIGH_CORRELATION",
       "level": "WARNING",
       "message": "Columns are highly correlated (1.0000) via pearson. They contain redundant information.",
-      "value": 0.9999527569717955
+      "value": 0.9999527842833705
     },
     {
       "column_name": "packet_id <-> sequence_id",
@@ -2618,14 +2826,14 @@
       "type": "HIGH_CORRELATION",
       "level": "WARNING",
       "message": "Columns are highly correlated (0.9997) via spearman. They contain redundant information.",
-      "value": 0.9996616558854936
+      "value": 0.9996618311441996
     }
   ],
   "_meta": {
-    "created_at": "2026-11-12T16:06:53.854467+00:00",
-    "execution_start_epoch": 1794499605.4346056,
-    "execution_end_epoch": 1794499613.854462,
-    "engine_time_seconds": 8.4199,
+    "created_at": "2026-11-16T17:54:17.753494+00:00",
+    "execution_start_epoch": 1794851647.588247,
+    "execution_end_epoch": 1794851657.7534888,
+    "engine_time_seconds": 10.1652,
     "profiler_version": "0.6.0",
     "is_low_memory_run": false,
     "config_source": "lofar_netra_config.yaml",
