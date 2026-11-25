@@ -1,7 +1,7 @@
 [project]
 name = "netra-profiler"
 version = "0.6.0"
-description = "High-performance profiling and data quality tool built with Polars. "
+description = "High-performance profiling and data quality tool built with Polars."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
@@ -70,7 +70,7 @@ packages = ["src/netra_profiler"]
 # Ruff (Linter & Formatter)
 [tool.ruff]
 line-length = 100
-target-version = "py311"   # Enforce Python 3.10+ compatibility
+target-version = "py311"   # Enforce Python 3.11+ compatibility
 src = ["src", "."]
 
 [tool.ruff.lint]
@@ -94,6 +94,9 @@ known-first-party = ["netra_profiler", "benchmarks"]
 "tests/**/*.py" = [
     "PLR0913", # Allow multiple pytest fixtures in test function signatures
     "PLR2004", # Allow literal numbers in test assertions
+]
+"benchmarks/generators/**/*.py" = [
+    "PLR2004", # Allow literal probabilities and distribution parameters in synthetic generators
 ]
 
 # Mypy (Static Type Checker)
