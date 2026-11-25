@@ -93,7 +93,9 @@ class Profiler:
             column statistics, correlation edges, diagnostic alerts, and execution telemetry.
         """
 
-        profiling_start_time = time.time()
+        profiling_start_epoch = time.time()
+        profiling_start_perf = time.perf_counter()
+
         profiler_warnings: list[str] = []
 
         # Stage 1: Scalar metrics, string Top-K tables, and exact unique counts
@@ -102,8 +104,13 @@ class Profiler:
         # Stage 2: Histograms, correlation sample, and bin-filtered exact quantiles
         self._collect_histograms_and_correlations(profile_data, bins, profiler_warnings)
 
-        # Assemble structured NetraProfile dictionary
-        profile = self._build_profile(profile_data, profiling_start_time, profiler_warnings)
+        # Assemble NetraProfile object
+        profile = self._build_profile(
+            profile_data,
+            profiling_start_epoch,
+            profiling_start_perf,
+            profiler_warnings,
+        )
 
         # Evaluate quality diagnostics
         self._run_diagnostics(profile)
@@ -527,7 +534,8 @@ class Profiler:
     def _build_profile(
         self,
         profile_data: dict[str, Any],
-        profiling_start_time: float,
+        profiling_start_epoch: float,
+        profiling_start_perf: float,
         profiler_warnings: list[str],
     ) -> NetraProfile:
         """
@@ -535,7 +543,9 @@ class Profiler:
         """
 
         row_count = profile_data.get("table_row_count", 0)
-        profiling_end_time = time.time()
+
+        profiling_end_epoch = time.time()
+        engine_time_seconds = round(time.perf_counter() - profiling_start_perf, 4)
 
         profile = {
             "dataset": {
@@ -550,9 +560,9 @@ class Profiler:
             "alerts": [],
             "_meta": {
                 "created_at": datetime.datetime.now(datetime.UTC).isoformat(),
-                "execution_start_epoch": profiling_start_time,
-                "execution_end_epoch": profiling_end_time,
-                "engine_time_seconds": round(profiling_end_time - profiling_start_time, 4),
+                "execution_start_epoch": profiling_start_epoch,
+                "execution_end_epoch": profiling_end_epoch,
+                "engine_time_seconds": engine_time_seconds,
                 "profiler_version": __version__,
                 "is_low_memory_run": self.low_memory,
                 "config_source": self.config_source,
