@@ -224,7 +224,8 @@ def generate_lofar_dataset(
 
     total_chunks = max(1, (total_rows + chunk_size - 1) // chunk_size)
     print(
-        f"\n[+] Synthesizing LOFAR Telemetry (Profiler Suite): {total_rows:,} rows across {total_chunks} chunks"
+        f"\n[+] Synthesizing LOFAR Telemetry (Profiler Suite): "
+        f"{total_rows:,} rows across {total_chunks} chunks"
     )
     print(f"[+] Output Target: {output_path}")
 

@@ -4,8 +4,6 @@ Netra Profiler Benchmark Adapter (Supports Standard and Low-Memory modes).
 
 from __future__ import annotations
 
-import os
-import shutil
 import time
 from pathlib import Path
 from typing import Any
@@ -27,7 +25,6 @@ class NetraProfilerBenchmarkTarget(BenchmarkTarget):
         self.low_memory = low_memory
         self.dataset_path: Path | None = None
         self.config_path: Path | None = None
-        self.scratch_dir: Path | None = None
         self.config_dict: dict[str, Any] = {}
         self.pipeline_config: PipelineConfig | None = None
 
@@ -44,10 +41,6 @@ class NetraProfilerBenchmarkTarget(BenchmarkTarget):
             raise FileNotFoundError(f"Dataset not found: {self.dataset_path}")
         if not self.config_path.exists():
             raise FileNotFoundError(f"Config not found: {self.config_path}")
-
-        # Provision an isolated temporary workspace for out-of-core spills
-        self.scratch_dir = self.dataset_path.parent / f".netra_prof_bench_{os.getpid()}"
-        self.scratch_dir.mkdir(parents=True, exist_ok=True)
 
         with open(self.config_path, encoding="utf-8") as f:
             self.config_dict = yaml.safe_load(f) or {}
@@ -97,14 +90,10 @@ class NetraProfilerBenchmarkTarget(BenchmarkTarget):
             passed = False
             exit_code = 1
 
-        # 4. Compute Throughput & Row Velocity
+        # 4. Compute End-to-End Throughput & Row Velocity from Wall Time
         file_size_bytes = self.dataset_path.stat().st_size
-        effective_time = engine_time if (engine_time and engine_time > 0) else wall_time
-
-        throughput_mb_s = (
-            (file_size_bytes / (1024 * 1024)) / effective_time if effective_time > 0 else 0.0
-        )
-        row_velocity = (total_rows / effective_time) / 1_000_000 if effective_time > 0 else 0.0
+        throughput_mb_s = (file_size_bytes / (1024 * 1024)) / wall_time if wall_time > 0 else 0.0
+        row_velocity = (total_rows / wall_time) / 1_000_000 if wall_time > 0 else 0.0
 
         pearson_edges = len(profile.get("correlations", {}).get("pearson", []))
         spearman_edges = len(profile.get("correlations", {}).get("spearman", []))
@@ -112,7 +101,7 @@ class NetraProfilerBenchmarkTarget(BenchmarkTarget):
         result = BenchmarkResult(
             target_name=self.name,
             wall_time_seconds=round(wall_time, 4),
-            engine_time_seconds=round(engine_time, 4) if engine_time else None,
+            engine_time_seconds=round(engine_time, 4) if engine_time is not None else None,
             peak_rss_mb=0.0,  # Stamped by external subprocess collector
             rows_evaluated=total_rows,
             columns_profiled=columns_profiled,
@@ -137,6 +126,4 @@ class NetraProfilerBenchmarkTarget(BenchmarkTarget):
         return result, dict(profile)
 
     def teardown(self) -> None:
-        """Purges temporary spill workspace."""
-        if self.scratch_dir and self.scratch_dir.exists():
-            shutil.rmtree(self.scratch_dir, ignore_errors=True)
+        """No-op teardown; isolated worker subprocess exits immediately after collection."""

@@ -4,6 +4,7 @@ Hardware and Environment Auto-Fingerprinting for Netra Profiler.
 
 from __future__ import annotations
 
+import os
 import platform
 import subprocess
 import sys
@@ -32,7 +33,11 @@ def get_system_fingerprint() -> dict[str, Any]:
 
     try:
         if platform.system() == "Linux":
-            output = subprocess.check_output("lscpu", text=True)
+            output = subprocess.check_output(
+                ["lscpu"],
+                text=True,
+                env={**os.environ, "LC_ALL": "C"},
+            )
             cpu_model = next(
                 (line.split(":")[1].strip() for line in output.split("\n") if "Model name" in line),
                 platform.processor(),

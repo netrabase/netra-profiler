@@ -3,7 +3,7 @@ Isolated Subprocess Telemetry Collector for Netra Profiler.
 
 Guarantees pristine memory tracking by executing every benchmark iteration
 inside a freshly spawned Python subprocess, preventing allocator retention
-and cross-iteration page-cache pollution.
+and ensuring an accurate per-run kernel Peak RSS (`ru_maxrss`).
 """
 
 from __future__ import annotations
@@ -68,9 +68,6 @@ def run_target_isolated(
     if dump_profile_path is not None:
         cmd.extend(["--dump-profile", str(dump_profile_path)])
 
-    worker_env = os.environ.copy()
-    worker_env["POLARS_FORCE_OOC"] = "1"
-
     try:
         result = subprocess.run(
             cmd,
@@ -78,7 +75,6 @@ def run_target_isolated(
             text=True,
             check=True,
             cwd=str(PROJECT_ROOT),
-            env=worker_env,
         )
 
         output_lines = result.stdout.strip().split("\n")
