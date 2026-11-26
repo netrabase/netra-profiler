@@ -8,43 +8,34 @@ are executed by the `Profiler` orchestrator in `profiler.py`.
 """
 
 import math
-import os
 from typing import Any, cast
 
 import polars as pl
+import psutil
 
 
 def _get_system_ram_bytes() -> int:
     """
-    Auto-detects total physical system RAM in bytes using standard library primitives.
+    Detects total physical system RAM in bytes across Linux, macOS, and Windows.
 
-    Design Notes:
-        To avoid hardcoding magic numbers that fail on 16 GB laptops or 256 GB enterprise
-        servers, Netra dynamically inspects available system memory. It defaults to
-        using 25% of total physical RAM as the cumulative memory ceiling for a single
-        concurrent execution batch, falling back to 4.0 GiB if OS inspection fails.
+    Falls back to 16 GiB if system inspection fails.
     """
     try:
-        # Standard Unix/Linux/macOS RAM inspection via os.sysconf
-        if (
-            hasattr(os, "sysconf")
-            and "SC_PHYS_PAGES" in os.sysconf_names
-            and "SC_PAGE_SIZE" in os.sysconf_names
-        ):
-            pages = os.sysconf("SC_PHYS_PAGES")
-            page_size = os.sysconf("SC_PAGE_SIZE")
-            if pages > 0 and page_size > 0:
-                return pages * page_size
+        total_bytes = int(psutil.virtual_memory().total)
+        if total_bytes > 0:
+            return total_bytes
     except (AttributeError, OSError, ValueError):
         pass
 
-    # Safe fallback default (16 GB total RAM -> 4 GB batch budget)
     return 16 * 1024 * 1024 * 1024
 
 
-# Default Batch Budget: 25% of total system RAM (capped between 2 GiB and 32 GiB)
+# Default Batch Budget: 25% of total system RAM (capped between 256 MiB and 32 GiB)
+# Note: `profiler.py` estimates raw key+count bytes (`width + 8`), while Polars'
+# hash tables and per-thread buffers use ~2x that in actual RSS.
+# A 25% uninflated budget therefore targets ~50% real physical RAM at peak.
 DEFAULT_BATCH_MEMORY_BYTES = min(
-    max(int(_get_system_ram_bytes() * 0.25), 2 * 1024 * 1024 * 1024),
+    max(int(_get_system_ram_bytes() * 0.25), 256 * 1024 * 1024),
     32 * 1024 * 1024 * 1024,
 )
 
