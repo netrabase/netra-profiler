@@ -28,6 +28,13 @@ tests/data/*
 *.swp
 .DS_Store
 
+# Ignore ephemeral benchmark runs
+benchmarks/results/*
+
+# Keep directory structure and curated golden accuracy baselines tracked
+!benchmarks/results/golden/
+!benchmarks/results/golden/*.json
+
 # User specific source setups
 # You can put anything here that needs to be done to prepare your env.
 .user_env.*
